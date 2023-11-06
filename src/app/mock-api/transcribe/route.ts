@@ -1,15 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
+import { faker } from "@faker-js/faker";
 
-const captionsVtt =
-  "WEBVTT\n\
+const captionsVtt = `WEBVTT\n\
 00:01.000 --> 00:04.000\n\
-- Never drink liquid nitrogen.\n\
+- ${faker.lorem.sentence()}\n\
 \n\
 00:05.000 --> 00:09.000\n\
-- It will perforate your stomach.\n\
-- You could die.";
+- ${faker.lorem.sentence()}\n\
+- ${faker.lorem.sentence()}`;
 
-export function GET(request: NextRequest) {
+export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
 
   const query = searchParams.get("query");
@@ -17,6 +17,9 @@ export function GET(request: NextRequest) {
 
   const videoUrl = searchParams.get("videoUrl");
   if (!videoUrl) return new NextResponse("Missing videoUrl", { status: 401 });
+
+  // Emulate slow transcribing process
+  await new Promise((res) => setTimeout(res, 5000));
 
   return NextResponse.json({
     videoUrl:
