@@ -9,11 +9,10 @@ const request = async () => {
 }
 
 export default async function Home() {
-  const data = {};
   return (
     <main className="bg-[#161E2A] h-[951px] flex justify-between">
       <Sidebar />
-      <Content data={data} request={request} />
+      <Content request={request} />
     </main>
   )
 }

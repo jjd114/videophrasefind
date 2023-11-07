@@ -13,7 +13,7 @@ export const schema = z.object({
         .nonempty("Please enter search query"),
 });
   
-export default function Form({ data, request }: any) {
+export default function Form({ setData, request }: any) {
     const {
         register,
         handleSubmit,
@@ -28,7 +28,9 @@ export default function Form({ data, request }: any) {
     });
 
     const onSubmit = handleSubmit(async (formData) => {
-        data = await request();
+        const data = await request();
+        data.videoUrl = formData.videoUrl;
+        setData(data);
         const { entries } = parse(data.captionsVtt);
         entries.forEach(({ from, to, text }) => {
             console.log("from:" + from);
