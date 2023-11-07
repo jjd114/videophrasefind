@@ -1,6 +1,7 @@
 "use client"
 import { useEventListener } from "../hooks/useEventListener";
-import { useEffect, useState } from "react";
+import { useRef } from "react";
+import Form from "./Form";
 
 const ListElem = () => {
     return (
@@ -20,38 +21,65 @@ const ListElem = () => {
 }
 
 const Content = ({ data }: any) => {
+    
     const onClick = () => {
         alert('click');
     }
+
+    const buttonRef = useRef<HTMLButtonElement>(null);
+
+    useEventListener('click', onClick, buttonRef.current!);
+
+    /*useEffect(() => {
+        const onClick = () => {
+            let video = document.getElementById("video");
+            if (video) {
+                video.currentTime = 5;
+            }
+        }
+        const onUpdate = () => {
+            let video = document.getElementById("video");
+            let canvas = document.getElementById("canvas");
+            if (video && canvas) {
+                canvas.getContext("2d").drawImage(video, 0, 0, video.videoWidth, video.videoHeight);
+            }
+        }
+        if (document) {
+            document.getElementById("capture").addEventListener("click", onClick);
+            document.getElementById("video").addEventListener("timeupdate", onUpdate);
+        }
+    }, []);*/
     return (
-        <div className="py-6 px-10 bg-[#212A36] h-full w-[100%] max-w-[627px]">
-            <div
-                className="text-white text-xl font-semibold h-[48px]"
-                id="button"
-            >
-                Results:  1000
-            </div>
-            <div className="ml-3 w-[100%] h-[379px] rounded-[20px] bg-[#ffffff1f] mt-3">
-                <video style={{ width: "100%", height: "100%" }}>
-                    <source src={data.videoUrl} />
-                    <track
-                        label="English"
-                        kind="subtitles"
-                        srcLang="en"
-                        src={`data:text/vtt;charset=UTF-8,${encodeURIComponent(data.captionsVtt)}`}
-                        default
-                    />
-                </video>
-            </div>
-            <div className="w-[100%] h-[420px] mt-5 overflow-auto">
-                <ListElem />
-                <ListElem />
-                <ListElem />
-                <ListElem />
-                <ListElem />
-                <ListElem />
-                <ListElem />
-                <ListElem />
+        <div className="flex w-full">
+            <Form />
+            <div className="py-6 px-10 bg-[#212A36] h-full w-[100%] max-w-[627px] ml-auto">
+                <div
+                    className="text-white text-xl font-semibold h-[48px]"
+                >
+                    Results:  1000
+                </div>
+                <div className="ml-3 w-[100%] h-[379px] rounded-[20px] bg-[#ffffff1f] mt-3">
+                    <video style={{ width: "100%", height: "100%" }}>
+                        <source src={data.videoUrl} />
+                        <track
+                            label="English"
+                            kind="subtitles"
+                            srcLang="en"
+                            src={`data:text/vtt;charset=UTF-8,${encodeURIComponent(data.captionsVtt)}`}
+                            default
+                        />
+                    </video>
+                </div>
+                <div className="w-[100%] h-[420px] mt-5 overflow-auto">
+                    <ListElem />
+                    <ListElem />
+                    <ListElem />
+                    <ListElem />
+                    <ListElem />
+                    <ListElem />
+                    <ListElem />
+                    <ListElem />
+                </div>
             </div>
         </div>
     );
