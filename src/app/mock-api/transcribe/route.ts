@@ -7,7 +7,8 @@ const captionsVtt = `WEBVTT\n\
 \n\
 00:05.000 --> 00:09.000\n\
 - ${faker.lorem.sentence()}\n\
-- ${faker.lorem.sentence()}`;
+- ${faker.lorem.sentence()}\n\
+`;
 
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;

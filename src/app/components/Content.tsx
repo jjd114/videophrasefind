@@ -20,7 +20,7 @@ const ListElem = () => {
     );
 }
 
-const Content = ({ data }: any) => {
+const Content = ({ data, request }: any) => {
     
     const onClick = () => {
         alert('click');
@@ -51,7 +51,7 @@ const Content = ({ data }: any) => {
     }, []);*/
     return (
         <div className="flex w-full">
-            <Form />
+            <Form data={data} request={request} />
             <div className="py-6 px-10 bg-[#212A36] h-full w-[100%] max-w-[627px] ml-auto">
                 <div
                     className="text-white text-xl font-semibold h-[48px]"

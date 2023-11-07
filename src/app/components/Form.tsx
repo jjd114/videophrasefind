@@ -2,7 +2,7 @@ import useZodForm from '../hooks/useZodForm';
 import { z } from 'zod';
 import Button from './Button';
 import Input from './Input';
-
+import { parse } from '@plussub/srt-vtt-parser';
   
 export const schema = z.object({
     videoUrl: z
@@ -13,7 +13,7 @@ export const schema = z.object({
         .nonempty("Please enter search query"),
 });
   
-export default function Form() {
+export default function Form({ data, request }: any) {
     const {
         register,
         handleSubmit,
@@ -27,8 +27,21 @@ export default function Form() {
         mode: 'onBlur',
     });
 
-    const onSubmit = handleSubmit((data) => {
-        alert("submit")
+    const onSubmit = handleSubmit(async (formData) => {
+        data = await request();
+        const { entries } = parse(data.captionsVtt);
+        entries.forEach(({ from, to, text }) => {
+            console.log("from:" + from);
+            console.log("to:" + to);
+            console.log("text:" + text);
+        });
+        const result = entries.filter((item) => item.text.toLocaleLowerCase().includes(formData.searchQuery.toLocaleLowerCase()));
+        console.log("Result:");
+        result.forEach(({ from, to, text }) => {
+            console.log("from:" + from);
+            console.log("to:" + to);
+            console.log("text:" + text);
+        });
     });
 
     return (
