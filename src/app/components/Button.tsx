@@ -1,16 +1,16 @@
-import { ButtonHTMLAttributes } from 'react';
+import { ButtonHTMLAttributes } from "react";
 
 type Props = ButtonHTMLAttributes<HTMLButtonElement> & {
   isLoading?: boolean;
-  variant?: 'primary' | 'secondary';
+  variant?: "primary" | "secondary";
   className?: string;
 };
 
 export default function Button({
   children,
   isLoading,
-  variant = 'primary',
-  className = '',
+  variant = "primary",
+  className = "",
   ...rest
 }: Props) {
   return (
@@ -24,9 +24,9 @@ export default function Button({
         disabled:bg-gray-400
         bg-black
         text-white uppercase
-        ${isLoading ? 'cursor-progress' : ''}
-        ${variant === 'primary' ? 'bg-primary' : ''}
-        ${variant === 'secondary' ? 'bg-secondary' : ''}
+        ${isLoading ? "cursor-progress" : ""}
+        ${variant === "primary" ? "bg-primary" : ""}
+        ${variant === "secondary" ? "bg-secondary" : ""}
         ${className}
       `}
       {...rest}

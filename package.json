@@ -12,11 +12,13 @@
     "@faker-js/faker": "^8.2.0",
     "@hookform/resolvers": "^3.3.2",
     "@plussub/srt-vtt-parser": "^1.1.0",
+    "@tanstack/react-query": "^5.8.1",
     "lodash": "^4.17.21",
     "next": "^14.0.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.48.2",
+    "react-hot-toast": "^2.4.1",
     "zod": "^3.22.4"
   },
   "devDependencies": {

@@ -1,5 +1,5 @@
-import { type FC } from 'react';
-import _ from 'lodash';
+import { type FC } from "react";
+import _ from "lodash";
 
 interface Props {
   name: string;
@@ -14,7 +14,7 @@ const Label: FC<Props> = ({ name, isLoading = false, required = false }) => {
       htmlFor={name}
     >
       <span>
-        {_.startCase(_.last(name.split('.'))) + (required ? '*' : '')}
+        {_.startCase(_.last(name.split("."))) + (required ? "*" : "")}
       </span>
     </label>
   );
