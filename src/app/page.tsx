@@ -4,7 +4,7 @@ import Content from './components/Content';
 
 const request = async () => {
   "use server"
-  const res = await fetch('http://localhost:3000/mock-api/transcribe?videoUrl=some_video_url&query=some_query');
+  const res = await fetch('https://videophrasefind.vercel.app/mock-api/transcribe?videoUrl=some_video_url&query=some_query');
   return res.json();
 }
 
