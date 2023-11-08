@@ -13,7 +13,7 @@ export const schema = z.object({
         .nonempty("Please enter search query"),
 });
   
-export default function Form({ setData, request }: any) {
+export default function Form({ setData, setResults, request }: any) {
     const {
         register,
         handleSubmit,
@@ -29,7 +29,6 @@ export default function Form({ setData, request }: any) {
 
     const onSubmit = handleSubmit(async (formData) => {
         const data = await request();
-        data.videoUrl = formData.videoUrl;
         setData(data);
         const { entries } = parse(data.captionsVtt);
         entries.forEach(({ from, to, text }) => {
@@ -44,6 +43,7 @@ export default function Form({ setData, request }: any) {
             console.log("to:" + to);
             console.log("text:" + text);
         });
+        setResults(result);
     });
 
     return (
