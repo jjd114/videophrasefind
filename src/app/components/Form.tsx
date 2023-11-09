@@ -6,7 +6,6 @@ import { SubmitHandler } from "react-hook-form";
 
 export const schema = z.object({
   videoUrl: z.string().url(),
-  query: z.string().min(1, "Please enter search query"),
 });
 
 interface Props {
@@ -22,7 +21,6 @@ export default function Form({ onSubmit }: Props) {
     schema,
     defaultValues: {
       videoUrl: "",
-      query: "",
     },
     mode: "onBlur",
   });
@@ -35,12 +33,6 @@ export default function Form({ onSubmit }: Props) {
       <Input
         placeholder="Video url"
         name="videoUrl"
-        register={register}
-        errors={errors}
-      />
-      <Input
-        placeholder="Search query"
-        name="query"
         register={register}
         errors={errors}
       />

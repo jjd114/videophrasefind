@@ -3,7 +3,7 @@ import Form from "./Form";
 import { z } from "zod";
 import { parse } from "@plussub/srt-vtt-parser";
 import { useMutation } from "@tanstack/react-query";
-import Image from 'next/image'
+import Image from "next/image";
 
 const ListElem = ({ data }: any) => {
   function msToTime(s: number) {
@@ -49,24 +49,15 @@ export const responseSchema = z.object({
 
 const Content = () => {
   const { data, status, mutateAsync } = useMutation({
-    mutationFn: async ({
-      videoUrl,
-      query,
-    }: {
-      videoUrl: string;
-      query: string;
-    }) => {
+    mutationFn: async ({ videoUrl }: { videoUrl: string }) => {
       const res = await fetch(
         `${
           process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"
-        }/mock-api/transcribe?videoUrl=${videoUrl}&query=${query}`,
+        }/mock-api/transcribe?videoUrl=${videoUrl}`,
       );
       const json = responseSchema.parse(await res.json());
       const { entries } = parse(json.captionsVtt);
-      const parsedCaptions = entries.filter((item) =>
-        item.text.toLocaleLowerCase().includes(query.toLocaleLowerCase()),
-      );
-      return { ...json, parsedCaptions };
+      return { ...json, parsedCaptions: entries };
     },
   });
 
@@ -92,7 +83,11 @@ const Content = () => {
             </div>
             <div className="ml-3 w-[100%] h-[379px] rounded-[20px] bg-[#ffffff1f] mt-3 overflow-hidden">
               {data.videoUrl && (
-                <video style={{ width: "100%", height: "100%" }} preload="auto" controls>
+                <video
+                  style={{ width: "100%", height: "100%" }}
+                  preload="auto"
+                  controls
+                >
                   <source src={data.videoUrl} type="application/ogg" />
                   <track
                     label="English"
