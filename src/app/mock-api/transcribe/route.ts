@@ -13,14 +13,11 @@ const captionsVtt = `WEBVTT\n\
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
 
-  const query = searchParams.get("query");
-  if (!query) return new NextResponse("Missing query", { status: 400 });
-
   const videoUrl = searchParams.get("videoUrl");
   if (!videoUrl) return new NextResponse("Missing videoUrl", { status: 401 });
 
   // Emulate slow transcribing process
-  await new Promise((res) => setTimeout(res, 5000));
+  await new Promise((res) => setTimeout(res, 3000));
 
   return NextResponse.json({
     videoUrl:
