@@ -22,7 +22,7 @@ const ListElem = ({ data }: any) => {
           {msToTime(data.from)}
         </div>
       </div>
-      <div className="ml-auto shrink-0">
+      {/*<div className="ml-auto shrink-0">
         <Image
           className="cursor-pointer"
           src="/forward.svg"
@@ -37,7 +37,7 @@ const ListElem = ({ data }: any) => {
           width="28"
           height="28"
         />
-      </div>
+      </div>*/}
     </div>
   );
 };
