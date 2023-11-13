@@ -6,19 +6,25 @@ import { useQuery } from "@tanstack/react-query";
 import Search from "./Search";
 import useZodForm from "../hooks/useZodForm";
 import { useMemo } from "react";
+import _ from "lodash";
 
 export const schema = z.object({
   searchQuery: z.string(),
 });
 
+function padTime(time: number) {
+  return _.padStart(time.toFixed(0), 2, "0");
+}
+
+function msToTime(s: number) {
+  var secs = s % 60;
+  s = (s - secs) / 60;
+  var mins = s % 60;
+  var hrs = (s - mins) / 60;
+  return `${padTime(hrs)}:${padTime(mins)}:${padTime(secs)}`;
+}
+
 const ListElem = ({ data }: any) => {
-  function msToTime(s: number) {
-    var secs = s % 60;
-    s = (s - secs) / 60;
-    var mins = s % 60;
-    var hrs = (s - mins) / 60;
-    return hrs + ":" + mins + ":" + secs;
-  }
   return (
     <div className="p-2 flex gap-5 hover:bg-[#394150] rounded-[18px] overflow-hidden mb-2 cursor-pointer">
       <div className="h-16 aspect-video rounded-xl bg-[#ffffff1f] relative"></div>
