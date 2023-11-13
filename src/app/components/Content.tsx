@@ -1,8 +1,8 @@
 "use client";
-import Form from "./Form";
+import Image from "next/image";
 import { z } from "zod";
 import { parse } from "@plussub/srt-vtt-parser";
-import { useMutation } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import Search from "./Search";
 import useZodForm from "../hooks/useZodForm";
 
@@ -52,9 +52,15 @@ export const responseSchema = z.object({
   captionsVtt: z.string().min(1),
 });
 
-const Content = () => {
-  const { data, status, mutateAsync } = useMutation({
-    mutationFn: async ({ videoUrl }: { videoUrl: string }) => {
+interface Props {
+  videoUrl?: string;
+}
+
+const Content = ({ videoUrl }: Props) => {
+  const { data } = useQuery({
+    queryKey: [videoUrl],
+    enabled: !!videoUrl,
+    queryFn: async () => {
       const res = await fetch(
         `${
           process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"
@@ -78,47 +84,57 @@ const Content = () => {
     mode: "onBlur",
   });
 
+  if (!data)
+    return (
+      <div className="m-auto flex align-center">
+        <Image
+          className="cursor-pointer mt-[18px] animate-spin"
+          src="/loading.svg"
+          alt=""
+          width="77"
+          height="77"
+        />
+      </div>
+    );
+
   return (
-    <div className="flex w-full">
-      <Form onSubmit={(v) => mutateAsync(v)} status={status} />
-      {status === "success" && data && (
-        <div className="py-6 px-10 bg-[#212A36] max-w-3xl rounded-[32px] ml-[10px] flex flex-col overflow-hidden">
-          <Search
-            placeholder="Search"
-            name="searchQuery"
-            register={register}
-            errors={errors}
-          />
-          <div className="text-white text-base font-semibold py-5">
-            Results: {data.parsedCaptions.length}
-          </div>
-          <div className="min-h-[380px] rounded-[20px] bg-[#ffffff1f] overflow-hidden">
-            {data.videoUrl && (
-              <video
-                style={{ width: "100%", height: "100%" }}
-                preload="auto"
-                controls
-              >
-                <source src={data.videoUrl} type="application/ogg" />
-                <track
-                  label="English"
-                  kind="subtitles"
-                  srcLang="en"
-                  src={`data:text/vtt;charset=UTF-8,${encodeURIComponent(
-                    data.captionsVtt,
-                  )}`}
-                  default
-                />
-              </video>
-            )}
-          </div>
-          <div className="mt-5 overflow-y-auto">
-            {data.parsedCaptions.map((result: any) => {
-              return <ListElem key={result.text} data={result} />;
-            })}
-          </div>
+    <div className="flex-1 grid grid-cols-3 gap-10 bg-[#212A36] rounded-3xl overflow-hidden p-10">
+      <div className="col-span-2">
+        <div className="bg-[#ffffff1f] rounded-2xl p-2">
+          <video
+            preload="auto"
+            controls
+            className="w-full max-h-fit rounded-xl overflow-hidden"
+          >
+            <source src={data.videoUrl} type="application/ogg" />
+            <track
+              label="English"
+              kind="subtitles"
+              srcLang="en"
+              src={`data:text/vtt;charset=UTF-8,${encodeURIComponent(
+                data.captionsVtt,
+              )}`}
+              default
+            />
+          </video>
         </div>
-      )}
+      </div>
+      <div className="rounded-[32px] flex flex-col overflow-hidden">
+        <Search
+          placeholder="Filter"
+          name="searchQuery"
+          register={register}
+          errors={errors}
+        />
+        <div className="text-white text-base font-semibold py-5">
+          Results: {data.parsedCaptions.length}
+        </div>
+        <div className="mt-5 overflow-y-auto">
+          {data.parsedCaptions.map((result: any) => {
+            return <ListElem key={result.text} data={result} />;
+          })}
+        </div>
+      </div>
     </div>
   );
 };

@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import Header from "./components/Header";
 import "./globals.css";
 import QueryProvider from "./utils/queryProvider";
+import Sidebar from "./components/Sidebar";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -21,7 +22,10 @@ export default function RootLayout({
       <body className={`${inter.className} h-screen flex flex-col`}>
         <QueryProvider>
           <Header />
-          {children}
+          <div className="bg-[#161E2A] flex-1 flex py-2.5 pr-10 gap-10 overflow-hidden">
+            <Sidebar />
+            {children}
+          </div>
         </QueryProvider>
       </body>
     </html>

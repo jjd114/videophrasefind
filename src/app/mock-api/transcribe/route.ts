@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { faker } from "@faker-js/faker";
 
+export const revalidate = 30;
+
 const captionsVtt = `WEBVTT\n\
 00:01.000 --> 00:04.000\n\
 - ${faker.lorem.sentence()}\n\
@@ -33,7 +35,7 @@ export async function GET(request: NextRequest) {
   if (!videoUrl) return new NextResponse("Missing videoUrl", { status: 401 });
 
   // Emulate slow transcribing process
-  await new Promise((res) => setTimeout(res, 3000));
+  await new Promise((res) => setTimeout(res, 300));
 
   return NextResponse.json({
     videoUrl:
