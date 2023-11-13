@@ -144,6 +144,8 @@ const Content = ({ videoUrl }: Props) => {
           <video
             ref={videoRef}
             preload="auto"
+            autoPlay
+            muted
             controls
             className="w-full max-h-fit rounded-xl overflow-hidden"
           >
