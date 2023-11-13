@@ -6,6 +6,7 @@ import Button from "./Button";
 import Input from "./Input";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { useTransition } from "react";
 
 export const schema = z.object({
   videoUrl: z.string().url(),
@@ -13,6 +14,8 @@ export const schema = z.object({
 
 export default function Form() {
   const router = useRouter();
+  const [isPending, startTransition] = useTransition();
+
   const {
     register,
     handleSubmit,
@@ -35,7 +38,9 @@ export default function Form() {
 
   const onSubmit = handleSubmit((formData) => {
     // TODO: upload video and get URL if needed
-    router.push(`/video/${encodeURIComponent(formData.videoUrl)}`);
+    startTransition(() => {
+      router.push(`/video/${encodeURIComponent(formData.videoUrl)}`);
+    });
   });
 
   return (
@@ -84,7 +89,10 @@ export default function Form() {
         register={register}
         errors={errors}
       />
-      <Button type="submit" disabled={!isValid || !isDirty || isSubmitting}>
+      <Button
+        type="submit"
+        disabled={!isValid || !isDirty || isSubmitting || isPending}
+      >
         Submit
       </Button>
     </form>
