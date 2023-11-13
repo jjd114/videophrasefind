@@ -3,7 +3,12 @@ import Form from "./Form";
 import { z } from "zod";
 import { parse } from "@plussub/srt-vtt-parser";
 import { useMutation } from "@tanstack/react-query";
-import Image from "next/image";
+import Search from "./Search";
+import useZodForm from "../hooks/useZodForm";
+
+export const schema = z.object({
+  searchQuery: z.string(),
+});
 
 const ListElem = ({ data }: any) => {
   function msToTime(s: number) {
@@ -61,54 +66,61 @@ const Content = () => {
     },
   });
 
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isValid, isSubmitting, isDirty },
+  } = useZodForm({
+    schema,
+    defaultValues: {
+      searchQuery: "",
+    },
+    mode: "onBlur",
+  });
+
   return (
     <div className="flex w-full">
-      <Form onSubmit={(v) => mutateAsync(v)} />
-      {status === "pending" ? (
-        <div className="m-auto flex align-center">
-          <Image
-            className="cursor-pointer mt-[18px] animate-spin"
-            src="/spinner.svg"
-            alt=""
-            width="120"
-            height="120"
+      <Form onSubmit={(v) => mutateAsync(v)} status={status} />
+      {status === "success" &&
+      data && (
+        <div className="py-6 px-10 bg-[#212A36] h-full w-[100%] max-w-[627px] rounded-[32px] ml-[10px]">
+          <Search
+            placeholder="Search"
+            name="searchQuery"
+            register={register}
+            errors={errors}
           />
-        </div>
-      ) : (
-        status === "success" &&
-        data && (
-          <div className="py-6 px-10 bg-[#212A36] h-full w-[100%] max-w-[627px] ml-auto">
-            <div className="text-white text-xl font-semibold h-[48px]">
-              Results: {data.parsedCaptions.length}
-            </div>
-            <div className="ml-3 w-[100%] h-[379px] rounded-[20px] bg-[#ffffff1f] mt-3 overflow-hidden">
-              {data.videoUrl && (
-                <video
-                  style={{ width: "100%", height: "100%" }}
-                  preload="auto"
-                  controls
-                >
-                  <source src={data.videoUrl} type="application/ogg" />
-                  <track
-                    label="English"
-                    kind="subtitles"
-                    srcLang="en"
-                    src={`data:text/vtt;charset=UTF-8,${encodeURIComponent(
-                      data.captionsVtt,
-                    )}`}
-                    default
-                  />
-                </video>
-              )}
-            </div>
-            <div className="w-[100%] h-[420px] mt-5 overflow-auto">
-              {data.parsedCaptions.map((result: any) => {
-                return <ListElem key={result.text} data={result} />;
-              })}
-            </div>
+          <div className="text-white text-base font-semibold py-5">
+            Results: {data.parsedCaptions.length}
           </div>
-        )
-      )}
+          <div className="w-[100%] h-[379px] rounded-[20px] bg-[#ffffff1f] overflow-hidden">
+            {data.videoUrl && (
+              <video
+                style={{ width: "100%", height: "100%" }}
+                preload="auto"
+                controls
+              >
+                <source src={data.videoUrl} type="application/ogg" />
+                <track
+                  label="English"
+                  kind="subtitles"
+                  srcLang="en"
+                  src={`data:text/vtt;charset=UTF-8,${encodeURIComponent(
+                    data.captionsVtt,
+                  )}`}
+                  default
+                />
+              </video>
+            )}
+          </div>
+          <div className="w-[100%] h-[420px] mt-5 overflow-auto ml-[-10px]">
+            {data.parsedCaptions.map((result: any) => {
+              return <ListElem key={result.text} data={result} />;
+            })}
+          </div>
+        </div>
+      )
+      }
     </div>
   );
 };

@@ -7,7 +7,7 @@ import {
   type Path,
   type UseFormRegister,
 } from "react-hook-form";
-import Label from "./Label";
+import Image from "next/image";
 
 type Props<T extends FieldValues> = InputHTMLAttributes<HTMLInputElement> & {
   name: Path<T>;
@@ -18,7 +18,7 @@ type Props<T extends FieldValues> = InputHTMLAttributes<HTMLInputElement> & {
 };
 
 /// This is react-hook-form compatible version of Input
-export default function Input<T extends FieldValues>({
+export default function Search<T extends FieldValues>({
   name,
   label,
   register,
@@ -29,16 +29,22 @@ export default function Input<T extends FieldValues>({
   ...rest
 }: Props<T>) {
   const error = _.get(errors, name) as FieldError | undefined;
-  const labelName = label ?? String(name);
 
   return (
     <fieldset className={`relative flex flex-col ${className}`}>
       {/*labelName && <Label name={labelName} required={required} />*/}
+      <Image
+        className="cursor-pointer mb-5 ml-auto mr-auto absolute top-[12px] left-[18px]"
+        src="/search.svg"
+        alt=""
+        width="25"
+        height="25"
+      />
       <input
         id={name}
         className={`
           w-full rounded-[32px] focus:outline-none disabled:cursor-not-allowed
-          bg-transparent border-[#212A36] border-[1px] text-[#9DA3AE] placeholder:text-[#9DA3AE]-500 px-5 py-3 ${inputClassName}
+          bg-[#ffffff1f] border-[#212A36] border-[1px] text-[#9DA3AE] placeholder:text-[#9DA3AE]-500 pr-5 py-3 pl-[48px] ${inputClassName}
         `}
         type={rest.type}
         {...register(name, {

@@ -17,13 +17,10 @@ export default function Button({
     <button
       type="submit"
       className={`
-        px-12 py-3 sm:w-fit w-full rounded-full
+        px-12 py-[10px] w-full rounded-[32px]
         flex items-center justify-center relative
-        whitespace-nowrap font-bold text-md
-        disabled:cursor-not-allowed
-        disabled:bg-gray-400
-        bg-black
-        text-white uppercase
+        whitespace-nowrap font-semibold text-xl
+        bg-[#212A36] text-[#9DA3AE] cursor-pointer
         ${isLoading ? "cursor-progress" : ""}
         ${variant === "primary" ? "bg-primary" : ""}
         ${variant === "secondary" ? "bg-secondary" : ""}
