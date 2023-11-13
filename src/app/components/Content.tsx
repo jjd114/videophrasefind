@@ -22,7 +22,7 @@ const ListElem = ({ data }: any) => {
     <div className="p-2 flex items-center hover:bg-[#394150] rounded-[18px]">
       <div className="w-[121px] h-[90px] rounded-xl bg-[#ffffff1f] shrink-0"></div>
       <div className="ml-5">
-        <div className="text-white text-xl font-semibold">{data.text}</div>
+        <div className="text-white font-semibold">{data.text}</div>
         <div className="text-base text-[#101824] flex justify-center items-center mt-5 w-[max-content] h-[28px] rounded-md bg-[#9DA3AE] px-2">
           {msToTime(data.from)}
         </div>
@@ -81,9 +81,8 @@ const Content = () => {
   return (
     <div className="flex w-full">
       <Form onSubmit={(v) => mutateAsync(v)} status={status} />
-      {status === "success" &&
-      data && (
-        <div className="py-6 px-10 bg-[#212A36] h-full w-[100%] max-w-[627px] rounded-[32px] ml-[10px]">
+      {status === "success" && data && (
+        <div className="py-6 px-10 bg-[#212A36] max-w-3xl rounded-[32px] ml-[10px] flex flex-col overflow-hidden">
           <Search
             placeholder="Search"
             name="searchQuery"
@@ -93,7 +92,7 @@ const Content = () => {
           <div className="text-white text-base font-semibold py-5">
             Results: {data.parsedCaptions.length}
           </div>
-          <div className="w-[100%] h-[379px] rounded-[20px] bg-[#ffffff1f] overflow-hidden">
+          <div className="min-h-[380px] rounded-[20px] bg-[#ffffff1f] overflow-hidden">
             {data.videoUrl && (
               <video
                 style={{ width: "100%", height: "100%" }}
@@ -113,14 +112,13 @@ const Content = () => {
               </video>
             )}
           </div>
-          <div className="w-[100%] h-[420px] mt-5 overflow-auto ml-[-10px]">
+          <div className="mt-5 overflow-y-auto">
             {data.parsedCaptions.map((result: any) => {
               return <ListElem key={result.text} data={result} />;
             })}
           </div>
         </div>
-      )
-      }
+      )}
     </div>
   );
 };
