@@ -41,56 +41,52 @@ export default function Form() {
   return (
     <form
       onSubmit={onSubmit}
-      className="flex items-center paper bg-[#0B111A] h-full w-full p-4 rounded-[32px] ml-[10px]"
+      className="min-w-[512px] flex flex-col gap-8 items-center bg-[#0B111A] p-4 rounded-[32px]"
     >
-      <div className="max-w-[390px] ml-auto mr-auto">
-        <section className="w-full border-dashed border-[#212A36] border-[1px] rounded-[32px] bg-[#212A361A] h-[300px] mb-5">
-          <div {...getRootProps({ className: "dropzone w-full h-full" })}>
-            <input {...getInputProps()} />
-            <div className="flex flex-col items-center justify-center w-full h-full">
-              <Image
-                className="cursor-pointer mb-5 ml-auto mr-auto"
-                src="/upload.svg"
-                alt=""
-                width="25"
-                height="25"
-              />
-              {!files.length ? (
-                <p className="text-center text-[#9DA3AE] font-semibold">
-                  Drag & Drop or{" "}
-                  <span className="text-white">Choose video</span>
-                  <br />
-                  to upload
-                </p>
-              ) : (
-                <p className="text-[#9DA3AE] text-center text-[#9DA3AE]-500">
-                  {files}
-                </p>
-              )}
-            </div>
+      <section className="w-full border-dashed border-[#212A36] border-[1px] rounded-[32px] bg-[#212A361A] aspect-[4/3] cursor-pointer">
+        <div {...getRootProps({ className: "dropzone w-full h-full" })}>
+          <input {...getInputProps()} />
+          <div className="flex flex-col items-center justify-center w-full h-full">
+            <Image
+              className="mb-5"
+              src="/upload.svg"
+              alt=""
+              width="25"
+              height="25"
+            />
+            {!files.length ? (
+              <p className="text-center text-[#9DA3AE] font-semibold">
+                Drag & Drop or <span className="text-white">Choose video</span>
+                <br />
+                to upload
+              </p>
+            ) : (
+              <p className="text-[#9DA3AE] text-center text-[#9DA3AE]-500">
+                {files}
+              </p>
+            )}
           </div>
-          {/*<aside>
+        </div>
+        {/*<aside>
               <h4>Files</h4>
               <ul>{files}</ul>
             </aside>*/}
-        </section>
-        <div className="flex items-center mb-5">
-          <div className="border-b-[1px] border-[#212A36] w-full"></div>
-          <div className="px-[27px] text-[#9DA3AE] text-base font-medium">
-            or
-          </div>
-          <div className="border-b-[1px] border-[#212A36] w-full"></div>
-        </div>
-        <Input
-          placeholder="Add video URL"
-          name="videoUrl"
-          register={register}
-          errors={errors}
-        />
-        <Button type="submit" disabled={!isValid || !isDirty || isSubmitting}>
-          Submit
-        </Button>
+      </section>
+      <div className="flex items-center w-full">
+        <div className="border-b-[1px] border-[#212A36] flex-1"></div>
+        <div className="px-[27px] text-[#9DA3AE] text-base font-medium">or</div>
+        <div className="border-b-[1px] border-[#212A36] flex-1"></div>
       </div>
+      <Input
+        className="w-full"
+        placeholder="Paste video URL"
+        name="videoUrl"
+        register={register}
+        errors={errors}
+      />
+      <Button type="submit" disabled={!isValid || !isDirty || isSubmitting}>
+        Submit
+      </Button>
     </form>
   );
 }
