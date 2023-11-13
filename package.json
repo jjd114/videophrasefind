@@ -13,6 +13,7 @@
     "@hookform/resolvers": "^3.3.2",
     "@plussub/srt-vtt-parser": "^1.1.0",
     "@tanstack/react-query": "^5.8.1",
+    "date-fns": "^2.30.0",
     "lodash": "^4.17.21",
     "next": "^14.0.1",
     "react": "^18.2.0",

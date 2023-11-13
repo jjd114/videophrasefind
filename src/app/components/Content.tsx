@@ -5,35 +5,54 @@ import { parse } from "@plussub/srt-vtt-parser";
 import { useQuery } from "@tanstack/react-query";
 import Search from "./Search";
 import useZodForm from "../hooks/useZodForm";
-import { useMemo } from "react";
+import { RefObject, useMemo, useRef } from "react";
 import _ from "lodash";
+import { Entry } from "@plussub/srt-vtt-parser/dist/src/types";
+import { intervalToDuration } from "date-fns";
 
 export const schema = z.object({
   searchQuery: z.string(),
 });
 
-function padTime(time: number) {
-  return _.padStart(time.toFixed(0), 2, "0");
+function padTime(time?: number) {
+  return _.padStart(time?.toFixed(0), 2, "0");
 }
 
-function msToTime(s: number) {
-  var secs = s % 60;
-  s = (s - secs) / 60;
-  var mins = s % 60;
-  var hrs = (s - mins) / 60;
-  return `${padTime(hrs)}:${padTime(mins)}:${padTime(secs)}`;
+function formatMilliseconds(ms: number) {
+  const duration = intervalToDuration({
+    start: 0,
+    end: ms,
+  });
+  return `${padTime(duration?.hours)}:${padTime(duration?.minutes)}:${padTime(
+    duration?.seconds,
+  )}`;
 }
 
-const ListElem = ({ data }: any) => {
+const CaptionsEntry = ({
+  entry,
+  videoRef,
+}: {
+  entry: Entry;
+  videoRef: RefObject<HTMLVideoElement>;
+}) => {
+  const handleClick = () => {
+    if (videoRef.current) {
+      videoRef.current.currentTime = entry.from / 1000;
+    }
+  };
+
   return (
-    <div className="p-2 flex gap-5 hover:bg-[#394150] rounded-[18px] overflow-hidden mb-2 cursor-pointer">
+    <button
+      onClick={handleClick}
+      className="p-2 flex gap-5 hover:bg-[#394150] rounded-[18px] overflow-hidden mb-2 w-full"
+    >
       <div className="h-16 aspect-video rounded-xl bg-[#ffffff1f] relative"></div>
-      <div className="flex flex-col text-sm">
+      <div className="flex flex-col gap-1 text-left text-sm">
         <div className="text-white font-semibold overflow-hidden overflow-ellipsis grow">
-          {data.text}
+          {entry.text}
         </div>
         <div className="text-[#101824] flex justify-center items-center w-[max-content] rounded-md bg-[#9DA3AE] px-2">
-          {msToTime(data.from)}
+          {formatMilliseconds(entry.from)}
         </div>
       </div>
       {/*<div className="ml-auto shrink-0">
@@ -52,7 +71,7 @@ const ListElem = ({ data }: any) => {
           height="28"
         />
       </div>*/}
-    </div>
+    </button>
   );
 };
 
@@ -66,6 +85,8 @@ interface Props {
 }
 
 const Content = ({ videoUrl }: Props) => {
+  const videoRef = useRef<HTMLVideoElement>(null);
+
   const { data } = useQuery({
     queryKey: [videoUrl],
     enabled: !!videoUrl,
@@ -121,6 +142,7 @@ const Content = ({ videoUrl }: Props) => {
       <div className="col-span-2">
         <div className="bg-[#ffffff1f] rounded-2xl p-2">
           <video
+            ref={videoRef}
             preload="auto"
             controls
             className="w-full max-h-fit rounded-xl overflow-hidden"
@@ -149,8 +171,14 @@ const Content = ({ videoUrl }: Props) => {
           Results: {filteredCaptions?.length || 0}
         </div>
         <div className="overflow-y-auto">
-          {filteredCaptions?.map((result: any) => {
-            return <ListElem key={result.text} data={result} />;
+          {filteredCaptions?.map((entry) => {
+            return (
+              <CaptionsEntry
+                key={entry.text}
+                entry={entry}
+                videoRef={videoRef}
+              />
+            );
           })}
         </div>
       </div>

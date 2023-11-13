@@ -14,9 +14,6 @@ const captionsVtt = `WEBVTT\n\
 00:09.000 --> 00:15.000\n\
 - ${faker.lorem.sentence()}\n\
 \n\
-00:09.000 --> 00:15.000\n\
-- ${faker.lorem.sentence()}\n\
-\n\
 00:15.000 --> 00:20.000\n\
 - ${faker.lorem.sentence()}\n\
 \n\
