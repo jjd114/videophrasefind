@@ -5,6 +5,7 @@ import { parse } from "@plussub/srt-vtt-parser";
 import { useQuery } from "@tanstack/react-query";
 import Search from "./Search";
 import useZodForm from "../hooks/useZodForm";
+import { useMemo } from "react";
 
 export const schema = z.object({
   searchQuery: z.string(),
@@ -73,9 +74,9 @@ const Content = ({ videoUrl }: Props) => {
   });
 
   const {
+    watch,
     register,
-    handleSubmit,
-    formState: { errors, isValid, isSubmitting, isDirty },
+    formState: { errors },
   } = useZodForm({
     schema,
     defaultValues: {
@@ -83,6 +84,16 @@ const Content = ({ videoUrl }: Props) => {
     },
     mode: "onBlur",
   });
+
+  const searchQuery = watch("searchQuery");
+
+  const filteredCaptions = useMemo(
+    () =>
+      data?.parsedCaptions.filter((entry) =>
+        entry.text.toLowerCase().includes(searchQuery.toLowerCase()),
+      ),
+    [data?.parsedCaptions, searchQuery],
+  );
 
   if (!data)
     return (
@@ -127,10 +138,10 @@ const Content = ({ videoUrl }: Props) => {
           errors={errors}
         />
         <div className="text-white text-base font-semibold py-5">
-          Results: {data.parsedCaptions.length}
+          Results: {filteredCaptions?.length || 0}
         </div>
         <div className="mt-5 overflow-y-auto">
-          {data.parsedCaptions.map((result: any) => {
+          {filteredCaptions?.map((result: any) => {
             return <ListElem key={result.text} data={result} />;
           })}
         </div>
