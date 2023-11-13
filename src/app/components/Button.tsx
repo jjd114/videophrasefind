@@ -20,7 +20,7 @@ export default function Button({
         px-12 py-[10px] w-full rounded-[32px]
         flex items-center justify-center relative
         whitespace-nowrap font-semibold text-xl
-        bg-[#212A36] text-[#9DA3AE] cursor-pointer
+        bg-slate-100 text-slate-700 disbled:text-[#9DA3AE] cursor-pointer disabled:bg-[#212A36]
         ${isLoading ? "cursor-progress" : ""}
         ${variant === "primary" ? "bg-primary" : ""}
         ${variant === "secondary" ? "bg-secondary" : ""}
