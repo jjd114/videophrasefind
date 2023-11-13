@@ -20,11 +20,13 @@ const ListElem = ({ data }: any) => {
     return hrs + ":" + mins + ":" + secs;
   }
   return (
-    <div className="p-2 flex items-center hover:bg-[#394150] rounded-[18px]">
-      <div className="w-[121px] h-[90px] rounded-xl bg-[#ffffff1f] shrink-0"></div>
-      <div className="ml-5">
-        <div className="text-white font-semibold">{data.text}</div>
-        <div className="text-base text-[#101824] flex justify-center items-center mt-5 w-[max-content] h-[28px] rounded-md bg-[#9DA3AE] px-2">
+    <div className="p-2 flex gap-5 hover:bg-[#394150] rounded-[18px] overflow-hidden mb-2 cursor-pointer">
+      <div className="h-16 aspect-video rounded-xl bg-[#ffffff1f] relative"></div>
+      <div className="flex flex-col text-sm">
+        <div className="text-white font-semibold overflow-hidden overflow-ellipsis grow">
+          {data.text}
+        </div>
+        <div className="text-[#101824] flex justify-center items-center w-[max-content] rounded-md bg-[#9DA3AE] px-2">
           {msToTime(data.from)}
         </div>
       </div>
@@ -130,17 +132,17 @@ const Content = ({ videoUrl }: Props) => {
           </video>
         </div>
       </div>
-      <div className="rounded-[32px] flex flex-col overflow-hidden">
+      <div className="rounded-[32px] flex flex-col gap-5 overflow-hidden">
         <Search
           placeholder="Filter"
           name="searchQuery"
           register={register}
           errors={errors}
         />
-        <div className="text-white text-base font-semibold py-5">
+        <div className="text-white text-base font-semibold">
           Results: {filteredCaptions?.length || 0}
         </div>
-        <div className="mt-5 overflow-y-auto">
+        <div className="overflow-y-auto">
           {filteredCaptions?.map((result: any) => {
             return <ListElem key={result.text} data={result} />;
           })}
