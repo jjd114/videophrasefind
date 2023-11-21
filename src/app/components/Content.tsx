@@ -49,14 +49,16 @@ const CaptionsEntry = ({
       className="p-2 flex gap-5 hover:bg-[#394150] rounded-[18px] overflow-hidden mb-2 w-full"
     >
       <div className="h-16 aspect-video rounded-xl bg-[#ffffff1f] relative">
-          <video
-            ref={videoRef}
-            preload="auto"
-            muted
-            className="w-full max-h-fit rounded-xl overflow-hidden"
-          >
-            <source src={`${src}#t=${formatMilliseconds(entry.from)}`} type="application/ogg" />
-          </video>
+        <video
+          preload="metadata"
+          muted
+          className="w-full max-h-fit rounded-xl overflow-hidden"
+        >
+          <source
+            src={`${src}#t=${formatMilliseconds(entry.from)}`}
+            type="application/ogg"
+          />
+        </video>
       </div>
       <div className="flex flex-col gap-1 text-left text-sm">
         <div className="text-white font-semibold overflow-hidden overflow-ellipsis grow">
