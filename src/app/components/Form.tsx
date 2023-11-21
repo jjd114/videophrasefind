@@ -5,6 +5,7 @@ import { z } from "zod";
 import Button from "./Button";
 import Input from "./Input";
 import Image from "next/image";
+import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { useRouter } from "next/navigation";
 import { useTransition } from "react";
 
@@ -36,7 +37,24 @@ export default function Form() {
     </li>
   ));
 
-  const onSubmit = handleSubmit((formData) => {
+  const onSubmit = handleSubmit(async (formData) => {
+    const s3client = new S3Client({
+      region: "eu-north-1",
+      credentials: {
+        accessKeyId: "TODO",
+        secretAccessKey: "TODO",
+        sessionToken: "TODO",
+      },
+    });
+
+    const command = new PutObjectCommand({
+      Bucket: "videphrasefind",
+      Key: "test.txt",
+      Body: "hello, world!",
+    });
+
+    await s3client.send(command).then(console.log).catch(console.log);
+
     // TODO: upload video and get URL if needed
     startTransition(() => {
       router.push(`/video/${encodeURIComponent(formData.videoUrl)}`);
