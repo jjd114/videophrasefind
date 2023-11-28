@@ -88,10 +88,57 @@ const CaptionsEntry = ({
   );
 };
 
-export const responseSchema = z.object({
-  videoUrl: z.string().url(),
-  captionsVtt: z.string().min(1),
-});
+function secondsToVttFormat(seconds: number) {
+  const duration = intervalToDuration({
+    start: 0,
+    end: seconds * 1000,
+  });
+
+  const milliseconds = (seconds - Math.floor(seconds)) * 1000;
+  return `${padTime(duration?.minutes)}:${padTime(
+    duration?.seconds,
+  )}.${_.padEnd(milliseconds.toFixed(0), 3, "0")}`;
+}
+
+export const responseSchema = z
+  .object({
+    texts_and_timestamps: z
+      .string()
+      .transform((s) => JSON.parse(s))
+      .pipe(
+        z.object({
+          transcription_array: z.string().array(),
+          timestamp_array: z.tuple([z.number(), z.number()]).array(),
+          base_url: z.string(),
+        }),
+      ),
+  })
+  .transform(({ texts_and_timestamps: data }) => {
+    // Split our words and timestamps into chunks
+    const CHUNK_SIZE = 6;
+    const timestamps = _.chunk(data.timestamp_array, CHUNK_SIZE).map(
+      // Take the beginning and the end of each chunk
+      (intervals) =>
+        [intervals[0][0], intervals[intervals.length - 1][1]] as const,
+    );
+    const texts = _.chunk(data.transcription_array, CHUNK_SIZE);
+
+    const vttLines = timestamps.map((timestamp, index) => {
+      const text = texts[index];
+      return `${secondsToVttFormat(timestamp[0])} --> ${secondsToVttFormat(
+        timestamp[1],
+      )}\n- ${text.join(" ")}\n`;
+    });
+
+    return {
+      captionsVtt: `WEBVTT\n${vttLines.join("\n")}`,
+      videoUrl: data.base_url,
+    };
+  })
+  .transform((data) => ({
+    ...data,
+    parsedCaptions: parse(data.captionsVtt).entries,
+  }));
 
 interface Props {
   videoUrl?: string;
@@ -104,14 +151,21 @@ const Content = ({ videoUrl }: Props) => {
     queryKey: [videoUrl],
     enabled: !!videoUrl,
     queryFn: async () => {
-      const res = await fetch(
-        `${
-          process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"
-        }/mock-api/transcribe?videoUrl=${videoUrl}`,
-      );
-      const json = responseSchema.parse(await res.json());
-      const { entries } = parse(json.captionsVtt);
-      return { ...json, parsedCaptions: entries };
+      const res = await fetch("/example.json");
+      //const res = await fetch(
+      //  `${
+      //    process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3000"
+      //  }/search`,
+      //  {
+      //    method: "POST",
+      //    headers: {
+      //      "Content-Type": "application/json",
+      //    },
+      //    body: JSON.stringify({ url: videoUrl }),
+      //  },
+      //);
+      //return res.json()
+      return responseSchema.parse(await res.json());
     },
   });
 
@@ -189,7 +243,7 @@ const Content = ({ videoUrl }: Props) => {
           {filteredCaptions?.map((entry) => {
             return (
               <CaptionsEntry
-                key={entry.text}
+                key={entry.from}
                 entry={entry}
                 videoRef={videoRef}
                 src={data.videoUrl}
