@@ -153,20 +153,18 @@ const Content = ({ videoUrl }: Props) => {
     queryKey: [videoUrl],
     enabled: !!videoUrl,
     queryFn: async () => {
-      const res = await fetch("/example.json");
-      //const res = await fetch(
-      //  `${
-      //    process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3000"
-      //  }/search`,
-      //  {
-      //    method: "POST",
-      //    headers: {
-      //      "Content-Type": "application/json",
-      //    },
-      //    body: JSON.stringify({ url: videoUrl }),
-      //  },
-      //);
-      //return res.json()
+      const res = await fetch(
+        `${
+          process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3000"
+        }/search`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ url: videoUrl }),
+        },
+      );
       return responseSchema.parse(await res.json());
     },
   });
