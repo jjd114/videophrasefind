@@ -2,11 +2,13 @@
 import { z } from "zod";
 import Search from "./Search";
 import useZodForm from "../hooks/useZodForm";
-import { RefObject, useMemo, useRef } from "react";
+import { RefObject, useMemo, useRef, useState } from "react";
 import _ from "lodash";
 import { Entry } from "@plussub/srt-vtt-parser/dist/src/types";
 import { intervalToDuration } from "date-fns";
 import { JsonSchema } from "../utils/json.schema";
+import { useInView } from "react-cool-inview";
+import { throttledGetVideoThumbnail } from "../utils/thumbnailer";
 
 export const schema = z.object({
   searchQuery: z.string(),
@@ -33,7 +35,7 @@ const CaptionsEntry = ({
 }: {
   entry: Entry;
   videoRef: RefObject<HTMLVideoElement>;
-  src: String;
+  src: string;
 }) => {
   const handleClick = () => {
     if (videoRef.current) {
@@ -41,23 +43,35 @@ const CaptionsEntry = ({
     }
   };
 
+  const [thumbnailSrc, setThumbnailSrc] = useState<string>();
+
+  const { observe } = useInView({
+    threshold: 1,
+    onEnter: async ({ unobserve }) => {
+      unobserve();
+      const thumbnail = await throttledGetVideoThumbnail(
+        src,
+        entry.from / 1000,
+      );
+      setThumbnailSrc(thumbnail);
+    },
+  });
+
   return (
     <button
       onClick={handleClick}
       className="p-2 flex gap-5 hover:bg-[#394150] rounded-[18px] overflow-hidden mb-2 w-full"
     >
-      <div className="h-16 aspect-video rounded-xl bg-[#ffffff1f] relative">
-        {false && (
-          <video
-            preload="metadata"
-            muted
+      <div
+        className="h-16 aspect-video rounded-xl bg-[#ffffff1f] relative"
+        ref={observe}
+      >
+        {thumbnailSrc && (
+          <img
+            src={thumbnailSrc}
             className="w-full max-h-fit rounded-xl overflow-hidden"
-          >
-            <source
-              src={`${src}#t=${formatMilliseconds(entry.from)}`}
-              type="application/ogg"
-            />
-          </video>
+            alt=""
+          />
         )}
       </div>
       <div className="flex flex-col gap-1 text-left text-sm">
