@@ -26,7 +26,8 @@ export default async function VideoPage({ params }: Props) {
     const parsed = await fetchTranscriptionJson(parseResult.data);
 
     return <Content data={parsed} />;
-  } catch {
+  } catch (e) {
+    console.log(e);
     return <Loader />;
   }
 }

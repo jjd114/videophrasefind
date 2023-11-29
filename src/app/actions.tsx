@@ -22,11 +22,14 @@ export async function triggerVideoTranscription(rawVideoUrl: string) {
 
 export async function fetchTranscriptionJson(rawVideoUrl: string) {
   // We actually encode URI twice (!) because the s3 path itself is already URL-encoded string
-  const res = await fetch(
-    `${S3_BASE}/${encodeURIComponent(
-      encodeURIComponent(rawVideoUrl),
-    )}/result.json`,
-  );
+  const url = `${S3_BASE}/${encodeURIComponent(
+    encodeURIComponent(rawVideoUrl),
+  )}/result.json`;
+  const res = await fetch(url);
+
+  if (res.status !== 200) {
+    throw new Error(`Got status code ${res.status} from ${url}`);
+  }
 
   return jsonSchema.parse(await res.json());
 }
