@@ -1,6 +1,8 @@
 "use server";
-
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { jsonSchema } from "./utils/json.schema";
+import { v4 as uuid } from "uuid";
 
 const S3_BASE =
   process.env.S3_BASE ||
@@ -15,7 +17,9 @@ export async function triggerVideoTranscription(rawVideoUrl: string) {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({ url: rawVideoUrl }),
+    cache: "no-cache",
   });
+  // Add a delay to make sure that request above has hit the API
   await new Promise((res) => setTimeout(res, 3000));
   return "triggered";
 }
@@ -33,4 +37,25 @@ export async function fetchTranscriptionJson(rawVideoUrl: string) {
   }
 
   return jsonSchema.parse(await res.json());
+}
+
+export async function getUploadUrl() {
+  const id = uuid();
+
+  const client = new S3Client({
+    region: process.env.AWS_REGION || "eu-north-1",
+    credentials: {
+      accessKeyId: process.env.AWS_ACCESS_KEY_ID || "",
+      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || "",
+    },
+  });
+
+  const command = new PutObjectCommand({
+    Bucket: process.env.AWS_BUCKET || "",
+    Key: `videos/${id}/video.webm`,
+  });
+
+  const uploadUrl = await getSignedUrl(client, command, { expiresIn: 3600 });
+  const downloadUrl = uploadUrl.replace(/\?.*/, "");
+  return { uploadUrl, s3Path: id, downloadUrl };
 }

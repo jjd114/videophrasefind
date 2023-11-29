@@ -5,16 +5,17 @@ import { z } from "zod";
 import Button from "./Button";
 import Input from "./Input";
 import Image from "next/image";
-import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { useRouter } from "next/navigation";
 import { useTransition } from "react";
-import { triggerVideoTranscription } from "../actions";
+import { getUploadUrl, triggerVideoTranscription } from "../actions";
+import { useMutation } from "@tanstack/react-query";
 
 export const schema = z.object({
   videoUrl: z
     .string()
     .url()
-    .transform((s) => s.replaceAll(/&.*$/g, "")), // Cleanup youtube links
+    .transform((s) => s.replaceAll(/&.*$/g, "")) // Cleanup youtube links
+    .or(z.literal("")),
 });
 
 export default function Form() {
@@ -41,29 +42,32 @@ export default function Form() {
     </li>
   ));
 
+  const uploadMutation = useMutation({
+    mutationFn: async () => {
+      const { uploadUrl, s3Path, downloadUrl } = await getUploadUrl();
+
+      await fetch(uploadUrl, {
+        method: "PUT",
+        body: acceptedFiles[0],
+      });
+
+      return { s3Path, videoUrl: downloadUrl };
+    },
+  });
+
   const onSubmit = handleSubmit(async (formData) => {
-    const s3client = new S3Client({
-      region: "eu-north-1",
-      credentials: {
-        accessKeyId: "TODO",
-        secretAccessKey: "TODO",
-        sessionToken: "TODO",
-      },
-    });
+    const { videoUrl, s3Path } = formData.videoUrl
+      ? {
+          videoUrl: formData.videoUrl,
+          s3Path: encodeURIComponent(formData.videoUrl),
+        }
+      : await uploadMutation.mutateAsync();
 
-    const command = new PutObjectCommand({
-      Bucket: "videphrasefind",
-      Key: "test.txt",
-      Body: "hello, world!",
-    });
+    console.log({ videoUrl, s3Path });
+    await triggerVideoTranscription(videoUrl);
 
-    await s3client.send(command).then(console.log).catch(console.log);
-
-    await triggerVideoTranscription(formData.videoUrl);
-
-    // TODO: upload video and get URL if needed
     startTransition(() => {
-      router.push(`/video/${encodeURIComponent(formData.videoUrl)}`);
+      router.push(`/video/${s3Path}`);
     });
   });
 
@@ -72,8 +76,13 @@ export default function Form() {
       onSubmit={onSubmit}
       className="min-w-[512px] flex flex-col gap-8 items-center bg-[#0B111A] p-4 rounded-[32px]"
     >
-      <section className="w-full border-dashed border-[#212A36] border-[1px] rounded-[32px] bg-[#212A361A] aspect-[4/3] cursor-pointer">
-        <div {...getRootProps({ className: "dropzone w-full h-full" })}>
+      <section className="w-full h-full">
+        <div
+          {...getRootProps({
+            className:
+              "dropzone w-full h-full aspect-[4/3] border-dashed border-[#212A36] border-[1px] rounded-[32px] bg-[#212A361A] cursor-pointer",
+          })}
+        >
           <input {...getInputProps()} />
           <div className="flex flex-col items-center justify-center w-full h-full">
             <Image
@@ -96,10 +105,6 @@ export default function Form() {
             )}
           </div>
         </div>
-        {/*<aside>
-              <h4>Files</h4>
-              <ul>{files}</ul>
-            </aside>*/}
       </section>
       <div className="flex items-center w-full">
         <div className="border-b-[1px] border-[#212A36] flex-1"></div>
@@ -115,7 +120,13 @@ export default function Form() {
       />
       <Button
         type="submit"
-        disabled={!isValid || !isDirty || isSubmitting || isPending}
+        disabled={
+          isSubmitting ||
+          isPending ||
+          uploadMutation.isPending ||
+          !isValid ||
+          (!isDirty && acceptedFiles.length === 0)
+        }
       >
         Submit
       </Button>
