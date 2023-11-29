@@ -1,14 +1,12 @@
 "use client";
-import Image from "next/image";
 import { z } from "zod";
-import { parse } from "@plussub/srt-vtt-parser";
-import { useQuery } from "@tanstack/react-query";
 import Search from "./Search";
 import useZodForm from "../hooks/useZodForm";
 import { RefObject, useMemo, useRef } from "react";
 import _ from "lodash";
 import { Entry } from "@plussub/srt-vtt-parser/dist/src/types";
 import { intervalToDuration } from "date-fns";
+import { JsonSchema } from "../utils/json.schema";
 
 export const schema = z.object({
   searchQuery: z.string(),
@@ -90,84 +88,12 @@ const CaptionsEntry = ({
   );
 };
 
-function secondsToVttFormat(seconds: number) {
-  const duration = intervalToDuration({
-    start: 0,
-    end: seconds * 1000,
-  });
-
-  const milliseconds = (seconds - Math.floor(seconds)) * 1000;
-  return `${padTime(duration?.minutes)}:${padTime(
-    duration?.seconds,
-  )}.${_.padEnd(milliseconds.toFixed(0), 3, "0")}`;
-}
-
-export const responseSchema = z
-  .object({
-    texts_and_timestamps: z
-      .string()
-      .transform((s) => JSON.parse(s))
-      .pipe(
-        z.object({
-          transcription_array: z.string().array(),
-          timestamp_array: z.tuple([z.number(), z.number()]).array(),
-          base_url: z.string(),
-        }),
-      ),
-  })
-  .transform(({ texts_and_timestamps: data }) => {
-    // Split our words and timestamps into chunks
-    const CHUNK_SIZE = 6;
-    const timestamps = _.chunk(data.timestamp_array, CHUNK_SIZE).map(
-      // Take the beginning and the end of each chunk
-      (intervals) =>
-        [intervals[0][0], intervals[intervals.length - 1][1]] as const,
-    );
-    const texts = _.chunk(data.transcription_array, CHUNK_SIZE);
-
-    const vttLines = timestamps.map((timestamp, index) => {
-      const text = texts[index];
-      return `${secondsToVttFormat(timestamp[0])} --> ${secondsToVttFormat(
-        timestamp[1],
-      )}\n- ${text.join(" ")}\n`;
-    });
-
-    return {
-      captionsVtt: `WEBVTT\n${vttLines.join("\n")}`,
-      videoUrl: data.base_url,
-    };
-  })
-  .transform((data) => ({
-    ...data,
-    parsedCaptions: parse(data.captionsVtt).entries,
-  }));
-
 interface Props {
-  videoUrl?: string;
+  data: JsonSchema;
 }
 
-const Content = ({ videoUrl }: Props) => {
+const Content = ({ data }: Props) => {
   const videoRef = useRef<HTMLVideoElement>(null);
-
-  const { data } = useQuery({
-    queryKey: [videoUrl],
-    enabled: !!videoUrl,
-    queryFn: async () => {
-      const res = await fetch(
-        `${
-          process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3000"
-        }/search`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ url: videoUrl }),
-        },
-      );
-      return responseSchema.parse(await res.json());
-    },
-  });
 
   const {
     watch,
@@ -190,19 +116,6 @@ const Content = ({ videoUrl }: Props) => {
       ),
     [data?.parsedCaptions, searchQuery],
   );
-
-  if (!data)
-    return (
-      <div className="m-auto flex align-center">
-        <Image
-          className="cursor-pointer mt-[18px] animate-spin"
-          src="/loading.svg"
-          alt=""
-          width="77"
-          height="77"
-        />
-      </div>
-    );
 
   return (
     <div className="flex-1 grid grid-cols-3 gap-10 bg-[#212A36] rounded-3xl overflow-hidden p-10">

@@ -8,6 +8,7 @@ import Image from "next/image";
 import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { useRouter } from "next/navigation";
 import { useTransition } from "react";
+import { triggerVideoTranscription } from "../actions";
 
 export const schema = z.object({
   videoUrl: z.string().url(),
@@ -54,6 +55,8 @@ export default function Form() {
     });
 
     await s3client.send(command).then(console.log).catch(console.log);
+
+    await triggerVideoTranscription(formData.videoUrl);
 
     // TODO: upload video and get URL if needed
     startTransition(() => {
