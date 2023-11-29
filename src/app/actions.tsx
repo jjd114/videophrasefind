@@ -16,6 +16,7 @@ export async function triggerVideoTranscription(rawVideoUrl: string) {
     },
     body: JSON.stringify({ url: rawVideoUrl }),
   });
+  await new Promise((res) => setTimeout(res, 3000));
   return "triggered";
 }
 
