@@ -11,7 +11,10 @@ import { useTransition } from "react";
 import { triggerVideoTranscription } from "../actions";
 
 export const schema = z.object({
-  videoUrl: z.string().url(),
+  videoUrl: z
+    .string()
+    .url()
+    .transform((s) => s.replaceAll(/&.*$/g, "")), // Cleanup youtube links
 });
 
 export default function Form() {
