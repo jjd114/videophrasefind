@@ -11,6 +11,7 @@ interface Props {
 }
 
 export const dynamic = "force-dynamic";
+export const runtime = "nodejs";
 
 export default async function VideoPage({ params }: Props) {
   const parseResult = z

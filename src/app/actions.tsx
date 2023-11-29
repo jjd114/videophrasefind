@@ -24,7 +24,8 @@ export async function fetchTranscriptionJson(rawVideoUrl: string) {
   // We actually encode URI twice (!) because the s3 path itself is already URL-encoded string
   const url = `${S3_BASE}/${encodeURIComponent(
     encodeURIComponent(rawVideoUrl),
-  )}/result.json`;
+  )}/result.json`.replaceAll("%252C", "%252F"); // For some reason function behaves differently on Vercel
+  console.log(`Fetching transcriptions from ${url}`);
   const res = await fetch(url, { cache: "no-cache" });
 
   if (res.status !== 200) {
