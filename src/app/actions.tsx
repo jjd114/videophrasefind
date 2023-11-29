@@ -25,7 +25,7 @@ export async function fetchTranscriptionJson(rawVideoUrl: string) {
   const url = `${S3_BASE}/${encodeURIComponent(
     encodeURIComponent(rawVideoUrl),
   )}/result.json`;
-  const res = await fetch(url);
+  const res = await fetch(url, { cache: "no-cache" });
 
   if (res.status !== 200) {
     throw new Error(`Got status code ${res.status} from ${url}`);
