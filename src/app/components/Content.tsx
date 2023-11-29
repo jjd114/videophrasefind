@@ -2,13 +2,12 @@
 import { z } from "zod";
 import Search from "./Search";
 import useZodForm from "../hooks/useZodForm";
-import { RefObject, useMemo, useRef, useState } from "react";
+import { RefObject, useMemo, useRef } from "react";
 import _ from "lodash";
 import { Entry } from "@plussub/srt-vtt-parser/dist/src/types";
 import { intervalToDuration } from "date-fns";
 import { JsonSchema } from "../utils/json.schema";
-import { useInView } from "react-cool-inview";
-import { throttledGetVideoThumbnail } from "../utils/thumbnailer";
+import { STEP, useThumbnailer } from "../utils/thumbnailer";
 
 export const schema = z.object({
   searchQuery: z.string(),
@@ -31,11 +30,11 @@ function formatMilliseconds(ms: number) {
 const CaptionsEntry = ({
   entry,
   videoRef,
-  src,
+  thumbnailSrc,
 }: {
   entry: Entry;
   videoRef: RefObject<HTMLVideoElement>;
-  src: string;
+  thumbnailSrc?: string;
 }) => {
   const handleClick = () => {
     if (videoRef.current) {
@@ -43,29 +42,12 @@ const CaptionsEntry = ({
     }
   };
 
-  const [thumbnailSrc, setThumbnailSrc] = useState<string>();
-
-  const { observe } = useInView({
-    threshold: 1,
-    onEnter: async ({ unobserve }) => {
-      unobserve();
-      const thumbnail = await throttledGetVideoThumbnail(
-        src,
-        entry.from / 1000,
-      );
-      setThumbnailSrc(thumbnail);
-    },
-  });
-
   return (
     <button
       onClick={handleClick}
       className="p-2 flex gap-5 hover:bg-[#394150] rounded-[18px] overflow-hidden mb-2 w-full"
     >
-      <div
-        className="h-16 aspect-video rounded-xl bg-[#ffffff1f] relative"
-        ref={observe}
-      >
+      <div className="h-16 aspect-video rounded-xl bg-[#ffffff1f] relative">
         {thumbnailSrc && (
           <img
             src={thumbnailSrc}
@@ -131,6 +113,8 @@ const Content = ({ data }: Props) => {
     [data?.parsedCaptions, searchQuery],
   );
 
+  const { thumbnails } = useThumbnailer(data.videoUrl);
+
   return (
     <div className="flex-1 grid grid-cols-3 gap-10 bg-[#212A36] rounded-3xl overflow-hidden p-10">
       <div className="col-span-2">
@@ -173,7 +157,10 @@ const Content = ({ data }: Props) => {
                 key={entry.from}
                 entry={entry}
                 videoRef={videoRef}
-                src={data.videoUrl}
+                thumbnailSrc={
+                  thumbnails[Math.floor(entry.from / (STEP * 1000))] ||
+                  _.last(thumbnails)
+                }
               />
             );
           })}

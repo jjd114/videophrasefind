@@ -1,4 +1,6 @@
+import Bluebird from "bluebird";
 import _ from "lodash";
+import { useEffect, useState } from "react";
 
 // Most of this code was copy-pasted
 // TODO: refactor
@@ -17,11 +19,10 @@ export function videoScreenshotGetter(videoEl: HTMLVideoElement) {
 
         internals.videoEl.onseeked = function () {
           const canvas = document.createElement("canvas");
-          canvas.width = 150; //internals.videoEl.videoWidth;
+          canvas.width = 120; //internals.videoEl.videoWidth;
           canvas.height =
             (canvas.width / internals.videoEl.videoWidth) *
             internals.videoEl.videoHeight;
-          canvas.setAttribute("crossorigin", "anonymous"); // works for me
           const ctx = canvas.getContext("2d");
           console.log(canvas.width, canvas.height);
           ctx?.drawImage(internals.videoEl, 0, 0, canvas.width, canvas.height);
@@ -50,7 +51,6 @@ export function createVideoElement(src: string) {
     video.onerror = function (e) {
       reject(e);
     };
-    resolve(video);
   });
 }
 
@@ -61,3 +61,26 @@ export async function getVideoThumbnail(src: string, time: number) {
 }
 
 export const throttledGetVideoThumbnail = _.throttle(getVideoThumbnail, 1500);
+
+export const STEP = 5;
+
+export function useThumbnailer(src: string) {
+  const [thumbnails, setThumbnails] = useState<string[]>([]);
+
+  useEffect(() => {
+    (async () => {
+      const videoElement = await createVideoElement(src);
+      const getter = videoScreenshotGetter(videoElement);
+      await Bluebird.mapSeries(
+        _.range(0, videoElement.duration, STEP),
+        async (time) => {
+          console.log("Generating thumbnail for", src, time);
+          const thumbnail = await getter.get({ time });
+          setThumbnails((v) => [...v, thumbnail]);
+        },
+      );
+    })();
+  }, [setThumbnails, src]);
+
+  return { thumbnails };
+}
