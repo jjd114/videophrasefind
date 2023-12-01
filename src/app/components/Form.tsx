@@ -7,7 +7,11 @@ import Input from "./Input";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useTransition } from "react";
-import { getUploadUrl, triggerVideoTranscription } from "../actions";
+import {
+  fetchTranscriptionResult,
+  getUploadUrl,
+  triggerVideoTranscription,
+} from "../actions";
 import { useMutation } from "@tanstack/react-query";
 
 export const schema = z.object({
@@ -44,30 +48,31 @@ export default function Form() {
 
   const uploadMutation = useMutation({
     mutationFn: async () => {
-      const { uploadUrl, s3Path, downloadUrl } = await getUploadUrl();
+      const { uploadUrl, s3Directory, downloadUrl } = await getUploadUrl();
 
       await fetch(uploadUrl, {
         method: "PUT",
         body: acceptedFiles[0],
       });
 
-      return { s3Path, videoUrl: downloadUrl };
+      return { s3Directory, videoUrl: downloadUrl };
     },
   });
 
   const onSubmit = handleSubmit(async (formData) => {
-    const { videoUrl, s3Path } = formData.videoUrl
+    const { videoUrl, s3Directory } = formData.videoUrl
       ? {
           videoUrl: formData.videoUrl,
-          s3Path: encodeURIComponent(formData.videoUrl),
+          s3Directory: encodeURIComponent(formData.videoUrl),
         }
       : await uploadMutation.mutateAsync();
 
-    console.log({ videoUrl, s3Path });
-    await triggerVideoTranscription(videoUrl);
+    console.log({ videoUrl, s3Directory });
+    const json = await fetchTranscriptionResult(s3Directory);
+    if (!json) await triggerVideoTranscription(videoUrl);
 
     startTransition(() => {
-      router.push(`/video/${s3Path}`);
+      router.push(`/video/${s3Directory}`);
     });
   });
 

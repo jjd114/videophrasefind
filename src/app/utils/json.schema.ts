@@ -23,7 +23,6 @@ export const jsonSchema = z
   .object({
     transcription_array: z.string().array(),
     timestamp_array: z.tuple([z.number(), z.number()]).array(),
-    video_url: z.string(),
   })
   .transform((data) => {
     // Split our words and timestamps into chunks
@@ -44,7 +43,6 @@ export const jsonSchema = z
 
     return {
       captionsVtt: `WEBVTT\n${vttLines.join("\n")}`,
-      videoUrl: encodeURI(data.video_url),
     };
   })
   .transform((data) => ({

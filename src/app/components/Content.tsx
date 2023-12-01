@@ -8,6 +8,7 @@ import { Entry } from "@plussub/srt-vtt-parser/dist/src/types";
 import { intervalToDuration } from "date-fns";
 import { JsonSchema } from "../utils/json.schema";
 import { STEP, useThumbnailer } from "../utils/thumbnailer";
+import Loader from "../video/[...s3DirectoryPath]/loader";
 
 export const schema = z.object({
   searchQuery: z.string(),
@@ -85,10 +86,11 @@ const CaptionsEntry = ({
 };
 
 interface Props {
-  data: JsonSchema;
+  data: JsonSchema | null;
+  videoUrl: string | null;
 }
 
-const Content = ({ data }: Props) => {
+const Content = ({ data, videoUrl }: Props) => {
   const videoRef = useRef<HTMLVideoElement>(null);
 
   const {
@@ -103,6 +105,8 @@ const Content = ({ data }: Props) => {
     mode: "onBlur",
   });
 
+  const { thumbnails } = useThumbnailer(videoUrl);
+
   const searchQuery = watch("searchQuery");
 
   const filteredCaptions = useMemo(
@@ -113,7 +117,7 @@ const Content = ({ data }: Props) => {
     [data?.parsedCaptions, searchQuery],
   );
 
-  const { thumbnails } = useThumbnailer(data.videoUrl);
+  if (!videoUrl) return <Loader />;
 
   return (
     <div className="flex-1 grid grid-cols-3 gap-10 bg-[#212A36] rounded-3xl overflow-hidden p-10">
@@ -127,44 +131,52 @@ const Content = ({ data }: Props) => {
             controls
             className="w-full max-h-fit rounded-xl overflow-hidden"
           >
-            <source src={data.videoUrl} type="application/ogg" />
-            <track
-              label="English"
-              kind="subtitles"
-              srcLang="en"
-              src={`data:text/vtt;charset=UTF-8,${encodeURIComponent(
-                data.captionsVtt,
-              )}`}
-              default
-            />
+            <source src={videoUrl} type="application/ogg" />
+            {data && (
+              <track
+                label="English"
+                kind="subtitles"
+                srcLang="en"
+                src={`data:text/vtt;charset=UTF-8,${encodeURIComponent(
+                  data.captionsVtt,
+                )}`}
+                default
+              />
+            )}
           </video>
         </div>
       </div>
       <div className="rounded-[32px] flex flex-col gap-5 overflow-hidden">
-        <Search
-          placeholder="Filter"
-          name="searchQuery"
-          register={register}
-          errors={errors}
-        />
-        <div className="text-white text-base font-semibold">
-          Results: {filteredCaptions?.length || 0}
-        </div>
-        <div className="overflow-y-auto">
-          {filteredCaptions?.map((entry) => {
-            return (
-              <CaptionsEntry
-                key={entry.from}
-                entry={entry}
-                videoRef={videoRef}
-                thumbnailSrc={
-                  thumbnails[Math.floor(entry.from / (STEP * 1000))] ||
-                  _.last(thumbnails)
-                }
-              />
-            );
-          })}
-        </div>
+        {data ? (
+          <>
+            <Search
+              placeholder="Filter"
+              name="searchQuery"
+              register={register}
+              errors={errors}
+            />
+            <div className="text-white text-base font-semibold">
+              Results: {filteredCaptions?.length || 0}
+            </div>
+            <div className="overflow-y-auto">
+              {filteredCaptions?.map((entry) => {
+                return (
+                  <CaptionsEntry
+                    key={entry.from}
+                    entry={entry}
+                    videoRef={videoRef}
+                    thumbnailSrc={
+                      thumbnails[Math.floor(entry.from / (STEP * 1000))] ||
+                      _.last(thumbnails)
+                    }
+                  />
+                );
+              })}
+            </div>
+          </>
+        ) : (
+          <Loader />
+        )}
       </div>
     </div>
   );

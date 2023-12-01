@@ -64,22 +64,24 @@ export const throttledGetVideoThumbnail = _.throttle(getVideoThumbnail, 1500);
 
 export const STEP = 5;
 
-export function useThumbnailer(src: string) {
+export function useThumbnailer(src: string | null) {
   const [thumbnails, setThumbnails] = useState<string[]>([]);
 
   useEffect(() => {
-    (async () => {
-      const videoElement = await createVideoElement(src);
-      const getter = videoScreenshotGetter(videoElement);
-      await Bluebird.mapSeries(
-        _.range(0, videoElement.duration, STEP),
-        async (time) => {
-          console.log("Generating thumbnail for", src, time);
-          const thumbnail = await getter.get({ time });
-          setThumbnails((v) => [...v, thumbnail]);
-        },
-      );
-    })();
+    if (src) {
+      (async () => {
+        const videoElement = await createVideoElement(src);
+        const getter = videoScreenshotGetter(videoElement);
+        await Bluebird.mapSeries(
+          _.range(0, videoElement.duration, STEP),
+          async (time) => {
+            console.log("Generating thumbnail for", src, time);
+            const thumbnail = await getter.get({ time });
+            setThumbnails((v) => [...v, thumbnail]);
+          },
+        );
+      })();
+    }
   }, [setThumbnails, src]);
 
   return { thumbnails };
