@@ -27,7 +27,6 @@ export async function getVideoUrl(s3Directory: string) {
   const res = await fetch(url, { cache: "no-cache", method: "HEAD" });
 
   if (res.status !== 200) {
-    console.log(res.status);
     return null;
   }
 
