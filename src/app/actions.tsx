@@ -36,6 +36,7 @@ export async function triggerVideoTranscription(rawVideoUrl: string) {
 }
 
 export async function getVideoUrl(s3Directory: string) {
+  console.log(`Checking if video exists in directory: ${s3Directory}`);
   const command = new HeadObjectCommand({
     Bucket: BUCKET,
     Key: `videos/${s3Directory}/video.webm`,
