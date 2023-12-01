@@ -13,8 +13,10 @@ export const runtime = "nodejs";
 
 export default async function VideoPage({ params }: Props) {
   const [videoUrl, transcriptionData] = await Promise.all([
-    getVideoUrl(params.s3DirectoryPath),
-    fetchTranscriptionResult(params.s3DirectoryPath),
+    getVideoUrl(encodeURIComponent(decodeURIComponent(params.s3DirectoryPath))),
+    fetchTranscriptionResult(
+      encodeURIComponent(decodeURIComponent(params.s3DirectoryPath)),
+    ),
   ]);
 
   return <Content videoUrl={videoUrl} data={transcriptionData} />;
