@@ -1,23 +1,8 @@
-"use client";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
 
-export default function Loader() {
-  const router = useRouter();
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      // TODO: exponential backoff?
-      console.log("Refetching");
-      router.refresh();
-    }, 3000);
-
-    return () => clearInterval(interval);
-  }, [router]);
-
+export default function Loader({ message }: { message?: string }) {
   return (
-    <div className="m-auto flex align-center">
+    <div className="m-auto flex flex-col items-center gap-8 align-center">
       <Image
         className="cursor-pointer mt-[18px] animate-spin"
         src="/loading.svg"
@@ -25,6 +10,7 @@ export default function Loader() {
         width="77"
         height="77"
       />
+      {message && <span className="text-center">{message}</span>}
     </div>
   );
 }

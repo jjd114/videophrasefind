@@ -2,95 +2,37 @@
 import { z } from "zod";
 import Search from "./Search";
 import useZodForm from "../hooks/useZodForm";
-import { RefObject, useMemo, useRef } from "react";
+import { useMemo, useRef } from "react";
 import _ from "lodash";
-import { Entry } from "@plussub/srt-vtt-parser/dist/src/types";
-import { intervalToDuration } from "date-fns";
 import { JsonSchema } from "../utils/json.schema";
 import { STEP, useThumbnailer } from "../utils/thumbnailer";
 import Loader from "../video/[...s3DirectoryPath]/loader";
+import useRefresher from "../utils/useRefresher";
+import CaptionsEntry from "./CaptionsEntry";
 
 export const schema = z.object({
   searchQuery: z.string(),
 });
-
-function padTime(time?: number) {
-  return _.padStart(time?.toFixed(0), 2, "0");
-}
-
-function formatMilliseconds(ms: number) {
-  const duration = intervalToDuration({
-    start: 0,
-    end: ms,
-  });
-  return `${padTime(duration?.hours)}:${padTime(duration?.minutes)}:${padTime(
-    duration?.seconds,
-  )}`;
-}
-
-const CaptionsEntry = ({
-  entry,
-  videoRef,
-  thumbnailSrc,
-}: {
-  entry: Entry;
-  videoRef: RefObject<HTMLVideoElement>;
-  thumbnailSrc?: string;
-}) => {
-  const handleClick = () => {
-    if (videoRef.current) {
-      videoRef.current.currentTime = entry.from / 1000;
-    }
-  };
-
-  return (
-    <button
-      onClick={handleClick}
-      className="p-2 flex gap-5 hover:bg-[#394150] rounded-[18px] overflow-hidden mb-2 w-full"
-    >
-      <div className="h-16 aspect-video rounded-xl bg-[#ffffff1f] relative">
-        {thumbnailSrc && (
-          <img
-            src={thumbnailSrc}
-            className="w-full max-h-fit rounded-xl overflow-hidden"
-            alt=""
-          />
-        )}
-      </div>
-      <div className="flex flex-col gap-1 text-left text-sm">
-        <div className="text-white font-semibold overflow-hidden overflow-ellipsis grow">
-          {entry.text}
-        </div>
-        <div className="text-[#101824] flex justify-center items-center w-[max-content] rounded-md bg-[#9DA3AE] px-2">
-          {formatMilliseconds(entry.from)}
-        </div>
-      </div>
-      {/*<div className="ml-auto shrink-0">
-        <Image
-          className="cursor-pointer"
-          src="/forward.svg"
-          alt=""
-          width="28"
-          height="28"
-        />
-        <Image
-          className="cursor-pointer mt-[18px]"
-          src="/loop.svg"
-          alt=""
-          width="28"
-          height="28"
-        />
-      </div>*/}
-    </button>
-  );
-};
 
 interface Props {
   data: JsonSchema | null;
   videoUrl: string | null;
 }
 
+function getLoaderMessage(videoDurationSeconds?: number) {
+  if (!videoDurationSeconds) return "Waiting for transcription results.";
+  if (videoDurationSeconds < 60 * 5)
+    return "Waiting for transcription results, it's gonna take a minute or two";
+  if (videoDurationSeconds < 60 * 10)
+    return "Waiting for transcription results, it may take up to 5 minutes";
+  if (videoDurationSeconds < 60 * 30)
+    return "Waiting for transcription results, it may take up to 15 minutes. You can save this link and come back later!";
+  return "Waiting for transcription results. Your video is pretty large, it make take some time (up to half of the video duration). You can save this link and come back later!";
+}
+
 const Content = ({ data, videoUrl }: Props) => {
+  useRefresher({ enabled: !(data && videoUrl) });
+
   const videoRef = useRef<HTMLVideoElement>(null);
 
   const {
@@ -117,7 +59,10 @@ const Content = ({ data, videoUrl }: Props) => {
     [data?.parsedCaptions, searchQuery],
   );
 
-  if (!videoUrl) return <Loader />;
+  if (!videoUrl)
+    return (
+      <Loader message="Waiting for the video. This can take up to 5 minutes" />
+    );
 
   return (
     <div className="flex-1 grid grid-cols-3 gap-10 bg-[#212A36] rounded-3xl overflow-hidden p-10">
@@ -175,7 +120,7 @@ const Content = ({ data, videoUrl }: Props) => {
             </div>
           </>
         ) : (
-          <Loader />
+          <Loader message={getLoaderMessage(videoRef.current?.duration)} />
         )}
       </div>
     </div>

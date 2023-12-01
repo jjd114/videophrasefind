@@ -13,6 +13,7 @@ import {
   triggerVideoTranscription,
 } from "../actions";
 import { useMutation } from "@tanstack/react-query";
+import Loader from "../video/[...s3DirectoryPath]/loader";
 
 export const schema = z.object({
   videoUrl: z
@@ -29,7 +30,7 @@ export default function Form() {
   const {
     register,
     handleSubmit,
-    formState: { errors, isValid, isSubmitting, isDirty },
+    formState: { errors, isValid, isSubmitting, isSubmitted, isDirty },
   } = useZodForm({
     schema,
     defaultValues: {
@@ -75,6 +76,12 @@ export default function Form() {
       router.push(`/video/${s3Directory}`);
     });
   });
+
+  if (uploadMutation.isPending)
+    return <Loader message="Uploading your video" />;
+
+  if (isSubmitting || isPending)
+    return <Loader message="Initializing video processing" />;
 
   return (
     <form
