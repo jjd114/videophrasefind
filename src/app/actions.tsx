@@ -1,23 +1,9 @@
 "use server";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
-import {
-  HeadObjectCommand,
-  PutObjectCommand,
-  S3Client,
-} from "@aws-sdk/client-s3";
+import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { jsonSchema } from "./utils/json.schema";
 import { v4 as uuid } from "uuid";
 import { getS3DirectoryUrl } from "./utils/s3";
-
-const BUCKET = process.env.AWS_BUCKET || "";
-
-const client = new S3Client({
-  region: process.env.AWS_REGION || "eu-north-1",
-  credentials: {
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID || "",
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || "",
-  },
-});
 
 // This function should be triggered, but not awaited - the job is very long
 export async function triggerVideoTranscription(rawVideoUrl: string) {
@@ -37,18 +23,15 @@ export async function triggerVideoTranscription(rawVideoUrl: string) {
 
 export async function getVideoUrl(s3Directory: string) {
   console.log(`Checking if video exists in directory: ${s3Directory}`);
-  const command = new HeadObjectCommand({
-    Bucket: BUCKET,
-    Key: `videos/${s3Directory}/video.webm`,
-  });
 
-  try {
-    await client.send(command);
-    return `${getS3DirectoryUrl(s3Directory)}/video.webm`;
-  } catch (e: any) {
-    if (e?.$metadata?.httpStatusCode === 404) return null;
-    throw e;
+  const url = `${getS3DirectoryUrl(s3Directory)}/video.webm`;
+  const res = await fetch(url, { cache: "no-cache", method: "HEAD" });
+
+  if (res.status !== 200) {
+    return null;
   }
+
+  return url;
 }
 
 export async function fetchTranscriptionResult(s3Directory: string) {
@@ -65,6 +48,14 @@ export async function fetchTranscriptionResult(s3Directory: string) {
 
 export async function getUploadUrl() {
   const id = uuid();
+
+  const client = new S3Client({
+    region: process.env.AWS_REGION || "eu-north-1",
+    credentials: {
+      accessKeyId: process.env.AWS_ACCESS_KEY_ID || "",
+      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || "",
+    },
+  });
 
   const command = new PutObjectCommand({
     Bucket: process.env.AWS_BUCKET || "",
