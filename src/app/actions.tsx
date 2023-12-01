@@ -22,12 +22,12 @@ export async function triggerVideoTranscription(rawVideoUrl: string) {
 }
 
 export async function getVideoUrl(s3Directory: string) {
-  console.log(`Checking if video exists in directory: ${s3Directory}`);
-
   const url = `${getS3DirectoryUrl(s3Directory)}/video.webm`;
+  console.log(`Checking if video exists: ${url}`);
   const res = await fetch(url, { cache: "no-cache", method: "HEAD" });
 
   if (res.status !== 200) {
+    console.log(res.status);
     return null;
   }
 
