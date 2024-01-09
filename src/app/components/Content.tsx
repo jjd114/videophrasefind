@@ -61,7 +61,7 @@ const Content = ({ data, videoUrl }: Props) => {
 
   if (!videoUrl)
     return (
-      <Loader message="Waiting for the video. This can take up to 5 minutes" />
+      <Loader message="Waiting for the video. This may take a few minutes" />
     );
 
   return (
