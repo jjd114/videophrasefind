@@ -1,19 +1,24 @@
 "use client";
+
 import { useDropzone, FileWithPath } from "react-dropzone";
-import useZodForm from "../hooks/useZodForm";
 import { z } from "zod";
-import Button from "./Button";
-import Input from "./Input";
+import { useMutation } from "@tanstack/react-query";
+import { useTransition } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useTransition } from "react";
+
+import useZodForm from "@/app/hooks/useZodForm";
+
+import Button from "@/app/components/Button";
+import Input from "@/app/components/Input";
+
 import {
   fetchTranscriptionResult,
   getUploadUrl,
   triggerVideoTranscription,
-} from "../actions";
-import { useMutation } from "@tanstack/react-query";
-import Loader from "../video/[...s3DirectoryPath]/loader";
+} from "@/app/actions";
+
+import Loader from "@/app/video/[...s3DirectoryPath]/loader";
 
 export const schema = z.object({
   videoUrl: z
@@ -86,9 +91,9 @@ export default function Form() {
   return (
     <form
       onSubmit={onSubmit}
-      className="min-w-[512px] flex flex-col gap-8 items-center bg-[#0B111A] p-4 rounded-[32px]"
+      className="flex min-w-[512px] flex-col items-center gap-8 rounded-[32px] bg-[#0B111A] p-4"
     >
-      <section className="w-full h-full">
+      <section className="h-full w-full">
         <div
           {...getRootProps({
             className:
@@ -96,7 +101,7 @@ export default function Form() {
           })}
         >
           <input {...getInputProps()} />
-          <div className="flex flex-col items-center justify-center w-full h-full">
+          <div className="flex h-full w-full flex-col items-center justify-center">
             <Image
               className="mb-5"
               src="/upload.svg"
@@ -105,23 +110,23 @@ export default function Form() {
               height="25"
             />
             {!files.length ? (
-              <p className="text-center text-[#9DA3AE] font-semibold">
+              <p className="text-center font-semibold text-[#9DA3AE]">
                 Drag & Drop or <span className="text-white">Choose video</span>
                 <br />
                 to upload
               </p>
             ) : (
-              <p className="text-[#9DA3AE] text-center text-[#9DA3AE]-500">
+              <p className="text-[#9DA3AE]-500 text-center text-[#9DA3AE]">
                 {files}
               </p>
             )}
           </div>
         </div>
       </section>
-      <div className="flex items-center w-full">
-        <div className="border-b-[1px] border-[#212A36] flex-1"></div>
-        <div className="px-[27px] text-[#9DA3AE] text-base font-medium">or</div>
-        <div className="border-b-[1px] border-[#212A36] flex-1"></div>
+      <div className="flex w-full items-center">
+        <div className="flex-1 border-b-[1px] border-[#212A36]"></div>
+        <div className="px-[27px] text-base font-medium text-[#9DA3AE]">or</div>
+        <div className="flex-1 border-b-[1px] border-[#212A36]"></div>
       </div>
       <Input
         className="w-full"

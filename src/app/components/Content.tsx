@@ -1,14 +1,19 @@
 "use client";
+
 import { z } from "zod";
-import Search from "./Search";
-import useZodForm from "../hooks/useZodForm";
 import { useMemo, useRef } from "react";
 import _ from "lodash";
-import { JsonSchema } from "../utils/json.schema";
-import { STEP, useThumbnailer } from "../utils/thumbnailer";
-import Loader from "../video/[...s3DirectoryPath]/loader";
-import useRefresher from "../utils/useRefresher";
-import CaptionsEntry from "./CaptionsEntry";
+
+import CaptionsEntry from "@/app/components/CaptionsEntry";
+import Search from "@/app/components/Search";
+
+import useZodForm from "@/app/hooks/useZodForm";
+
+import { JsonSchema } from "@/app/utils/json.schema";
+import { STEP, useThumbnailer } from "@/app/utils/thumbnailer";
+import useRefresher from "@/app/utils/useRefresher";
+
+import Loader from "@/app/video/[...s3DirectoryPath]/loader";
 
 export const schema = z.object({
   searchQuery: z.string(),
@@ -65,16 +70,16 @@ const Content = ({ data, videoUrl }: Props) => {
     );
 
   return (
-    <div className="flex-1 grid grid-cols-3 gap-10 bg-[#212A36] rounded-3xl overflow-hidden p-10">
+    <div className="grid flex-1 grid-cols-3 gap-10 overflow-hidden rounded-3xl bg-[#212A36] p-10">
       <div className="col-span-2">
-        <div className="bg-[#ffffff1f] rounded-2xl p-2">
+        <div className="rounded-2xl bg-[#ffffff1f] p-2">
           <video
             ref={videoRef}
             preload="auto"
             autoPlay
             muted
             controls
-            className="w-full max-h-fit rounded-xl overflow-hidden"
+            className="max-h-fit w-full overflow-hidden rounded-xl"
           >
             <source src={videoUrl} type="application/ogg" />
             {data && (
@@ -91,7 +96,7 @@ const Content = ({ data, videoUrl }: Props) => {
           </video>
         </div>
       </div>
-      <div className="rounded-[32px] flex flex-col gap-5 overflow-hidden">
+      <div className="flex flex-col gap-5 overflow-hidden rounded-[32px]">
         {data ? (
           <>
             <Search
@@ -100,7 +105,7 @@ const Content = ({ data, videoUrl }: Props) => {
               register={register}
               errors={errors}
             />
-            <div className="text-white text-base font-semibold">
+            <div className="text-base font-semibold text-white">
               Results: {filteredCaptions?.length || 0}
             </div>
             <div className="overflow-y-auto">

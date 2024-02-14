@@ -1,5 +1,7 @@
 import _ from "lodash";
-import Content from "../../components/Content";
+
+import Content from "@/app/components/Content";
+
 import { fetchTranscriptionResult, getVideoUrl } from "@/app/actions";
 
 interface Props {
