@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import Header from "./components/Header";
-import "./globals.css";
 import QueryProvider from "./utils/queryProvider";
-import Sidebar from "./components/Sidebar";
+
+import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -19,11 +19,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`${inter.className} h-screen flex flex-col`}>
+      <body className={`${inter.className} flex h-screen flex-col`}>
         <QueryProvider>
           <Header />
-          <div className="bg-[#161E2A] flex-1 flex py-2.5 pr-10 gap-10 overflow-hidden">
-            <Sidebar />
+          <div className="flex flex-1 gap-10 overflow-hidden bg-[#161E2A] py-2.5 pr-10">
             {children}
           </div>
         </QueryProvider>
