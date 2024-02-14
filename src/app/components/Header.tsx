@@ -8,7 +8,7 @@ const capitalize = (str: string) => {
 
 const Header = () => {
   return (
-    <header className="flex min-h-[70px] items-center justify-between bg-[#101824] px-10 py-4">
+    <header className="flex min-h-[60px] items-center justify-between bg-[#101824] px-10 py-4">
       <Link href="/" className="text-2xl font-semibold">
         VideoPhraseFind
       </Link>

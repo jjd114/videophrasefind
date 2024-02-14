@@ -24,9 +24,7 @@ export default function RootLayout({
       <body className={`${inter.className} flex h-screen flex-col`}>
         <QueryProvider>
           <Header />
-          <div className="flex flex-1 gap-10 overflow-hidden bg-[#161E2A] py-2.5 pr-10">
-            {children}
-          </div>
+          <main className="flex flex-1 bg-[#161E2A] p-10">{children}</main>
         </QueryProvider>
       </body>
     </html>
