@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 
-import Header from "@/app/components/Header";
+import { Header } from "@/app/components/Header";
 
 import QueryProvider from "@/app/utils/queryProvider";
 
@@ -11,7 +11,7 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "VideoPhraseFind",
-  description: "Search text spoken in your video",
+  description: "Search text spoken in your video.",
 };
 
 export default function RootLayout({
