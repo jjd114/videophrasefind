@@ -4,6 +4,6 @@ export default function AboutLayout({
   children: React.ReactNode;
 }) {
   return (
-    <section className="grid size-full place-items-center">{children}</section>
+    <section className="flex size-full justify-center">{children}</section>
   );
 }

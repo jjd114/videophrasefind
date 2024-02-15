@@ -1,20 +1,21 @@
 // import Image from "next/image";
 
 import { type Metadata } from "next";
+import Link from "next/link";
 
 const steps: {
   text: string;
   img?: string;
 }[] = [
   {
-    text: "Navigate to https://videophrasefind.com/",
+    text: "Navigate to https://videophrasefind.com",
   },
   {
     text: `Click the "Paste video URL" input`,
     img: "/favicon.ico",
   },
   {
-    text: `Press ctrl + v`,
+    text: `Paste the result`,
   },
   {
     text: `Click "Drag & Drop" or Choose video to upload`,
@@ -47,30 +48,39 @@ export const metadata: Metadata = {
 
 export default function About() {
   return (
-    <div className="flex flex-col gap-8">
+    <div className="flex w-full max-w-[935px] flex-col gap-10">
       <h2 className="text-center text-2xl font-semibold">About the project</h2>
-      <p className="text-justify indent-8 leading-7">
-        With video becoming the dominant form of media being consumed, we are
-        building a robust engine to search and sift easily to deliver accurate
-        results. Give us feedback or let us know how we can improve here.
-      </p>
+      <text className="flex flex-col gap-5 text-lg leading-7">
+        <p className="text-justify indent-8">
+          With video becoming the dominant form of media being consumed, we are
+          building a robust engine to search and sift easily to deliver accurate
+          results.
+        </p>
+        <p className="text-center ">
+          Give us{" "}
+          <Link className="underline" href="/contact">
+            feedback
+          </Link>{" "}
+          or let us know how we can improve here!
+        </p>
+      </text>
       <h2 className="text-center text-2xl font-semibold">
-        How to find and filter video phrases on VideoPhraseFind?
+        How to use the app?
       </h2>
-      <ul className="flex flex-col items-center gap-8">
+      <ul className="flex flex-col items-center gap-8 text-lg">
         {steps.map((step, index) => (
           <li
             key={index + 1}
-            className="flex w-full max-w-[1000px] flex-col gap-7 rounded-2xl border-b-[5px] border-b-slate-600 bg-slate-800 p-8"
+            className="flex w-full max-w-[900px] flex-col justify-center gap-7 rounded-2xl border-b-[5px] border-b-slate-600 bg-slate-800 p-8"
           >
             <div className="flex items-center gap-5">
-              <span className="inline-flex size-9 items-center justify-center rounded-full bg-sky-300 font-bold text-sky-700">
+              <span className="inline-flex size-9 items-center justify-center rounded-full bg-sky-300 font-bold text-sky-800">
                 {index + 1}
               </span>
               <h3 className="font-medium">{step.text}</h3>
             </div>
             {step.img && (
-              <div className="flex min-h-[525px] w-full items-center justify-center rounded-lg bg-slate-700">
+              <div className="flex min-h-[400px] w-full items-center justify-center rounded-lg bg-slate-700">
                 Image will be here
                 {/* <Image
                   src="/favicon.ico"

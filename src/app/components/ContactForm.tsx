@@ -36,7 +36,7 @@ export default function ContactForm() {
 
   return (
     <form
-      className="flex flex-1 flex-col gap-4"
+      className="flex max-h-max flex-col gap-4"
       onSubmit={handleSubmit((data: z.infer<typeof contactSchema>) => {
         console.log(data);
       })}

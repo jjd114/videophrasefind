@@ -92,7 +92,7 @@ export default function Form() {
   return (
     <form
       onSubmit={onSubmit}
-      className="flex max-h-[650px] w-full max-w-[512px] flex-col items-center gap-8 rounded-[32px] bg-[#0B111A] p-4"
+      className="flex w-full max-w-[512px] flex-col items-center gap-8 rounded-[32px] bg-[#0B111A] p-4"
     >
       <section className="size-full">
         <div
