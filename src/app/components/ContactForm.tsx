@@ -6,6 +6,7 @@ import useZodForm from "@/app/hooks/useZodForm";
 
 import Input from "@/app/components/Input";
 import Button from "@/app/components/Button";
+import { TextArea } from "@/app/components/TextArea";
 
 const contactSchema = z.object({
   name: z.string().min(1, { message: "Name is required" }),
@@ -34,7 +35,7 @@ export default function ContactForm() {
 
   return (
     <form
-      className="flex w-full flex-col gap-4"
+      className="flex flex-1 flex-col gap-4"
       onSubmit={handleSubmit((data: z.infer<typeof contactSchema>) => {
         console.log(data);
       })}
@@ -63,23 +64,14 @@ export default function ContactForm() {
         errors={errors}
         register={register}
       />
-      <div className="grid gap-2">
-        <label htmlFor="description">
-          Describe in detail your problem or proposition*
-        </label>
-        <textarea
-          rows={7}
-          className="placeholder:text-[#9DA3AE]-500 resize-none rounded-[32px] border border-[#212A36] bg-transparent px-5 py-3 text-[#9DA3AE]"
-          placeholder="description"
-          id="description"
-          {...register("description")}
-        />
-        {errors.description && (
-          <p className="mx-5 text-sm text-red-500">
-            {errors.description.message}
-          </p>
-        )}
-      </div>
+      <TextArea
+        required
+        name="description"
+        label="Describe in detail your problem or proposition"
+        placeholder="description"
+        errors={errors}
+        register={register}
+      />
       <Button disabled={!isDirty || !isValid || isSubmitting}>
         Submit a request
       </Button>
