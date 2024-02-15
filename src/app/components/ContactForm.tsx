@@ -31,6 +31,7 @@ export default function ContactForm() {
       subject: "",
       description: "",
     },
+    mode: "onBlur",
   });
 
   return (

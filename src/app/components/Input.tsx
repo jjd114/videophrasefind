@@ -46,9 +46,9 @@ export default function Input<T extends FieldValues>({
         })}
         {...rest}
       />
-      {error?.message && (
-        <p className="mx-5 text-sm text-red-500">{error.message}</p>
-      )}
+      <p className="mx-3 min-h-[20px] text-sm text-red-500">
+        {error?.message && error.message}
+      </p>
     </fieldset>
   );
 }

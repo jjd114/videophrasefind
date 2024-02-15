@@ -37,7 +37,7 @@ const TextArea = <T extends FieldValues>({
       {label && <label htmlFor={name}>{required ? `${label}*` : label}</label>}
       <textarea
         rows={rows}
-        className="placeholder:text-[#9DA3AE]-500 h-full max-h-[250px] resize-none rounded-[32px] border border-[#212A36] bg-transparent px-5 py-3 text-[#9DA3AE] focus:outline-none disabled:cursor-not-allowed"
+        className="placeholder:text-[#9DA3AE]-500 h-full max-h-[250px] min-h-[125px] resize-none rounded-[32px] border border-[#212A36] bg-transparent px-5 py-3 text-[#9DA3AE] focus:outline-none disabled:cursor-not-allowed"
         id={name}
         {...register(name, {
           onChange: (e) => {
@@ -46,9 +46,9 @@ const TextArea = <T extends FieldValues>({
         })}
         {...props}
       />
-      {error?.message && (
-        <p className="mx-5 text-sm text-red-500">{error.message}</p>
-      )}
+      <p className="mx-3 min-h-[20px] text-sm text-red-500">
+        {error?.message && error.message}
+      </p>
     </fieldset>
   );
 };
