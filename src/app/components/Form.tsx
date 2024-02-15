@@ -30,7 +30,7 @@ export const schema = z.object({
 
 export default function Form() {
   const router = useRouter();
-  
+
   const [isPending, startTransition] = useTransition();
 
   const {
@@ -125,9 +125,9 @@ export default function Form() {
         </div>
       </section>
       <div className="flex w-full items-center">
-        <div className="flex-1 border-b-[1px] border-[#212A36]"></div>
+        <div className="flex-1 border-b border-[#212A36]"></div>
         <div className="px-[27px] text-base font-medium text-[#9DA3AE]">or</div>
-        <div className="flex-1 border-b-[1px] border-[#212A36]"></div>
+        <div className="flex-1 border-b border-[#212A36]"></div>
       </div>
       <Input
         className="w-full"

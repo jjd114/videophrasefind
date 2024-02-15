@@ -8,17 +8,17 @@ const steps: {
 }[] = [
   {
     text: "Navigate to https://videophrasefind.com/",
-    img: "/favicon.ico",
   },
   {
     text: `Click the "Paste video URL" input`,
-  },
-  {
-    text: `Press ctrl + v`,
     img: "/favicon.ico",
   },
   {
+    text: `Press ctrl + v`,
+  },
+  {
     text: `Click "Drag & Drop" or Choose video to upload`,
+    img: "/favicon.ico",
   },
   {
     text: `Click "Drag & Drop" or Choose video to upload`,
@@ -26,6 +26,7 @@ const steps: {
   },
   {
     text: `Click "Submit"`,
+    img: "/favicon.ico",
   },
   {
     text: `Click the "Filter" field`,
@@ -36,6 +37,7 @@ const steps: {
   },
   {
     text: "Double-click on keyword instance to jump to",
+    img: "/favicon.ico",
   },
 ];
 

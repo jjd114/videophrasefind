@@ -1,13 +1,13 @@
 import _ from "lodash";
 import { type InputHTMLAttributes } from "react";
-import {
-  type FieldError,
-  type FieldErrors,
-  type FieldValues,
-  type Path,
-  type UseFormRegister,
+import type {
+  FieldError,
+  FieldErrors,
+  FieldValues,
+  Path,
+  UseFormRegister,
 } from "react-hook-form";
-// import Label from "@/app/components/Label";
+import Label from "@/app/components/Label";
 
 type Props<T extends FieldValues> = InputHTMLAttributes<HTMLInputElement> & {
   name: Path<T>;
@@ -23,17 +23,16 @@ export default function Input<T extends FieldValues>({
   label,
   register,
   errors,
-  className = "mb-5",
+  className,
   inputClassName = "",
   required,
   ...rest
 }: Props<T>) {
   const error = _.get(errors, name) as FieldError | undefined;
-  // const labelName = label ?? String(name);
 
   return (
-    <fieldset className={`relative flex flex-col ${className}`}>
-      {/*labelName && <Label name={labelName} required={required} />*/}
+    <fieldset className={`flex flex-col gap-2 ${className}`}>
+      {label && <Label name={name} label={label} required={required} />}
       <input
         id={name}
         className={`
@@ -48,9 +47,7 @@ export default function Input<T extends FieldValues>({
         {...rest}
       />
       {error?.message && (
-        <p className="absolute bottom-[-20px] mx-5 text-sm text-red-500">
-          {error.message}
-        </p>
+        <p className="mx-5 text-sm text-red-500">{error.message}</p>
       )}
     </fieldset>
   );

@@ -3,5 +3,7 @@ export default function ContactLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <section className="size-full">{children}</section>;
+  return (
+    <section className="flex size-full justify-center">{children}</section>
+  );
 }
