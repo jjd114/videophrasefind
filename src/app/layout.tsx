@@ -21,7 +21,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`${inter.className} flex h-screen flex-col`}>
+      <body
+        className={`${inter.className} flex h-screen flex-col bg-[#161E2A]`}
+      >
         <QueryProvider>
           <Header />
           <main className="flex flex-1 bg-[#161E2A] p-10">{children}</main>

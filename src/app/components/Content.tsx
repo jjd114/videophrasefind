@@ -96,7 +96,7 @@ const Content = ({ data, videoUrl }: Props) => {
           </video>
         </div>
       </div>
-      <div className="flex flex-col gap-5 overflow-hidden rounded-[32px]">
+      <div className="overflow-scrolls flex max-h-[800px] flex-col gap-5 rounded-[32px]">
         {data ? (
           <>
             <Search

@@ -3,5 +3,7 @@ export default function AboutLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <section>{children}</section>;
+  return (
+    <section className="grid size-full place-items-center">{children}</section>
+  );
 }
