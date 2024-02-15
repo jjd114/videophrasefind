@@ -74,7 +74,7 @@ export default function About() {
             className="flex w-full max-w-[900px] flex-col justify-center gap-7 rounded-2xl border-b-[5px] border-b-slate-600 bg-slate-800 p-8"
           >
             <div className="flex items-center gap-5">
-              <span className="inline-flex size-9 items-center justify-center rounded-full bg-sky-300 font-bold text-sky-800">
+              <span className="inline-flex size-9 items-center justify-center rounded-full bg-purple-300 font-bold text-purple-800">
                 {index + 1}
               </span>
               <h3 className="font-medium">{step.text}</h3>
