@@ -49,7 +49,7 @@ export default function About() {
   return (
     <div className="flex flex-col gap-8">
       <h2 className="text-center text-2xl font-semibold">About the project</h2>
-      <p className="indent-8">
+      <p className="text-justify indent-8 leading-7">
         With video becoming the dominant form of media being consumed, we are
         building a robust engine to search and sift easily to deliver accurate
         results. Give us feedback or let us know how we can improve here.
