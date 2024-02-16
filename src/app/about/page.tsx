@@ -50,7 +50,7 @@ export default function About() {
   return (
     <div className="flex w-full max-w-[935px] flex-col gap-10">
       <h2 className="text-center text-2xl font-semibold">About the project</h2>
-      <text className="flex flex-col gap-5 text-lg leading-7">
+      <div className="flex flex-col gap-5 text-lg leading-7">
         <p className="text-justify indent-8">
           With video becoming the dominant form of media being consumed, we are
           building a robust engine to search and sift easily to deliver accurate
@@ -63,7 +63,7 @@ export default function About() {
           </Link>{" "}
           or let us know how we can improve here!
         </p>
-      </text>
+      </div>
       <h2 className="text-center text-2xl font-semibold">
         How to use the app?
       </h2>

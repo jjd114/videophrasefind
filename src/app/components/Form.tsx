@@ -23,7 +23,7 @@ import Loader from "@/app/video/[...s3DirectoryPath]/loader";
 export const schema = z.object({
   videoUrl: z
     .string()
-    .url()
+    .url({ message: "Invalid URL" })
     .transform((s) => s.replaceAll(/&.*$/g, "")) // Cleanup youtube links
     .or(z.literal("")),
 });
