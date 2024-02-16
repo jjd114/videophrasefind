@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 
 import { Header } from "@/app/components/Header";
+import { Footer } from "@/app/components/Footer";
 
 import QueryProvider from "@/app/utils/queryProvider";
 
@@ -27,6 +28,7 @@ export default function RootLayout({
         <QueryProvider>
           <Header />
           <main className="flex flex-1 bg-[#161E2A]">{children}</main>
+          <Footer />
         </QueryProvider>
       </body>
     </html>
