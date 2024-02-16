@@ -2,7 +2,7 @@ import Form from "@/app/components/Form";
 
 export default function Root() {
   return (
-    <div className="flex size-full h-[calc(100vh-70px-40px)] gap-4">
+    <div className="flex size-full h-[calc(100vh-70px-40px)] gap-4 p-5">
       <section className="flex flex-1 flex-col gap-4 overflow-scroll rounded-[32px] bg-[#0B111A] p-12">
         <h1 className="text-4xl font-bold">FEATURES</h1>
         <div className="flex gap-4 bg-gradient-to-r from-purple-500/10">

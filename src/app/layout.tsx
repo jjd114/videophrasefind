@@ -26,7 +26,7 @@ export default function RootLayout({
       >
         <QueryProvider>
           <Header />
-          <main className="flex flex-1 bg-[#161E2A] p-5">{children}</main>
+          <main className="flex flex-1 bg-[#161E2A]">{children}</main>
         </QueryProvider>
       </body>
     </html>
