@@ -23,7 +23,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${inter.className} flex h-screen flex-col bg-[#161E2A]`}
+        className={`${inter.className} flex min-h-screen flex-col bg-[#161E2A]`}
       >
         <QueryProvider>
           <Header />

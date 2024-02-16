@@ -1,3 +1,4 @@
+import { type Metadata } from "next";
 import Link from "next/link";
 
 const Header = ({ children }: { children: React.ReactNode }) => (
@@ -24,6 +25,10 @@ const SmallText = <D extends "r" | "l" | "t" | "b" | "", S extends number>({
     | `m${D}-${S} m${D}-${S} m${D}-${S} m${D}-${S}`;
   children: React.ReactNode;
 }) => <span className={`${margins} text-base`}>{children}</span>;
+
+export const metadata: Metadata = {
+  title: "Terms and Conditions",
+};
 
 export default function TermsAndConditions() {
   return (
