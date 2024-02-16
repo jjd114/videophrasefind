@@ -84,10 +84,18 @@ export default function Form() {
   });
 
   if (uploadMutation.isPending)
-    return <Loader message="Uploading your video" />;
+    return (
+      <div className="flex w-full max-w-[512px]">
+        <Loader message="Uploading your video" />
+      </div>
+    );
 
   if (isSubmitting || isPending)
-    return <Loader message="Initializing video processing" />;
+    return (
+      <div className="flex w-full max-w-[512px]">
+        <Loader message="Initializing video processing" />
+      </div>
+    );
 
   return (
     <form
