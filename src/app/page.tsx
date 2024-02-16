@@ -4,7 +4,7 @@ export default function Root() {
   return (
     <div className="flex w-full justify-center">
       <div className="flex size-full max-h-[calc(678px+2*theme(padding.5))] max-w-screen-2xl gap-4 p-5">
-        <section className="flex flex-1 flex-col gap-4 overflow-scroll rounded-[32px] bg-[#0B111A] p-12">
+        <section className="hide-scrollbar flex flex-1 flex-col gap-4 overflow-scroll rounded-[32px] bg-[#0B111A] p-12">
           <div className="flex flex-1 flex-col gap-5 leading-7">
             <h2 className="text-4xl font-semibold">Video search</h2>
             <div className="rounded-md bg-gradient-to-r from-purple-500/15 p-2">
