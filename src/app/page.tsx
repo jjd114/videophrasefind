@@ -3,7 +3,7 @@ import Form from "@/app/components/Form";
 export default function Root() {
   return (
     <div className="flex w-full items-center justify-center">
-      <div className="flex size-full max-w-screen-2xl gap-4 p-3 max-[1050px]:flex-col sm:p-7 min-[1050px]:max-h-[calc(678px+2*theme(padding.5))]">
+      <div className="flex size-full max-w-screen-2xl gap-4 px-3 py-7 max-[1050px]:flex-col sm:p-7 min-[1050px]:max-h-[calc(678px+2*theme(padding.5))]">
         <section className="hide-scrollbar flex flex-1 flex-col gap-4 overflow-scroll rounded-[32px] bg-[#0B111A] p-8 md:p-12">
           <div className="flex flex-1 flex-col gap-5 leading-7">
             <h2 className="text-2xl font-semibold md:text-4xl">Video search</h2>
