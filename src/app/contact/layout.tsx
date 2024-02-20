@@ -4,7 +4,7 @@ export default function ContactLayout({
   children: React.ReactNode;
 }) {
   return (
-    <section className="flex w-full items-center justify-center px-3 py-7 sm:p-7">
+    <section className="flex w-full items-center justify-center px-3 py-7 sm:px-7">
       {children}
     </section>
   );

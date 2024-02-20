@@ -28,7 +28,7 @@ export const schema = z.object({
     .or(z.literal("")),
 });
 
-export default function Form() {
+export default function VideoForm() {
   const router = useRouter();
 
   const [isPending, startTransition] = useTransition();
