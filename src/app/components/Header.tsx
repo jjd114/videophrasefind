@@ -19,7 +19,7 @@ const Header = () => {
           VideoPhraseFind
         </Link>
         <nav>
-          <ul className="flex gap-14">
+          <ul className="flex gap-10">
             {tabs.map((tab) => (
               <Link
                 className={`${tab === pathname ? "font-bold" : "font-medium hover:text-neutral-300"} transition-colors`}
