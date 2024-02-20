@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-const tabs = ["/", "/about", "/help", "/contact"] as const;
+const tabs = ["/", "/help", "/about", "/contact"] as const;
 
 const capitalize = (str: string) => {
   return str[0].toUpperCase() + str.slice(1);

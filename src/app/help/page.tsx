@@ -49,11 +49,11 @@ export default function Help() {
       <h2 className="text-center text-xl font-medium sm:text-2xl">
         How to use the app?
       </h2>
-      <ul className="flex flex-col items-center gap-8 sm:text-lg">
+      <ul className="flex flex-col items-center gap-5 sm:text-lg">
         {steps.map((step, index) => (
           <li
             key={index + 1}
-            className="flex w-full flex-col justify-center gap-7 rounded-[32px] bg-[#0B111A] p-5 sm:p-8"
+            className="flex w-full flex-col justify-center gap-[42px] rounded-[32px] bg-[#0B111A] p-5 sm:p-8"
           >
             <div className="flex items-center gap-5">
               <span className="inline-flex size-9 flex-shrink-0 items-center justify-center rounded-full bg-purple-600 font-semibold">
@@ -62,7 +62,7 @@ export default function Help() {
               <h3>{step.text}</h3>
             </div>
             {step.img && (
-              <div className="flex min-h-[435px] w-full items-center justify-center rounded-lg border border-[#212A36] bg-[#0D131C]">
+              <div className="flex min-h-[435px] w-full items-center justify-center rounded-2xl border border-[#212A36] bg-[#0D131C]">
                 Image will be here
               </div>
             )}

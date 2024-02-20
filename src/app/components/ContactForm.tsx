@@ -43,7 +43,7 @@ export default function ContactForm() {
     >
       <Input
         required
-        placeholder="your name"
+        // placeholder="your name"
         name="name"
         label="What is your name?"
         errors={errors}
@@ -51,7 +51,7 @@ export default function ContactForm() {
       />
       <Input
         required
-        placeholder="your email"
+        // placeholder="your email"
         name="email"
         label="Contact email"
         errors={errors}
@@ -59,7 +59,7 @@ export default function ContactForm() {
       />
       <Input
         required
-        placeholder="subject"
+        // placeholder="subject"
         name="subject"
         label="What is your question about?"
         errors={errors}
@@ -69,7 +69,7 @@ export default function ContactForm() {
         required
         name="description"
         label="Describe in detail your problem or proposition"
-        placeholder="description"
+        // placeholder="description"
         errors={errors}
         register={register}
       />

@@ -32,7 +32,7 @@ export const metadata: Metadata = {
 
 export default function TermsAndConditions() {
   return (
-    <div className="flex w-full max-w-[935px] flex-col">
+    <div className="flex w-full max-w-[800px] flex-col">
       <TextBlock>
         <SmallText margins="mt-16 mb-6">
           Welcome to{" "}
