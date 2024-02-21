@@ -28,7 +28,9 @@ const TextArea = <T extends FieldValues>({
   required = false,
   ...props
 }: Props<T>) => {
-  const [rows, setRows] = React.useState(1);
+  const MIN_ROWS = 4;
+
+  const [rows, setRows] = React.useState(MIN_ROWS);
 
   const error = _.get(errors, name) as FieldError | undefined;
 
@@ -41,7 +43,13 @@ const TextArea = <T extends FieldValues>({
         id={name}
         {...register(name, {
           onChange: (e) => {
-            setRows(e.target.value.split("\n").length);
+            const rows = e.target.value.split("\n").length;
+
+            if (rows < MIN_ROWS) {
+              setRows(MIN_ROWS);
+            } else {
+              setRows(e.target.value.split("\n").length);
+            }
           },
         })}
         {...props}
