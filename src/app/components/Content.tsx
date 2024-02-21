@@ -70,7 +70,7 @@ const Content = ({ data, videoUrl }: Props) => {
     );
 
   return (
-    <div className="grid flex-1 grid-cols-3 gap-10 overflow-hidden bg-[#212A36] p-10">
+    <div className="grid flex-1 grid-cols-3 gap-10 overflow-hidden rounded-[32px] bg-[#212A36] p-10">
       <div className="col-span-2">
         <div className="rounded-2xl bg-[#ffffff1f] p-2">
           <video
