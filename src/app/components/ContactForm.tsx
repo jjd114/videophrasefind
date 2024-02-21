@@ -43,33 +43,33 @@ export default function ContactForm() {
     >
       <Input
         required
-        // placeholder="your name"
+        placeholder="What is your name?"
         name="name"
-        label="What is your name?"
+        label="Name"
         errors={errors}
         register={register}
       />
       <Input
         required
-        // placeholder="your email"
+        placeholder="Contact email"
         name="email"
-        label="Contact email"
+        label="Email"
         errors={errors}
         register={register}
       />
       <Input
         required
-        // placeholder="subject"
+        placeholder="What is your question about?"
         name="subject"
-        label="What is your question about?"
+        label="Subject"
         errors={errors}
         register={register}
       />
       <TextArea
         required
         name="description"
-        label="Describe in detail your problem or proposition"
-        // placeholder="description"
+        label="Description"
+        placeholder="Describe in detail your problem or proposition"
         errors={errors}
         register={register}
       />
