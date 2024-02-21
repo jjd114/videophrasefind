@@ -27,7 +27,9 @@ export default function RootLayout({
       >
         <QueryProvider>
           <Header />
-          <main className="flex flex-1 bg-[#161E2A]">{children}</main>
+          <main className="flex flex-1 bg-[#161E2A] px-3 py-7 sm:px-7">
+            {children}
+          </main>
           <Footer />
         </QueryProvider>
       </body>
