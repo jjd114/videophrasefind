@@ -77,7 +77,7 @@ export default function Help() {
               <h3>{step.text}</h3>
             </div>
             {step.img && (
-              <div className="items-center justify-center overflow-hidden rounded-2xl border border-[#212A36] bg-[#0D131C]">
+              <div className="items-center justify-center overflow-hidden rounded-2xl border border-[#212A36]">
                 <Image
                   width={1200}
                   height={720}
