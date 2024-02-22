@@ -33,7 +33,7 @@ export const metadata: Metadata = {
 
 export default function TermsAndConditions() {
   return (
-    <div className="flex w-full max-w-[800px] flex-col rounded-[32px] bg-[#0B111A] p-10">
+    <div className="flex w-full max-w-[800px] flex-col rounded-[32px] bg-[#0B111A] p-8 md:p-10">
       <h1 className="mb-7 text-[26px] font-medium leading-[30px]">
         Terms of Service Agreement
       </h1>
