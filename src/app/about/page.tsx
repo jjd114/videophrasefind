@@ -3,6 +3,8 @@ import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "About",
+  description:
+    "About page contains essential information and purpose of the project",
 };
 
 export default function About() {

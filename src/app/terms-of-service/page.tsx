@@ -28,10 +28,11 @@ const SmallText = <D extends "r" | "l" | "t" | "b" | "", S extends number>({
 }) => <span className={`${margins} text-lg text-white/70`}>{children}</span>;
 
 export const metadata: Metadata = {
-  title: "Terms and Conditions",
+  title: "Terms of Service",
+  description: "See our terms of service and how they relate to you",
 };
 
-export default function TermsAndConditions() {
+export default function TermsOfService() {
   return (
     <div className="flex w-full max-w-[800px] flex-col rounded-[32px] bg-[#0B111A] p-8 md:p-10">
       <h1 className="mb-7 text-[26px] font-medium leading-[30px]">

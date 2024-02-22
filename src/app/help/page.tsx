@@ -56,6 +56,7 @@ const steps: {
 
 export const metadata: Metadata = {
   title: "Help",
+  description: "Help page is here to teach you how to use the app",
 };
 
 export default function Help() {

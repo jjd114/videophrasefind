@@ -11,8 +11,11 @@ import "@/app/globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "VideoPhraseFind",
-  description: "Search text spoken in your video.",
+  title: {
+    template: "%s - VideoPhraseFind",
+    default: "VideoPhraseFind",
+  },
+  description: "Search for text spoken in your video.",
 };
 
 export default function RootLayout({
