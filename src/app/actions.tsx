@@ -1,9 +1,9 @@
 "use server";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
-import { jsonSchema } from "./utils/json.schema";
+import { jsonSchema } from "@/app/utils/json.schema";
 import { v4 as uuid } from "uuid";
-import { getS3DirectoryUrl } from "./utils/s3";
+import { getS3DirectoryUrl } from "@/app/utils/s3";
 
 // This function should be triggered, but not awaited - the job is very long
 export async function triggerVideoTranscription(rawVideoUrl: string) {

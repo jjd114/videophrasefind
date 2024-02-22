@@ -1,9 +1,9 @@
-import Form from "./components/Form";
+import VideoForm from "@/app/components/VideoForm";
 
-export default async function Home() {
+export default function Root() {
   return (
-    <div className="mx-auto my-auto">
-      <Form />
-    </div>
+    <section className="flex w-full items-center justify-center px-3 py-7 sm:px-7">
+      <VideoForm />
+    </section>
   );
 }

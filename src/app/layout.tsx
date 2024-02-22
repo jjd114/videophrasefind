@@ -1,15 +1,18 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import Header from "./components/Header";
-import "./globals.css";
-import QueryProvider from "./utils/queryProvider";
-import Sidebar from "./components/Sidebar";
+
+import { Header } from "@/app/components/Header";
+import { Footer } from "@/app/components/Footer";
+
+import QueryProvider from "@/app/utils/queryProvider";
+
+import "@/app/globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "VideoPhraseFind",
-  description: "Search text spoken in your video",
+  description: "Search text spoken in your video.",
 };
 
 export default function RootLayout({
@@ -19,13 +22,15 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`${inter.className} h-screen flex flex-col`}>
+      <body
+        className={`${inter.className} flex min-h-screen flex-col bg-[#161E2A]`}
+      >
         <QueryProvider>
           <Header />
-          <div className="bg-[#161E2A] flex-1 flex py-2.5 pr-10 gap-10 overflow-hidden">
-            <Sidebar />
+          <main className="flex flex-1 bg-[#161E2A] px-3 py-7 sm:px-7">
             {children}
-          </div>
+          </main>
+          <Footer />
         </QueryProvider>
       </body>
     </html>

@@ -34,7 +34,7 @@ export default function Search<T extends FieldValues>({
     <fieldset className={`relative flex flex-col ${className}`}>
       {/*labelName && <Label name={labelName} required={required} />*/}
       <Image
-        className="cursor-pointer mb-5 ml-auto mr-auto absolute top-[12px] left-[18px]"
+        className="absolute left-[18px] top-[12px] mb-5 ml-auto mr-auto cursor-pointer"
         src="/search.svg"
         alt=""
         width="25"
@@ -43,8 +43,8 @@ export default function Search<T extends FieldValues>({
       <input
         id={name}
         className={`
-          w-full rounded-[32px] focus:outline-none disabled:cursor-not-allowed
-          bg-[#ffffff1f] border-[#212A36] border-[1px] text-[#9DA3AE] placeholder:text-[#9DA3AE]-500 pr-5 py-3 pl-[48px] ${inputClassName}
+          placeholder:text-[#9DA3AE]-500 w-full rounded-[32px] border-[1px]
+          border-[#212A36] bg-[#ffffff1f] py-3 pl-[48px] pr-5 text-[#9DA3AE] focus:outline-none disabled:cursor-not-allowed ${inputClassName}
         `}
         type={rest.type}
         {...register(name, {
@@ -54,7 +54,9 @@ export default function Search<T extends FieldValues>({
         {...rest}
       />
       {error?.message && (
-        <p className="text-red-500 text-sm mx-5 absolute bottom-[-20px]">{error.message}</p>
+        <p className="absolute bottom-[-20px] mx-5 text-sm text-red-500">
+          {error.message}
+        </p>
       )}
     </fieldset>
   );

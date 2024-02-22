@@ -1,13 +1,13 @@
 import _ from "lodash";
 import { type InputHTMLAttributes } from "react";
-import {
-  type FieldError,
-  type FieldErrors,
-  type FieldValues,
-  type Path,
-  type UseFormRegister,
+import type {
+  FieldError,
+  FieldErrors,
+  FieldValues,
+  Path,
+  UseFormRegister,
 } from "react-hook-form";
-import Label from "./Label";
+import Label from "@/app/components/Label";
 
 type Props<T extends FieldValues> = InputHTMLAttributes<HTMLInputElement> & {
   name: Path<T>;
@@ -23,22 +23,21 @@ export default function Input<T extends FieldValues>({
   label,
   register,
   errors,
-  className = "mb-5",
+  className,
   inputClassName = "",
   required,
   ...rest
 }: Props<T>) {
   const error = _.get(errors, name) as FieldError | undefined;
-  const labelName = label ?? String(name);
 
   return (
-    <fieldset className={`relative flex flex-col ${className}`}>
-      {/*labelName && <Label name={labelName} required={required} />*/}
+    <fieldset className={`flex flex-col gap-2 ${className}`}>
+      {label && <Label name={name} label={label} required={required} />}
       <input
         id={name}
         className={`
-          w-full rounded-[32px] focus:outline-none disabled:cursor-not-allowed
-          bg-transparent border-[#212A36] border-[1px] text-[#9DA3AE] placeholder:text-[#9DA3AE]-500 px-5 py-3 ${inputClassName}
+          placeholder:text-[#9DA3AE]-500 w-full rounded-[32px] border-[1px]
+          border-[#212A36] bg-transparent px-5 py-3 text-[#9DA3AE] focus:outline-none disabled:cursor-not-allowed ${inputClassName}
         `}
         type={rest.type}
         {...register(name, {
@@ -47,9 +46,9 @@ export default function Input<T extends FieldValues>({
         })}
         {...rest}
       />
-      {error?.message && (
-        <p className="text-red-500 text-sm mx-5 absolute bottom-[-20px]">{error.message}</p>
-      )}
+      <p className="mx-3 min-h-[20px] text-sm text-red-500">
+        {error?.message && error.message}
+      </p>
     </fieldset>
   );
 }
