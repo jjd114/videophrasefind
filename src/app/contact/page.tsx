@@ -4,6 +4,7 @@ import ContactForm from "@/app/components/ContactForm";
 
 export const metadata: Metadata = {
   title: "Contact",
+  description: "Contact form is here to help you resolve your questions",
 };
 
 export default function Contact() {
