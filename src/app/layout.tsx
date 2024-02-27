@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import { Analytics } from "@vercel/analytics/react";
 
 import { Header } from "@/app/components/Header";
 import { Footer } from "@/app/components/Footer";
@@ -28,6 +29,7 @@ export default function RootLayout({
       <body
         className={`${inter.className} flex min-h-screen flex-col bg-[#161E2A]`}
       >
+        <Analytics />
         <QueryProvider>
           <Header />
           <main className="flex flex-1 bg-[#161E2A] px-3 py-7 sm:px-7">
