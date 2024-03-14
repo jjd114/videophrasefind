@@ -5,9 +5,9 @@ import { secondsToVttFormat } from "../utils/json.schema";
 
 export const transcriptionsSchema = z
   .object({
-    value: z.string(), // (1) вопрос может ли api возвращать тут быть массив строк, как в прошлом
-    start: z.number(), // вопрос в секундах ли это, по-моему да 🤔
-    end: z.number(), // вопрос в секундах ли это, по-моему да 🤔
+    value: z.string(),
+    start: z.number(),
+    end: z.number(),
   })
   .array()
   .transform((transcriptions) => {
@@ -15,7 +15,7 @@ export const transcriptionsSchema = z
       (transcription) =>
         `${secondsToVttFormat(transcription.start)} --> ${secondsToVttFormat(
           transcription.end,
-        )}\n- ${transcription.value}\n`, // (1) нужен ли тут тогда этот join (нет)
+        )}\n- ${transcription.value}\n`,
     );
 
     return {
