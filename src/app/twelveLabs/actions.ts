@@ -6,7 +6,7 @@ import { engine } from "@/app/twelveLabs/engines";
 
 import { transcriptionsSchema } from "@/app/twelveLabs/utils";
 
-export async function uploadLocalVideoOn12Lab(videoUrl: string) {
+export async function uploadAndIndexVideoOn12Lab(videoUrl: string) {
   console.log("uploading to 12labs....");
   const task = await client12Labs.task.create({
     indexId: process.env.TWELVE_LABS_GLOBAL_INDEX_ID as string,

@@ -17,7 +17,7 @@ import {
   getUploadUrl,
   triggerVideoTranscription,
 } from "@/app/actions";
-import { uploadLocalVideoOn12Lab } from "@/app/twelveLabs/actions";
+import { uploadAndIndexVideoOn12Lab } from "@/app/twelveLabs/actions";
 
 import Loader from "@/app/video/[...s3DirectoryPath]/loader";
 
@@ -73,7 +73,9 @@ export default function VideoForm() {
       const mutationResponse = await uploadMutation.mutateAsync();
       console.log("video uploading to s3 finished");
 
-      const videoId = await uploadLocalVideoOn12Lab(mutationResponse.videoUrl);
+      const videoId = await uploadAndIndexVideoOn12Lab(
+        mutationResponse.videoUrl,
+      );
 
       return {
         videoId: videoId,
@@ -81,13 +83,25 @@ export default function VideoForm() {
       };
     };
 
-    console.log("start");
-    const res = await localUpload();
-    console.log(res);
-    console.log("end");
+    const externalSourceUpload = async () => {
+      console.log("video uploading to s3 started");
+      // await triggerVideoTranscription(formData.videoUrl);
+      // fetch(getVideoUrl(encodeURIComponent(formData.videoUrl)))
+      // setInterval(fetch^,500) if 200 -> uploadAndIndexVideoOn12Lab  else -> fetch again
+      console.log("video uploading to s3 finished");
+
+      return {
+        videoId: "videoId",
+        s3Directory: encodeURIComponent("helloworld"), // s3Directory: encodeURIComponent(youtube-link)
+      };
+    };
+
+    const { videoId, s3Directory } = formData.videoUrl
+      ? await externalSourceUpload()
+      : await localUpload();
 
     startTransition(() => {
-      router.push(`/video/${res.s3Directory}?videoId=${res.videoId}`);
+      router.push(`/video/${s3Directory}?videoId=${videoId}`);
     });
   });
 
