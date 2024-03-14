@@ -3,7 +3,7 @@ import { engine } from "@/app/twelveLabs/engines";
 
 export const createIndex = async () => {
   const index = await client12Labs.index.create({
-    name: "ANY_VIDEOS",
+    name: "ANY",
     engines: engine,
     addons: ["thumbnail"],
   });
