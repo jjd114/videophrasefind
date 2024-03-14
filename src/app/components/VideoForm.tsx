@@ -17,6 +17,7 @@ import {
   getUploadUrl,
   triggerVideoTranscription,
 } from "@/app/actions";
+import { uploadLocalVideoOn12Lab } from "@/app/twelveLabs/actions";
 
 import Loader from "@/app/video/[...s3DirectoryPath]/loader";
 
@@ -67,19 +68,26 @@ export default function VideoForm() {
   });
 
   const onSubmit = handleSubmit(async (formData) => {
-    const { videoUrl, s3Directory } = formData.videoUrl
-      ? {
-          videoUrl: formData.videoUrl,
-          s3Directory: encodeURIComponent(formData.videoUrl),
-        }
-      : await uploadMutation.mutateAsync();
+    const localUpload = async () => {
+      console.log("video uploading to s3 started");
+      const mutationResponse = await uploadMutation.mutateAsync();
+      console.log("video uploading to s3 finished");
 
-    console.log({ videoUrl, s3Directory });
-    const json = await fetchTranscriptionResult(s3Directory);
-    if (!json) await triggerVideoTranscription(videoUrl);
+      const videoId = await uploadLocalVideoOn12Lab(mutationResponse.videoUrl);
+
+      return {
+        videoId: videoId,
+        s3Directory: mutationResponse.s3Directory, // s3Directory: uuid
+      };
+    };
+
+    console.log("start");
+    const res = await localUpload();
+    console.log(res);
+    console.log("end");
 
     startTransition(() => {
-      router.push(`/video/${s3Directory}`);
+      router.push(`/video/${res.s3Directory}?videoId=${res.videoId}`);
     });
   });
 

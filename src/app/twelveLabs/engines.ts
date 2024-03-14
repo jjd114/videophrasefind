@@ -2,7 +2,7 @@
 const marengo = [
   {
     name: "marengo2.6",
-    options: ["conversation"],
+    options: ["visual", "conversation", "text_in_video", "logo"],
   },
 ];
 
@@ -14,4 +14,4 @@ const pegasus = [
   },
 ];
 
-export const engine = pegasus;
+export const engine = marengo;

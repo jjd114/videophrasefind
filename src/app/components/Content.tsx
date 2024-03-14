@@ -9,8 +9,7 @@ import Search from "@/app/components/Search";
 
 import useZodForm from "@/app/hooks/useZodForm";
 
-import { JsonSchema } from "@/app/utils/json.schema";
-import { STEP, useThumbnailer } from "@/app/utils/thumbnailer";
+import { TranscriptionsSchema } from "@/app/twelveLabs/utils";
 import useRefresher from "@/app/utils/useRefresher";
 
 import Loader from "@/app/video/[...s3DirectoryPath]/loader";
@@ -20,7 +19,7 @@ export const schema = z.object({
 });
 
 interface Props {
-  data: JsonSchema | null;
+  data: TranscriptionsSchema | null;
   videoUrl: string | null;
 }
 
@@ -51,8 +50,6 @@ const Content = ({ data, videoUrl }: Props) => {
     },
     mode: "onBlur",
   });
-
-  const { thumbnails } = useThumbnailer(videoUrl);
 
   const searchQuery = watch("searchQuery");
 
@@ -115,10 +112,7 @@ const Content = ({ data, videoUrl }: Props) => {
                     key={entry.from}
                     entry={entry}
                     videoRef={videoRef}
-                    thumbnailSrc={
-                      thumbnails[Math.floor(entry.from / (STEP * 1000))] ||
-                      _.last(thumbnails)
-                    }
+                    thumbnailSrc={"https://github.com/shadcn.png"}
                   />
                 );
               })}

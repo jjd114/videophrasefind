@@ -42,7 +42,7 @@ export default function CaptionsEntry({
           <img
             src={thumbnailSrc}
             className="max-h-fit w-full overflow-hidden rounded-xl"
-            alt=""
+            alt="thumbnail"
           />
         )}
       </div>

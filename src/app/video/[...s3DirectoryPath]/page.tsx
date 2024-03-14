@@ -3,11 +3,15 @@ import { type Metadata } from "next";
 
 import Content from "@/app/components/Content";
 
-import { fetchTranscriptionResult, getVideoUrl } from "@/app/actions";
+import { getVideoUrl } from "@/app/actions";
+import { generateTranscriptions } from "@/app/twelveLabs/actions";
 
 interface Props {
   params: {
     s3DirectoryPath: string;
+  };
+  searchParams: {
+    videoId: string;
   };
 }
 
@@ -25,12 +29,12 @@ export const metadata: Metadata = {
     "Here you can see your transcribed video and search for keywords without watching the video",
 };
 
-export default async function VideoPage({ params }: Props) {
+export default async function VideoPage({ params, searchParams }: Props) {
   const s3DirectoryPath = fixEncoding(params.s3DirectoryPath);
 
   const [videoUrl, transcriptionData] = await Promise.all([
     getVideoUrl(s3DirectoryPath),
-    fetchTranscriptionResult(s3DirectoryPath),
+    generateTranscriptions(searchParams.videoId),
   ]);
 
   return <Content videoUrl={videoUrl} data={transcriptionData} />;
