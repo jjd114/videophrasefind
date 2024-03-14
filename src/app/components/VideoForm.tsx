@@ -84,13 +84,15 @@ export default function VideoForm() {
     };
 
     const externalSourceUpload = async () => {
-      console.log("video uploading to s3 started");
-      await triggerVideoTranscription(formData.videoUrl); // to upload video to s3 bucket
+      const triggerRes = await triggerVideoTranscription(formData.videoUrl); // to upload video to s3 bucket in our case
+      console.log("video uploading to s3 started: " + triggerRes);
 
       const url = await getVideoUrl(encodeURIComponent(formData.videoUrl));
+
+      const s3BucketVideoUrl = url ? url : "todo:? polling() implementation";
       console.log("video uploading to s3 finished");
 
-      const videoId = await uploadAndIndexVideoOn12Lab(url as string);
+      const videoId = await uploadAndIndexVideoOn12Lab(s3BucketVideoUrl);
 
       return {
         videoId,
