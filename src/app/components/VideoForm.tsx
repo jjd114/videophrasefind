@@ -13,8 +13,8 @@ import Button from "@/app/components/Button";
 import Input from "@/app/components/Input";
 
 import {
-  fetchTranscriptionResult,
   getUploadUrl,
+  getVideoUrl,
   triggerVideoTranscription,
 } from "@/app/actions";
 import { uploadAndIndexVideoOn12Lab } from "@/app/twelveLabs/actions";
@@ -85,14 +85,16 @@ export default function VideoForm() {
 
     const externalSourceUpload = async () => {
       console.log("video uploading to s3 started");
-      // await triggerVideoTranscription(formData.videoUrl);
-      // fetch(getVideoUrl(encodeURIComponent(formData.videoUrl)))
-      // setInterval(fetch^,500) if 200 -> uploadAndIndexVideoOn12Lab  else -> fetch again
+      await triggerVideoTranscription(formData.videoUrl); // to upload video to s3 bucket
+
+      const url = await getVideoUrl(encodeURIComponent(formData.videoUrl));
       console.log("video uploading to s3 finished");
 
+      const videoId = await uploadAndIndexVideoOn12Lab(url as string);
+
       return {
-        videoId: "videoId",
-        s3Directory: encodeURIComponent("helloworld"), // s3Directory: encodeURIComponent(youtube-link)
+        videoId,
+        s3Directory: encodeURIComponent(formData.videoUrl), // s3Directory: encodeURIComponent(youtube-link)
       };
     };
 

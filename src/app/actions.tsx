@@ -16,8 +16,10 @@ export async function triggerVideoTranscription(rawVideoUrl: string) {
     body: JSON.stringify({ url: rawVideoUrl }),
     cache: "no-cache",
   });
+
   // Add a delay to make sure that request above has hit the API
   await new Promise((res) => setTimeout(res, 8000));
+
   return "triggered";
 }
 
