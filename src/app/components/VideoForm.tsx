@@ -83,7 +83,7 @@ export default function VideoForm() {
       };
     };
 
-    const externalSourceUpload = async () => {
+    const videoUrlUpload = async () => {
       const triggerRes = await triggerVideoTranscription(formData.videoUrl); // to upload video to s3 bucket in our case
       console.log("video uploading to s3 started: " + triggerRes);
 
@@ -101,7 +101,7 @@ export default function VideoForm() {
     };
 
     const { videoId, s3Directory } = formData.videoUrl
-      ? await externalSourceUpload()
+      ? await videoUrlUpload()
       : await localUpload();
 
     startTransition(() => {
