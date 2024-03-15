@@ -17,11 +17,7 @@ import {
   getVideoUrl,
   triggerVideoTranscription,
 } from "@/app/actions";
-import {
-  getTaskStatus,
-  getTaskVideoId,
-  uploadAndIndexVideoOn12Lab,
-} from "@/app/twelveLabs/actions";
+import { getTaskStatus, uploadVideoOn12Lab } from "@/app/twelveLabs/actions";
 
 import Loader from "@/app/video/[...s3DirectoryPath]/loader";
 
@@ -36,7 +32,8 @@ export const schema = z.object({
 export default function VideoForm() {
   const router = useRouter();
 
-  const [status, setStatus] = useState("");
+  const [taskStatus12Labs, setTaskStatus12Labs] = useState("");
+  const [time, setTime] = useState("");
 
   const [isPending, startTransition] = useTransition();
 
@@ -74,17 +71,40 @@ export default function VideoForm() {
   });
 
   const onSubmit = handleSubmit(async (formData) => {
+    const waitForTaskReady = async (taskId: string) => {
+      let vidId = "";
+      let st = "";
+
+      while (st !== "ready") {
+        const { status, videoId, estimatedTime } = await getTaskStatus(taskId);
+
+        vidId = videoId;
+        st = status;
+
+        console.log(status);
+        console.log(vidId);
+        console.log(estimatedTime ? estimatedTime : "no estimated time yet");
+
+        setTaskStatus12Labs(status);
+        setTime(estimatedTime ? estimatedTime : "no estimated time yet");
+
+        await new Promise((res) => setTimeout(res, 1000));
+      }
+
+      return vidId;
+    };
+
     const localUpload = async () => {
       console.log("video uploading to s3 started");
       const mutationResponse = await uploadMutation.mutateAsync();
       console.log("video uploading to s3 finished");
 
-      const videoId = await uploadAndIndexVideoOn12Lab(
-        mutationResponse.videoUrl,
-      );
+      const taskId = await uploadVideoOn12Lab(mutationResponse.videoUrl);
+
+      const videoId = await waitForTaskReady(taskId);
 
       return {
-        videoId: videoId,
+        videoId,
         s3Directory: mutationResponse.s3Directory, // s3Directory: uuid
       };
     };
@@ -98,27 +118,12 @@ export default function VideoForm() {
       const s3BucketVideoUrl = url ? url : "todo:? polling() implementation";
       console.log("video uploading to s3 finished");
 
-      const taskId = await uploadAndIndexVideoOn12Lab(s3BucketVideoUrl);
+      const taskId = await uploadVideoOn12Lab(s3BucketVideoUrl);
 
-      let s = "";
-      let vid = "";
-
-      while (s !== "ready") {
-        const { status, videoId } = await getTaskStatus(taskId);
-
-        vid = videoId;
-        s = status;
-
-        console.log(status);
-        console.log(vid);
-
-        setStatus(status);
-
-        await new Promise((res) => setTimeout(res, 1000));
-      }
+      const videoId = await waitForTaskReady(taskId);
 
       return {
-        videoId: vid,
+        videoId,
         s3Directory: encodeURIComponent(formData.videoUrl), // s3Directory: encodeURIComponent(youtube-link)
       };
     };
@@ -143,7 +148,7 @@ export default function VideoForm() {
     return (
       <div className="flex w-full max-w-[512px]">
         <Loader
-          message={`Initializing video processing: status=${status}...`}
+          message={`Video processing: status=${taskStatus12Labs}...\n, estimated time: ${time}`}
         />
       </div>
     );

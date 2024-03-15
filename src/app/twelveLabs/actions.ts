@@ -7,29 +7,9 @@ import { client12Labs } from "@/app/twelveLabs/client";
 import { engine } from "@/app/twelveLabs/engines";
 import { transcriptionsSchema } from "@/app/twelveLabs/utils";
 
-export async function getTaskVideoId(taskId: string) {
-  const url = `https://api.twelvelabs.io/v1.2/tasks/${taskId}`;
-
-  const options: Parameters<typeof fetch>[1] = {
-    method: "GET",
-    headers: {
-      accept: "application/json",
-      "x-api-key": process.env.TWELVE_LABS_API_KEY as string,
-      "Content-Type": "application/json",
-    },
-    cache: "no-cache",
-  };
-
-  console.log("videoId loading...");
-  const response = await fetch(url, options);
-
-  const task = await response.json();
-  console.log("videoId loading finish...");
-
-  return task.videoId;
-}
-
 export async function getTaskStatus(taskId: string) {
+  console.log("taskId:" + taskId);
+
   const url = `https://api.twelvelabs.io/v1.2/tasks/${taskId}`;
 
   const options: Parameters<typeof fetch>[1] = {
@@ -41,35 +21,26 @@ export async function getTaskStatus(taskId: string) {
     },
     cache: "no-cache",
   };
-
-  console.log(taskId);
 
   console.log("status loading...");
   const response = await fetch(url, options);
-
   const task = await response.json();
   console.log("status loading finish");
 
-  console.log(task);
-
-  console.log(task.status);
-
-  return { status: task.status, videoId: task.video_id };
+  return {
+    status: task.status,
+    videoId: task.video_id,
+    estimatedTime: task.estimated_time,
+  };
 }
 
-export async function uploadAndIndexVideoOn12Lab(videoUrl: string) {
+export async function uploadVideoOn12Lab(videoUrl: string) {
   console.log("uploading to 12labs....");
   const task = await client12Labs.task.create({
     indexId: process.env.TWELVE_LABS_GLOBAL_INDEX_ID as string,
     url: videoUrl,
   });
   console.log("uploading to 12labs finished");
-
-  // console.log("indexing....");
-  // await task.waitForDone(500, () => {
-  //   console.log(`Task status=${task.status}`);
-  // });
-  // console.log("indexing finished");
 
   return task.id;
 }
