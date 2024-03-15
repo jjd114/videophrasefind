@@ -112,7 +112,6 @@ const Content = ({ data, videoUrl }: Props) => {
                     key={entry.from}
                     entry={entry}
                     videoRef={videoRef}
-                    thumbnailSrc={"https://github.com/shadcn.png"}
                   />
                 );
               })}
