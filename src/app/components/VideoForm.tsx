@@ -17,7 +17,7 @@ import {
   getVideoUrl,
   triggerVideoTranscription,
 } from "@/app/actions";
-import { getTaskStatus, uploadVideoOn12Lab } from "@/app/twelveLabs/actions";
+import { getTaskStatus, uploadVideoOn12Labs } from "@/app/twelveLabs/actions";
 
 import Loader from "@/app/video/[...s3DirectoryPath]/loader";
 
@@ -99,7 +99,7 @@ export default function VideoForm() {
       const mutationResponse = await uploadMutation.mutateAsync();
       console.log("video uploading to s3 finished");
 
-      const taskId = await uploadVideoOn12Lab(mutationResponse.videoUrl);
+      const taskId = await uploadVideoOn12Labs(mutationResponse.videoUrl);
 
       const videoId = await waitForTaskReady(taskId);
 
@@ -118,7 +118,7 @@ export default function VideoForm() {
       const s3BucketVideoUrl = url ? url : "todo:? polling() implementation";
       console.log("video uploading to s3 finished");
 
-      const taskId = await uploadVideoOn12Lab(s3BucketVideoUrl);
+      const taskId = await uploadVideoOn12Labs(s3BucketVideoUrl);
 
       const videoId = await waitForTaskReady(taskId);
 

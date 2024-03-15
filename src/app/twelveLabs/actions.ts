@@ -34,7 +34,7 @@ export async function getTaskStatus(taskId: string) {
   };
 }
 
-export async function uploadVideoOn12Lab(videoUrl: string) {
+export async function uploadVideoOn12Labs(videoUrl: string) {
   console.log("uploading to 12labs....");
   const task = await client12Labs.task.create({
     indexId: process.env.TWELVE_LABS_GLOBAL_INDEX_ID as string,
