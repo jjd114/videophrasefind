@@ -3,7 +3,7 @@
 import { useDropzone, FileWithPath } from "react-dropzone";
 import { z } from "zod";
 import { useMutation } from "@tanstack/react-query";
-import { useTransition } from "react";
+import { useState, useTransition } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 
@@ -17,7 +17,11 @@ import {
   getVideoUrl,
   triggerVideoTranscription,
 } from "@/app/actions";
-import { uploadAndIndexVideoOn12Lab } from "@/app/twelveLabs/actions";
+import {
+  getTaskStatus,
+  getTaskVideoId,
+  uploadAndIndexVideoOn12Lab,
+} from "@/app/twelveLabs/actions";
 
 import Loader from "@/app/video/[...s3DirectoryPath]/loader";
 
@@ -31,6 +35,8 @@ export const schema = z.object({
 
 export default function VideoForm() {
   const router = useRouter();
+
+  const [status, setStatus] = useState("");
 
   const [isPending, startTransition] = useTransition();
 
@@ -92,10 +98,27 @@ export default function VideoForm() {
       const s3BucketVideoUrl = url ? url : "todo:? polling() implementation";
       console.log("video uploading to s3 finished");
 
-      const videoId = await uploadAndIndexVideoOn12Lab(s3BucketVideoUrl);
+      const taskId = await uploadAndIndexVideoOn12Lab(s3BucketVideoUrl);
+
+      let s = "";
+      let vid = "";
+
+      while (s !== "ready") {
+        const { status, videoId } = await getTaskStatus(taskId);
+
+        vid = videoId;
+        s = status;
+
+        console.log(status);
+        console.log(vid);
+
+        setStatus(status);
+
+        await new Promise((res) => setTimeout(res, 1000));
+      }
 
       return {
-        videoId,
+        videoId: vid,
         s3Directory: encodeURIComponent(formData.videoUrl), // s3Directory: encodeURIComponent(youtube-link)
       };
     };
@@ -119,7 +142,9 @@ export default function VideoForm() {
   if (isSubmitting || isPending)
     return (
       <div className="flex w-full max-w-[512px]">
-        <Loader message="Initializing video processing" />
+        <Loader
+          message={`Initializing video processing: status=${status}...`}
+        />
       </div>
     );
 
