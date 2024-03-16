@@ -40,10 +40,12 @@ export default async function VideoPage({ params, searchParams }: Props) {
     generateTranscriptions(searchParams.videoId),
   ]);
 
-  const thumbnails = await retrieveThumbnails(
-    transcriptionData.parsedCaptions,
-    searchParams.videoId,
-  );
+  // const thumbnails = await retrieveThumbnails(
+  //   transcriptionData.parsedCaptions,
+  //   searchParams.videoId,
+  // );
+
+  const thumbnails: string[] = [];
 
   return (
     <Content

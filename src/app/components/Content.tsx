@@ -107,13 +107,12 @@ const Content = ({ data, videoUrl, thumbnails }: Props) => {
               Results: {filteredCaptions?.length || 0}
             </div>
             <div className="overflow-y-auto">
-              {filteredCaptions?.map((entry, index) => {
+              {filteredCaptions?.map((entry) => {
                 return (
                   <CaptionsEntry
                     key={entry.from}
                     videoRef={videoRef}
                     entry={entry}
-                    thumbnailSrc={thumbnails[index]}
                   />
                 );
               })}
