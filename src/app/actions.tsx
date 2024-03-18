@@ -19,6 +19,8 @@ export async function triggerVideoTranscription(rawVideoUrl: string) {
 
   // Add a delay to make sure that request above has hit the API
   await new Promise((res) => setTimeout(res, 8000));
+
+  return "triggered";
 }
 
 export async function getVideoUrl(s3Directory: string) {
