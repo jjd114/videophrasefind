@@ -126,28 +126,38 @@ export default function VideoForm() {
       };
     };
 
-    // const videoUrlUpload = async () => {
-    //   const triggerRes = await triggerVideoTranscription(formData.videoUrl); // to upload video to s3 bucket in our case
-    //   console.log("video uploading to s3 started: " + triggerRes);
+    const videoUrlUpload = async () => {
+      const triggerRes = await triggerVideoTranscription(formData.videoUrl); // to upload video to s3 bucket in our case
+      console.log("video uploading to s3 started: " + triggerRes);
 
-    //   const url = await getVideoUrl(encodeURIComponent(formData.videoUrl));
+      const url = await getVideoUrl(encodeURIComponent(formData.videoUrl));
 
-    //   const s3BucketVideoUrl = url ? url : "todo:? polling() implementation";
-    //   console.log("video uploading to s3 finished");
+      const s3BucketVideoUrl = url ? url : "todo:? polling() implementation";
+      console.log("video uploading to s3 finished");
 
-    //   const taskId = await uploadVideoOn12Labs(s3BucketVideoUrl);
+      const indexId = await trigger12LabsVideoUpload(s3BucketVideoUrl);
+      console.log("indexId: " + indexId);
+      setTaskStatus12Labs("upload video on 12 labs");
 
-    //   const videoId = await waitForVideoTranscriptionsReady(taskId);
+      const taskId = await waitForUploadOn12LabsReady(indexId);
+      console.log("taskId: " + taskId);
 
-    //   return {
-    //     videoId,
-    //     s3Directory: encodeURIComponent(formData.videoUrl), // s3Directory: encodeURIComponent(youtube-link)
-    //   };
-    // };
+      await waitForVideoTranscriptionsReady(taskId);
 
-    const { videoId, indexId, s3Directory } = await localUpload();
+      const videoId = await getTaskVideoId(taskId);
 
-    console.log(videoId, s3Directory);
+      return {
+        videoId,
+        indexId,
+        s3Directory: encodeURIComponent(formData.videoUrl), // s3Directory: encodeURIComponent(youtube-link)
+      };
+    };
+
+    const { videoId, indexId, s3Directory } = formData.videoUrl
+      ? await videoUrlUpload()
+      : await localUpload();
+
+    console.log(videoId, s3Directory, indexId);
 
     startTransition(() => {
       router.push(
