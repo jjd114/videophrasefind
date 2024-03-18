@@ -37,7 +37,7 @@ export const schema = z.object({
 export default function VideoForm() {
   const router = useRouter();
 
-  const [taskStatus12Labs, setTaskStatus12Labs] = useState("no status");
+  const [status, setStatus] = useState("no status");
 
   const [isPending, startTransition] = useTransition();
 
@@ -83,7 +83,7 @@ export default function VideoForm() {
 
         console.log(status);
 
-        setTaskStatus12Labs(status);
+        setStatus(status);
 
         await new Promise((res) => setTimeout(res, 1000));
       }
@@ -103,14 +103,29 @@ export default function VideoForm() {
       return data[0]._id;
     };
 
+    const waitUntilExternalLinkVideoAppearOnS3 = async () => {
+      let url = await getVideoUrl(encodeURIComponent(formData.videoUrl));
+
+      while (url === null) {
+        url = await getVideoUrl(encodeURIComponent(formData.videoUrl));
+
+        console.log(url);
+
+        await new Promise((res) => setTimeout(res, 500));
+      }
+
+      return url;
+    };
+
     const localUpload = async () => {
       console.log("video uploading to s3 started");
+      setStatus("upload your video to our storage");
       const mutationResponse = await uploadMutation.mutateAsync();
       console.log("video uploading to s3 finished");
 
       const indexId = await trigger12LabsVideoUpload(mutationResponse.videoUrl);
       console.log("indexId: " + indexId);
-      setTaskStatus12Labs("upload video on 12 labs");
+      setStatus("upload video on 12 labs");
 
       const taskId = await waitForUploadOn12LabsReady(indexId);
       console.log("taskId: " + taskId);
@@ -127,17 +142,17 @@ export default function VideoForm() {
     };
 
     const videoUrlUpload = async () => {
-      const triggerRes = await triggerVideoTranscription(formData.videoUrl); // to upload video to s3 bucket in our case
-      console.log("video uploading to s3 started: " + triggerRes);
+      setStatus("triggering video upload to our storage");
+      await triggerVideoTranscription(formData.videoUrl); // to upload video to s3 bucket in our case
 
-      const url = await getVideoUrl(encodeURIComponent(formData.videoUrl));
-
-      const s3BucketVideoUrl = url ? url : "todo:? polling() implementation";
+      console.log("video uploading to s3 started");
+      setStatus("uploading your video to our storage");
+      const s3BucketVideoUrl = await waitUntilExternalLinkVideoAppearOnS3();
       console.log("video uploading to s3 finished");
 
       const indexId = await trigger12LabsVideoUpload(s3BucketVideoUrl);
       console.log("indexId: " + indexId);
-      setTaskStatus12Labs("upload video on 12 labs");
+      setStatus("upload video on 12 labs");
 
       const taskId = await waitForUploadOn12LabsReady(indexId);
       console.log("taskId: " + taskId);
@@ -176,7 +191,7 @@ export default function VideoForm() {
   if (isSubmitting || isPending)
     return (
       <div className="flex w-full max-w-[512px]">
-        <Loader message={`Video processing.. status=${taskStatus12Labs}`} />
+        <Loader message={`Video processing.. status=${status}`} />
       </div>
     );
 
