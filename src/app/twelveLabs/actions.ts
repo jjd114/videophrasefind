@@ -7,6 +7,33 @@ import { client12Labs } from "@/app/twelveLabs/client";
 import { engine } from "@/app/twelveLabs/engines";
 import { transcriptionsSchema } from "@/app/twelveLabs/utils";
 
+const statuses = [
+  "validating",
+  "pending",
+  "indexing",
+  "ready",
+  "failed",
+] as const;
+
+const taskSchema = z
+  .object({
+    _id: z.string(),
+    video_id: z.string(),
+    status: z.enum(statuses),
+  })
+  .passthrough();
+
+const tasksSchema = z.object({
+  data: z.array(
+    z
+      .object({
+        _id: z.string(),
+      })
+      .passthrough(),
+  ),
+  page_info: z.object({ page: z.number() }).passthrough(),
+});
+
 export async function getTaskVideoId(taskId: string) {
   const url = `https://api.twelvelabs.io/v1.2/tasks/${taskId}`;
 
@@ -22,7 +49,7 @@ export async function getTaskVideoId(taskId: string) {
 
   const response = await fetch(url, options);
 
-  const task = await response.json();
+  const task = taskSchema.parse(await response.json());
 
   return task.video_id;
 }
@@ -40,10 +67,9 @@ export async function getTaskStatus(taskId: string) {
     cache: "no-cache",
   };
 
-  console.log("status loading...");
   const response = await fetch(url, options);
-  const task = await response.json();
-  console.log("status loading finish");
+
+  const task = taskSchema.parse(await response.json());
 
   return task.status;
 }
@@ -78,7 +104,7 @@ export async function getTaskData(indexId: string) {
 
   const response = await fetch(url, options);
 
-  const json = await response.json();
+  const json = tasksSchema.parse(await response.json());
 
   return json.data;
 }
