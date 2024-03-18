@@ -15,6 +15,7 @@ interface Props {
   };
   searchParams: {
     videoId: string;
+    indexId: string;
   };
 }
 
@@ -37,7 +38,7 @@ export default async function VideoPage({ params, searchParams }: Props) {
 
   const [videoUrl, transcriptionData] = await Promise.all([
     getVideoUrl(s3DirectoryPath),
-    generateTranscriptions(searchParams.videoId),
+    generateTranscriptions(searchParams.videoId, searchParams.indexId),
   ]);
 
   // const thumbnails = await retrieveThumbnails(

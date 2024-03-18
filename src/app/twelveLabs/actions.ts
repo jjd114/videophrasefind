@@ -7,9 +7,27 @@ import { client12Labs } from "@/app/twelveLabs/client";
 import { engine } from "@/app/twelveLabs/engines";
 import { transcriptionsSchema } from "@/app/twelveLabs/utils";
 
-export async function getTaskStatus(taskId: string) {
-  console.log("taskId:" + taskId);
+export async function getTaskVideoId(taskId: string) {
+  const url = `https://api.twelvelabs.io/v1.2/tasks/${taskId}`;
 
+  const options: Parameters<typeof fetch>[1] = {
+    method: "GET",
+    headers: {
+      accept: "application/json",
+      "x-api-key": process.env.TWELVE_LABS_API_KEY as string,
+      "Content-Type": "application/json",
+    },
+    cache: "no-cache",
+  };
+
+  const response = await fetch(url, options);
+
+  const task = await response.json();
+
+  return task.video_id;
+}
+
+export async function getTaskStatus(taskId: string) {
   const url = `https://api.twelvelabs.io/v1.2/tasks/${taskId}`;
 
   const options: Parameters<typeof fetch>[1] = {
@@ -27,28 +45,48 @@ export async function getTaskStatus(taskId: string) {
   const task = await response.json();
   console.log("status loading finish");
 
-  return {
-    status: task.status,
-    videoId: task.video_id,
-    estimatedTime: task.estimated_time,
-  };
+  return task.status;
 }
 
-export async function uploadVideoOn12Labs(videoUrl: string) {
-  console.log("uploading to 12labs....");
-  const task = await client12Labs.task.create({
-    indexId: process.env.TWELVE_LABS_GLOBAL_INDEX_ID as string,
+export async function trigger12LabsVideoUpload(videoUrl: string) {
+  const { id } = await client12Labs.index.create({
+    name: videoUrl,
+    engines: engine,
+    addons: ["thumbnail"],
+  });
+
+  client12Labs.task.create({
+    indexId: id,
     url: videoUrl,
   });
-  console.log("uploading to 12labs finished");
 
-  return task.id;
+  return id;
 }
 
-export async function generateTranscriptions(videoId: string) {
+export async function getTaskData(indexId: string) {
+  const url = `https://api.twelvelabs.io/v1.2/tasks?page=1&page_limit=10&sort_by=created_at&sort_option=desc&index_id=${indexId}`;
+
+  const options: Parameters<typeof fetch>[1] = {
+    method: "GET",
+    headers: {
+      accept: "application/json",
+      "x-api-key": process.env.TWELVE_LABS_API_KEY as string,
+      "Content-Type": "application/json",
+    },
+    cache: "no-cache",
+  };
+
+  const response = await fetch(url, options);
+
+  const json = await response.json();
+
+  return json.data;
+}
+
+export async function generateTranscriptions(videoId: string, indexId: string) {
   console.log("generating transcriptions....");
   const transcriptions = await client12Labs.index.video.transcription(
-    process.env.TWELVE_LABS_GLOBAL_INDEX_ID as string,
+    indexId,
     videoId,
   );
   console.log("generation transcriptions finish");

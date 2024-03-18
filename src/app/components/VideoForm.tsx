@@ -17,7 +17,12 @@ import {
   getVideoUrl,
   triggerVideoTranscription,
 } from "@/app/actions";
-import { getTaskStatus, uploadVideoOn12Labs } from "@/app/twelveLabs/actions";
+import {
+  getTaskStatus,
+  trigger12LabsVideoUpload,
+  getTaskData,
+  getTaskVideoId,
+} from "@/app/twelveLabs/actions";
 
 import Loader from "@/app/video/[...s3DirectoryPath]/loader";
 
@@ -32,8 +37,7 @@ export const schema = z.object({
 export default function VideoForm() {
   const router = useRouter();
 
-  const [taskStatus12Labs, setTaskStatus12Labs] = useState("");
-  const [time, setTime] = useState("");
+  const [taskStatus12Labs, setTaskStatus12Labs] = useState("no status");
 
   const [isPending, startTransition] = useTransition();
 
@@ -71,27 +75,32 @@ export default function VideoForm() {
   });
 
   const onSubmit = handleSubmit(async (formData) => {
-    const waitForTaskReady = async (taskId: string) => {
-      let vidId = "";
-      let st = "";
+    const waitForVideoTranscriptionsReady = async (taskId: string) => {
+      let status = await getTaskStatus(taskId);
 
-      while (st !== "ready") {
-        const { status, videoId, estimatedTime } = await getTaskStatus(taskId);
-
-        vidId = videoId;
-        st = status;
+      while (status !== "ready") {
+        status = await getTaskStatus(taskId);
 
         console.log(status);
-        console.log(vidId);
-        console.log(estimatedTime ? estimatedTime : "no estimated time yet");
 
         setTaskStatus12Labs(status);
-        setTime(estimatedTime ? estimatedTime : "no estimated time yet");
 
         await new Promise((res) => setTimeout(res, 1000));
       }
+    };
 
-      return vidId;
+    const waitForUploadOn12LabsReady = async (indexId: string) => {
+      let data = await getTaskData(indexId);
+
+      while (data.length === 0) {
+        data = await getTaskData(indexId);
+
+        console.log(data);
+
+        await new Promise((res) => setTimeout(res, 500));
+      }
+
+      return data[0]._id;
     };
 
     const localUpload = async () => {
@@ -99,41 +108,51 @@ export default function VideoForm() {
       const mutationResponse = await uploadMutation.mutateAsync();
       console.log("video uploading to s3 finished");
 
-      const taskId = await uploadVideoOn12Labs(mutationResponse.videoUrl);
+      const indexId = await trigger12LabsVideoUpload(mutationResponse.videoUrl);
+      console.log("indexId: " + indexId);
+      setTaskStatus12Labs("upload video on 12 labs");
 
-      const videoId = await waitForTaskReady(taskId);
+      const taskId = await waitForUploadOn12LabsReady(indexId);
+      console.log("taskId: " + taskId);
+
+      await waitForVideoTranscriptionsReady(taskId);
+
+      const videoId = await getTaskVideoId(taskId);
 
       return {
-        videoId,
+        videoId: videoId,
+        indexId,
         s3Directory: mutationResponse.s3Directory, // s3Directory: uuid
       };
     };
 
-    const videoUrlUpload = async () => {
-      const triggerRes = await triggerVideoTranscription(formData.videoUrl); // to upload video to s3 bucket in our case
-      console.log("video uploading to s3 started: " + triggerRes);
+    // const videoUrlUpload = async () => {
+    //   const triggerRes = await triggerVideoTranscription(formData.videoUrl); // to upload video to s3 bucket in our case
+    //   console.log("video uploading to s3 started: " + triggerRes);
 
-      const url = await getVideoUrl(encodeURIComponent(formData.videoUrl));
+    //   const url = await getVideoUrl(encodeURIComponent(formData.videoUrl));
 
-      const s3BucketVideoUrl = url ? url : "todo:? polling() implementation";
-      console.log("video uploading to s3 finished");
+    //   const s3BucketVideoUrl = url ? url : "todo:? polling() implementation";
+    //   console.log("video uploading to s3 finished");
 
-      const taskId = await uploadVideoOn12Labs(s3BucketVideoUrl);
+    //   const taskId = await uploadVideoOn12Labs(s3BucketVideoUrl);
 
-      const videoId = await waitForTaskReady(taskId);
+    //   const videoId = await waitForVideoTranscriptionsReady(taskId);
 
-      return {
-        videoId,
-        s3Directory: encodeURIComponent(formData.videoUrl), // s3Directory: encodeURIComponent(youtube-link)
-      };
-    };
+    //   return {
+    //     videoId,
+    //     s3Directory: encodeURIComponent(formData.videoUrl), // s3Directory: encodeURIComponent(youtube-link)
+    //   };
+    // };
 
-    const { videoId, s3Directory } = formData.videoUrl
-      ? await videoUrlUpload()
-      : await localUpload();
+    const { videoId, indexId, s3Directory } = await localUpload();
+
+    console.log(videoId, s3Directory);
 
     startTransition(() => {
-      router.push(`/video/${s3Directory}?videoId=${videoId}`);
+      router.push(
+        `/video/${s3Directory}?videoId=${videoId}&indexId=${indexId}`,
+      );
     });
   });
 
@@ -147,9 +166,7 @@ export default function VideoForm() {
   if (isSubmitting || isPending)
     return (
       <div className="flex w-full max-w-[512px]">
-        <Loader
-          message={`Video processing: status=${taskStatus12Labs}...\n, estimated time: ${time}`}
-        />
+        <Loader message={`Video processing.. status=${taskStatus12Labs}`} />
       </div>
     );
 
