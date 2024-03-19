@@ -10,7 +10,9 @@ import Search from "@/app/components/Search";
 import useZodForm from "@/app/hooks/useZodForm";
 
 import { TranscriptionsSchema } from "@/app/twelveLabs/utils";
+
 import useRefresher from "@/app/utils/useRefresher";
+import { useThumbnailer, STEP } from "@/app/utils/thumbnailer";
 
 import Loader from "@/app/video/[...s3DirectoryPath]/loader";
 
@@ -50,6 +52,8 @@ const Content = ({ data, videoUrl }: Props) => {
     },
     mode: "onBlur",
   });
+
+  const { thumbnails } = useThumbnailer(videoUrl);
 
   const searchQuery = watch("searchQuery");
 
@@ -112,6 +116,10 @@ const Content = ({ data, videoUrl }: Props) => {
                     key={entry.from}
                     videoRef={videoRef}
                     entry={entry}
+                    thumbnailSrc={
+                      thumbnails[Math.floor(entry.from / (STEP * 1000))] ||
+                      _.last(thumbnails)
+                    }
                   />
                 );
               })}
