@@ -123,7 +123,10 @@ export default function VideoForm() {
       const mutationResponse = await uploadMutation.mutateAsync();
       console.log("video uploading to s3 finished");
 
-      const indexId = await trigger12LabsVideoUpload(mutationResponse.videoUrl);
+      const indexId = await trigger12LabsVideoUpload(
+        mutationResponse.videoUrl,
+        mutationResponse.s3Directory,
+      );
       console.log("indexId: " + indexId);
       setStatus("upload video on 12 labs");
 
@@ -150,7 +153,10 @@ export default function VideoForm() {
       const s3BucketVideoUrl = await waitUntilExternalLinkVideoAppearOnS3();
       console.log("video uploading to s3 finished");
 
-      const indexId = await trigger12LabsVideoUpload(s3BucketVideoUrl);
+      const indexId = await trigger12LabsVideoUpload(
+        s3BucketVideoUrl,
+        encodeURIComponent(formData.videoUrl),
+      );
       console.log("indexId: " + indexId);
       setStatus("upload video on 12 labs");
 

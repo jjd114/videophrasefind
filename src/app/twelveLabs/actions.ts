@@ -74,9 +74,12 @@ export async function getTaskStatus(taskId: string) {
   return task.status;
 }
 
-export async function trigger12LabsVideoUpload(videoUrl: string) {
+export async function trigger12LabsVideoUpload(
+  videoUrl: string,
+  indexName: string,
+) {
   const { id } = await client12Labs.index.create({
-    name: videoUrl,
+    name: indexName,
     engines: engine,
     addons: ["thumbnail"],
   });
