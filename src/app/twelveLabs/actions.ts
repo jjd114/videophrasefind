@@ -1,7 +1,6 @@
 "use server";
 
 import { z } from "zod";
-import { Entry } from "@plussub/srt-vtt-parser/dist/src/types";
 
 import { client12Labs } from "@/app/twelveLabs/client";
 import { engine } from "@/app/twelveLabs/engines";
@@ -121,41 +120,6 @@ export async function generateTranscriptions(videoId: string, indexId: string) {
   console.log("generation transcriptions finish");
 
   return transcriptionsSchema.parse(transcriptions);
-}
-
-// mb better promise.all then sort?
-export async function retrieveThumbnails(
-  parsedCaptions: Entry[],
-  videoId: string,
-) {
-  const schema = z.object({
-    thumbnail: z.string(),
-  });
-
-  const url = `https://api.twelvelabs.io/v1.2/indexes/${process.env.TWELVE_LABS_GLOBAL_INDEX_ID as string}/videos/${videoId}/thumbnail`;
-
-  const options = {
-    method: "GET",
-    headers: {
-      accept: "application/json",
-      "x-api-key": process.env.TWELVE_LABS_API_KEY as string,
-      "Content-Type": "application/json",
-    },
-  };
-
-  let thumbnails: string[] = [];
-
-  for (let i = 0; i < parsedCaptions.length; i++) {
-    const time = Math.floor(parsedCaptions[i].from / 1000);
-
-    const response = await fetch(`${url}?time=${time}`, options);
-
-    const { thumbnail } = schema.parse(await response.json());
-
-    thumbnails = [...thumbnails, thumbnail];
-  }
-
-  return thumbnails;
 }
 
 export async function createIndex() {

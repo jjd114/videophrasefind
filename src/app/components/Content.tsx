@@ -21,7 +21,6 @@ export const schema = z.object({
 interface Props {
   data: TranscriptionsSchema | null;
   videoUrl: string | null;
-  thumbnails: string[];
 }
 
 function getLoaderMessage(videoDurationSeconds?: number) {
@@ -35,7 +34,7 @@ function getLoaderMessage(videoDurationSeconds?: number) {
   return "Waiting for transcription results. Your video is pretty large, it make take some time (up to half of the video duration). You can save this link and come back later!";
 }
 
-const Content = ({ data, videoUrl, thumbnails }: Props) => {
+const Content = ({ data, videoUrl }: Props) => {
   useRefresher({ enabled: !(data && videoUrl) });
 
   const videoRef = useRef<HTMLVideoElement>(null);

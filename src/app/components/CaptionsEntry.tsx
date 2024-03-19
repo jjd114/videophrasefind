@@ -28,7 +28,7 @@ export default function CaptionsEntry({
 }) {
   const handleClick = () => {
     if (videoRef.current) {
-      videoRef.current.currentTime = Math.floor(entry.from / 1000);
+      videoRef.current.currentTime = entry.from / 1000;
     }
   };
 

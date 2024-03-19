@@ -4,10 +4,7 @@ import { type Metadata } from "next";
 import Content from "@/app/components/Content";
 
 import { getVideoUrl } from "@/app/actions";
-import {
-  generateTranscriptions,
-  retrieveThumbnails,
-} from "@/app/twelveLabs/actions";
+import { generateTranscriptions } from "@/app/twelveLabs/actions";
 
 interface Props {
   params: {
@@ -41,18 +38,5 @@ export default async function VideoPage({ params, searchParams }: Props) {
     generateTranscriptions(searchParams.videoId, searchParams.indexId),
   ]);
 
-  // const thumbnails = await retrieveThumbnails(
-  //   transcriptionData.parsedCaptions,
-  //   searchParams.videoId,
-  // );
-
-  const thumbnails: string[] = [];
-
-  return (
-    <Content
-      videoUrl={videoUrl}
-      data={transcriptionData}
-      thumbnails={thumbnails}
-    />
-  );
+  return <Content videoUrl={videoUrl} data={transcriptionData} />;
 }
