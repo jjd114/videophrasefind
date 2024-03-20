@@ -12,7 +12,7 @@ import useZodForm from "@/app/hooks/useZodForm";
 import Button from "@/app/components/Button";
 import Input from "@/app/components/Input";
 
-import { getVideoUrl, triggerVideoTranscription } from "@/app/actions";
+import { getVideoUrl } from "@/app/actions";
 
 import {
   getTaskVideoId,
@@ -20,6 +20,7 @@ import {
   getUploadUrl,
   trigger12LabsVideoUpload,
   getTaskData,
+  triggerVideoUploadFromYoutubeLinkToS3,
 } from "@/app/twelveLabs/hono";
 
 import Loader from "@/app/video/[...s3DirectoryPath]/loader";
@@ -143,7 +144,7 @@ export default function VideoForm() {
 
     const videoUrlUpload = async () => {
       setStatus("triggering video upload to our storage");
-      await triggerVideoTranscription(formData.videoUrl); // to upload video to s3 bucket in our case
+      await triggerVideoUploadFromYoutubeLinkToS3(formData.videoUrl);
 
       console.log("video uploading to s3 started");
       setStatus("uploading your video to our storage");

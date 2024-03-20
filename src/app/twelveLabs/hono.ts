@@ -123,3 +123,25 @@ export async function getTaskVideoId(taskId: string) {
 
   return json.videoId;
 }
+
+export async function triggerVideoUploadFromYoutubeLinkToS3(videoUrl: string) {
+  const schema = z.object({ message: z.string() });
+
+  const options: FetchOptions = {
+    method: "POST",
+    headers: {
+      accept: "application/json",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      ytUrl: encodeURIComponent(videoUrl),
+    }),
+    cache: "no-cache",
+  };
+
+  const response = await fetch(`${API_URL}/upload/s3/trigger`, options);
+
+  const json = schema.parse(await response.json());
+
+  return json.message;
+}
