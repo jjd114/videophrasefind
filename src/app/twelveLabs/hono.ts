@@ -79,3 +79,47 @@ export async function getTaskData(indexId: string) {
 
   return json.data;
 }
+
+export async function getTaskStatus(taskId: string) {
+  const schema = z.object({
+    status: z.enum([
+      "validating",
+      "pending",
+      "indexing",
+      "ready",
+      "failed",
+    ] as const),
+  });
+
+  const options: FetchOptions = {
+    method: "GET",
+    headers: {
+      accept: "application/json",
+    },
+    cache: "no-cache",
+  };
+
+  const response = await fetch(`${API_URL}/tasks/${taskId}/status`, options);
+
+  const json = schema.parse(await response.json());
+
+  return json.status;
+}
+
+export async function getTaskVideoId(taskId: string) {
+  const schema = z.object({ videoId: z.string() });
+
+  const options: FetchOptions = {
+    method: "GET",
+    headers: {
+      accept: "application/json",
+    },
+    cache: "no-cache",
+  };
+
+  const response = await fetch(`${API_URL}/tasks/${taskId}/video`, options);
+
+  const json = schema.parse(await response.json());
+
+  return json.videoId;
+}

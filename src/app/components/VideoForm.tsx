@@ -13,13 +13,14 @@ import Button from "@/app/components/Button";
 import Input from "@/app/components/Input";
 
 import { getVideoUrl, triggerVideoTranscription } from "@/app/actions";
-import { getTaskStatus, getTaskVideoId } from "@/app/twelveLabs/actions";
 
 import {
+  getTaskVideoId,
+  getTaskStatus,
   getUploadUrl,
   trigger12LabsVideoUpload,
   getTaskData,
-} from "@/app/twelveLabs/api";
+} from "@/app/twelveLabs/hono";
 
 import Loader from "@/app/video/[...s3DirectoryPath]/loader";
 
