@@ -15,12 +15,11 @@ import Input from "@/app/components/Input";
 import { getVideoUrl, triggerVideoTranscription } from "@/app/actions";
 import {
   getTaskStatus,
-  trigger12LabsVideoUpload,
   getTaskData,
   getTaskVideoId,
 } from "@/app/twelveLabs/actions";
 
-import { getUploadUrl } from "@/app/twelveLabs/api";
+import { getUploadUrl, trigger12LabsVideoUpload } from "@/app/twelveLabs/api";
 
 import Loader from "@/app/video/[...s3DirectoryPath]/loader";
 

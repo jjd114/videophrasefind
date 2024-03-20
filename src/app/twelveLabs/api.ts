@@ -25,3 +25,31 @@ export async function getUploadUrl() {
 
   return json;
 }
+
+export async function trigger12LabsVideoUpload(
+  videoUrl: string,
+  indexName: string,
+) {
+  const schema = z.object({
+    indexId: z.string(),
+  });
+
+  const options: FetchOptions = {
+    method: "POST",
+    headers: {
+      accept: "application/json",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      videoUrl,
+      indexName,
+    }),
+    cache: "no-cache",
+  };
+
+  const response = await fetch(`${API_URL}/upload/12Labs/trigger`, options);
+
+  const json = schema.parse(await response.json());
+
+  return json.indexId;
+}
