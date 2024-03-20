@@ -53,3 +53,29 @@ export async function trigger12LabsVideoUpload(
 
   return json.indexId;
 }
+
+export async function getTaskData(indexId: string) {
+  const schema = z.object({
+    data: z.array(
+      z
+        .object({
+          _id: z.string(),
+        })
+        .passthrough(),
+    ),
+  });
+
+  const options: FetchOptions = {
+    method: "GET",
+    headers: {
+      accept: "application/json",
+    },
+    cache: "no-cache",
+  };
+
+  const response = await fetch(`${API_URL}/indexes/${indexId}/data`, options);
+
+  const json = schema.parse(await response.json());
+
+  return json.data;
+}
