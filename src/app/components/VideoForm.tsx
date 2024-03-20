@@ -12,17 +12,15 @@ import useZodForm from "@/app/hooks/useZodForm";
 import Button from "@/app/components/Button";
 import Input from "@/app/components/Input";
 
-import {
-  getUploadUrl,
-  getVideoUrl,
-  triggerVideoTranscription,
-} from "@/app/actions";
+import { getVideoUrl, triggerVideoTranscription } from "@/app/actions";
 import {
   getTaskStatus,
   trigger12LabsVideoUpload,
   getTaskData,
   getTaskVideoId,
 } from "@/app/twelveLabs/actions";
+
+import { getUploadUrl } from "@/app/twelveLabs/api";
 
 import Loader from "@/app/video/[...s3DirectoryPath]/loader";
 
@@ -65,10 +63,12 @@ export default function VideoForm() {
     mutationFn: async () => {
       const { uploadUrl, s3Directory, downloadUrl } = await getUploadUrl();
 
+      console.log("upload your video to our storage start");
       await fetch(uploadUrl, {
         method: "PUT",
         body: acceptedFiles[0],
       });
+      console.log("upload your video to our storage finish");
 
       return { s3Directory, videoUrl: downloadUrl };
     },
@@ -118,10 +118,7 @@ export default function VideoForm() {
     };
 
     const localUpload = async () => {
-      console.log("video uploading to s3 started");
-      setStatus("upload your video to our storage");
       const mutationResponse = await uploadMutation.mutateAsync();
-      console.log("video uploading to s3 finished");
 
       const indexId = await trigger12LabsVideoUpload(
         mutationResponse.videoUrl,
