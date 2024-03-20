@@ -145,3 +145,34 @@ export async function triggerVideoUploadFromYoutubeLinkToS3(videoUrl: string) {
 
   return json.message;
 }
+
+export async function getTranscriptions(videoId: string, indexId: string) {
+  const schema = z.object({
+    captionsVtt: z.string(),
+    parsedCaptions: z
+      .object({
+        id: z.string(),
+        from: z.number(),
+        to: z.number(),
+        text: z.string(),
+      })
+      .array(), // import { Entry } from "@plussub/srt-vtt-parser/dist/src/types";
+  });
+
+  const options: FetchOptions = {
+    method: "GET",
+    headers: {
+      accept: "application/json",
+    },
+    cache: "no-cache",
+  };
+
+  const response = await fetch(
+    `${API_URL}/transcriptions/${indexId}/${videoId}`,
+    options,
+  );
+
+  const transcriptions = schema.parse(await response.json());
+
+  return transcriptions;
+}

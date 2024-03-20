@@ -4,7 +4,8 @@ import { type Metadata } from "next";
 import Content from "@/app/components/Content";
 
 import { getVideoUrl } from "@/app/actions";
-import { generateTranscriptions } from "@/app/twelveLabs/actions";
+
+import { getTranscriptions } from "@/app/twelveLabs/hono";
 
 interface Props {
   params: {
@@ -35,7 +36,7 @@ export default async function VideoPage({ params, searchParams }: Props) {
 
   const [videoUrl, transcriptionData] = await Promise.all([
     getVideoUrl(s3DirectoryPath),
-    generateTranscriptions(searchParams.videoId, searchParams.indexId),
+    getTranscriptions(searchParams.videoId, searchParams.indexId),
   ]);
 
   return <Content videoUrl={videoUrl} data={transcriptionData} />;
