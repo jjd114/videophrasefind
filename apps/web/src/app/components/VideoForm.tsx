@@ -12,16 +12,7 @@ import useZodForm from "@/app/hooks/useZodForm";
 import Button from "@/app/components/Button";
 import Input from "@/app/components/Input";
 
-import { getVideoUrl } from "@/app/actions";
-
-import {
-  getTaskVideoId,
-  getTaskStatus,
-  getUploadUrl,
-  trigger12LabsVideoUpload,
-  getTaskData,
-  triggerVideoUploadFromYoutubeLinkToS3,
-} from "@/app/twelveLabs/hono";
+import { getUploadUrl } from "@/app/actions";
 
 import Loader from "@/app/video/[...s3DirectoryPath]/loader";
 
@@ -43,7 +34,7 @@ export default function VideoForm() {
   const {
     register,
     handleSubmit,
-    formState: { errors, isValid, isSubmitting, isSubmitted, isDirty },
+    formState: { errors, isValid, isSubmitting, isDirty },
   } = useZodForm({
     schema,
     defaultValues: {
@@ -60,132 +51,67 @@ export default function VideoForm() {
     </li>
   ));
 
-  const uploadMutation = useMutation({
-    mutationFn: async () => {
+  const localUploadMutation = useMutation({
+    onMutate: () => {
+      setStatus("uploading your video to our storage");
+    },
+    mutationFn: async ({ file }: { file: File }) => {
       const { uploadUrl, s3Directory, downloadUrl } = await getUploadUrl();
 
-      console.log("upload your video to our storage start");
       await fetch(uploadUrl, {
         method: "PUT",
-        body: acceptedFiles[0],
+        body: file,
       });
-      console.log("upload your video to our storage finish");
 
-      return { s3Directory, videoUrl: downloadUrl };
+      // Trigger video transcription manually
+      fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/trigger`, {
+        method: "POST",
+        body: JSON.stringify({ indexName: s3Directory, url: downloadUrl }),
+        headers: {
+          accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        cache: "no-cache",
+      }).then(console.log);
+
+      return { s3Directory };
+    },
+  });
+
+  const externalUploadMutation = useMutation({
+    onMutate: () => {
+      setStatus("triggering video upload to our storage");
+    },
+    mutationFn: async ({ url }: { url: string }) => {
+      // Video transcription will be triggered automatically
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/fetch-and-trigger`,
+        {
+          method: "POST",
+          body: JSON.stringify({ url }),
+          headers: {
+            accept: "application/json",
+            "Content-Type": "application/json",
+          },
+          cache: "no-cache",
+        },
+      );
+      const { s3Directory } = await res.json();
+      return { s3Directory };
     },
   });
 
   const onSubmit = handleSubmit(async (formData) => {
-    const waitForVideoTranscriptionsReady = async (taskId: string) => {
-      let status = await getTaskStatus(taskId);
-
-      while (status !== "ready") {
-        status = await getTaskStatus(taskId);
-
-        console.log(status);
-
-        setStatus(status);
-
-        await new Promise((res) => setTimeout(res, 1000));
-      }
-    };
-
-    const waitForUploadOn12LabsReady = async (indexId: string) => {
-      let data = await getTaskData(indexId);
-
-      while (data.length === 0) {
-        data = await getTaskData(indexId);
-
-        console.log(data);
-
-        await new Promise((res) => setTimeout(res, 500));
-      }
-
-      return data[0]._id;
-    };
-
-    const waitUntilExternalLinkVideoAppearOnS3 = async () => {
-      let url = await getVideoUrl(encodeURIComponent(formData.videoUrl));
-
-      while (url === null) {
-        url = await getVideoUrl(encodeURIComponent(formData.videoUrl));
-
-        console.log(url);
-
-        await new Promise((res) => setTimeout(res, 500));
-      }
-
-      return url;
-    };
-
-    const localUpload = async () => {
-      const mutationResponse = await uploadMutation.mutateAsync();
-
-      const indexId = await trigger12LabsVideoUpload(
-        mutationResponse.videoUrl,
-        mutationResponse.s3Directory,
-      );
-      console.log("indexId: " + indexId);
-      setStatus("upload video on 12 labs");
-
-      const taskId = await waitForUploadOn12LabsReady(indexId);
-      console.log("taskId: " + taskId);
-
-      await waitForVideoTranscriptionsReady(taskId);
-
-      const videoId = await getTaskVideoId(taskId);
-
-      return {
-        videoId: videoId,
-        indexId,
-        s3Directory: mutationResponse.s3Directory, // s3Directory: uuid
-      };
-    };
-
-    const videoUrlUpload = async () => {
-      setStatus("triggering video upload to our storage");
-      await triggerVideoUploadFromYoutubeLinkToS3(formData.videoUrl);
-
-      console.log("video uploading to s3 started");
-      setStatus("uploading your video to our storage");
-      const s3BucketVideoUrl = await waitUntilExternalLinkVideoAppearOnS3();
-      console.log("video uploading to s3 finished");
-
-      const indexId = await trigger12LabsVideoUpload(
-        s3BucketVideoUrl,
-        encodeURIComponent(formData.videoUrl),
-      );
-      console.log("indexId: " + indexId);
-      setStatus("upload video on 12 labs");
-
-      const taskId = await waitForUploadOn12LabsReady(indexId);
-      console.log("taskId: " + taskId);
-
-      await waitForVideoTranscriptionsReady(taskId);
-
-      const videoId = await getTaskVideoId(taskId);
-
-      return {
-        videoId,
-        indexId,
-        s3Directory: encodeURIComponent(formData.videoUrl), // s3Directory: encodeURIComponent(youtube-link)
-      };
-    };
-
-    const { videoId, indexId, s3Directory } = formData.videoUrl
-      ? await videoUrlUpload()
-      : await localUpload();
-
-    console.log(videoId, s3Directory, indexId);
+    const { s3Directory } = formData.videoUrl
+      ? await externalUploadMutation.mutateAsync({ url: formData.videoUrl })
+      : await localUploadMutation.mutateAsync({ file: acceptedFiles[0] });
 
     startTransition(() => {
-      router.push(
-        `/video/${s3Directory}?videoId=${videoId}&indexId=${indexId}`,
-      );
+      router.push(`/video/${encodeURIComponent(s3Directory)}`);
     });
   });
 
-  if (uploadMutation.isPending)
+  if (localUploadMutation.isPending)
     return (
       <div className="flex w-full max-w-[512px]">
         <Loader message="Uploading your video" />
@@ -251,7 +177,7 @@ export default function VideoForm() {
         disabled={
           isSubmitting ||
           isPending ||
-          uploadMutation.isPending ||
+          localUploadMutation.isPending ||
           !isValid ||
           (!isDirty && acceptedFiles.length === 0)
         }
