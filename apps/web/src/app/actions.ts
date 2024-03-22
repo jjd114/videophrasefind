@@ -38,7 +38,7 @@ export async function getUploadUrl() {
 }
 
 export async function trigger(url: string, indexName: string) {
-  return fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/trigger`, {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/trigger`, {
     method: "POST",
     body: JSON.stringify({ indexName, url }),
     headers: {
@@ -47,6 +47,7 @@ export async function trigger(url: string, indexName: string) {
     },
     cache: "no-cache",
   });
+  return res.json();
 }
 
 export async function fetchAndTrigger(url: string) {

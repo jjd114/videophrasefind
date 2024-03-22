@@ -40,10 +40,12 @@ async function trigger12LabsTask({
   });
   console.log({ index });
 
-  return client12Labs.task.create({
+  const task = await client12Labs.task.create({
     indexId: index.id,
     url,
   });
+  console.log({ task });
+  return task;
 }
 
 app.post("/trigger", async (c) => {
