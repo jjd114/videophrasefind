@@ -9,7 +9,7 @@ import { transcriptionsSchema } from "@/app/twelveLabs/utils";
 
 interface Props {
   params: {
-    s3DirectoryPath: string;
+    s3DirectoryPath: string | string[];
   };
   searchParams: {
     videoId: string;
@@ -19,11 +19,6 @@ interface Props {
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
-
-function fixEncoding(s: string) {
-  // For whatever reason this is needed to get proper s3 directory path
-  return encodeURIComponent(decodeURIComponent(s));
-}
 
 export const metadata: Metadata = {
   title: "Transcription",
@@ -59,11 +54,14 @@ async function getTranscriptions(indexName: string) {
 }
 
 export default async function VideoPage({ params }: Props) {
-  const s3DirectoryPath = fixEncoding(params.s3DirectoryPath);
+  const s3DirectoryPath = Array.isArray(params.s3DirectoryPath)
+    ? params.s3DirectoryPath.join("%2F") // Join with back with encoded slash, on vercel the path is split into an array
+    : params.s3DirectoryPath;
+  console.log({ s3DirectoryPath });
 
   const videoUrl = await getVideoUrl(s3DirectoryPath);
 
-  const { data } = await getTranscriptions(decodeURIComponent(s3DirectoryPath));
+  const { data } = await getTranscriptions(s3DirectoryPath);
 
   return <Content videoUrl={videoUrl} data={data} />;
 }

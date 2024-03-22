@@ -86,7 +86,7 @@ export default function VideoForm() {
       : await localUploadMutation.mutateAsync({ file: acceptedFiles[0] });
 
     startTransition(() => {
-      router.push(`/video/${encodeURIComponent(s3Directory)}`);
+      router.push(`/video/${s3Directory}`);
     });
   });
 
