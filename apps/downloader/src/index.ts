@@ -68,8 +68,6 @@ app.post("/fetch-and-trigger", async (c) => {
     filter: "audioandvideo", // include audio, not only video
   });
 
-  const filename = info.videoDetails.title.replaceAll(" ", "").trim();
-
   const mimeType = format.mimeType;
 
   let chunks: BlobPart[] = [];
@@ -77,7 +75,7 @@ app.post("/fetch-and-trigger", async (c) => {
   const readable = ytdl.downloadFromInfo(info, { format });
 
   readable.on("data", (chunk) => {
-    chunks = [...chunks, chunk];
+    chunks.push(chunk);
   });
 
   const { uploadUrl, downloadUrl, s3Directory } = await getUploadUrl(url);
@@ -85,13 +83,15 @@ app.post("/fetch-and-trigger", async (c) => {
   readable.on("end", async () => {
     console.log("Fetching done, uploading to s3", { downloadUrl });
     const blob = new Blob(chunks, { type: mimeType });
-    const file = new File([blob], filename, { type: mimeType });
+    const formData = new FormData();
+    formData.append("file", blob);
 
-    // trigger, but not wait, we will wait on a client side using polling
+    // trigger, but not wait, we will wait on the client side using polling
     await fetch(uploadUrl, {
       method: "PUT",
-      body: file,
+      body: formData,
     });
+
     console.log("Upload done", { downloadUrl });
 
     return trigger12LabsTask({ indexName: s3Directory, url: downloadUrl });
