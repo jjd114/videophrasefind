@@ -1,5 +1,6 @@
 import _ from "lodash";
 import { type Metadata } from "next";
+import { Entry } from "@plussub/srt-vtt-parser/dist/src/types";
 
 import Content from "@/components/Content";
 
@@ -11,6 +12,7 @@ interface Props {
   params: {
     s3DirectoryPath: string;
   };
+  searchParams: { query?: string };
 }
 
 export const dynamic = "force-dynamic";
@@ -21,6 +23,25 @@ export const metadata: Metadata = {
   description:
     "Here you can see your transcribed video and search for keywords without watching the video",
 };
+
+async function getSemanticSearchTranscriptions(
+  indexName: string,
+  query: string,
+) {
+  console.log(indexName);
+  console.log(query);
+
+  return [
+    { id: "", from: 900, to: 610, text: "- I swear," },
+    { id: "", from: 620, to: 810, text: "- man," },
+    {
+      id: "",
+      from: 819,
+      to: 2809,
+      text: "- Liverpool really outplayed Chelsea in this one.",
+    },
+  ] as Entry[];
+}
 
 async function getTranscriptions(indexName: string) {
   const [index] = await client12Labs.index.list({ name: indexName });
@@ -51,11 +72,25 @@ async function getTranscriptions(indexName: string) {
 
 export default async function VideoPage({
   params: { s3DirectoryPath },
+  searchParams: { query },
 }: Props) {
   const [videoUrl, { data }] = await Promise.all([
     getVideoUrl(s3DirectoryPath),
     getTranscriptions(s3DirectoryPath),
   ]);
 
-  return <Content videoUrl={videoUrl} data={data} />;
+  const semanticSearchResult = query
+    ? await getSemanticSearchTranscriptions(
+        s3DirectoryPath,
+        decodeURIComponent(query),
+      )
+    : [];
+
+  return (
+    <Content
+      videoUrl={videoUrl}
+      data={data}
+      semanticSearchResult={semanticSearchResult}
+    />
+  );
 }
