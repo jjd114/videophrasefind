@@ -11,10 +11,6 @@ interface Props {
   params: {
     s3DirectoryPath: string;
   };
-  searchParams: {
-    videoId: string;
-    indexId: string;
-  };
 }
 
 export const dynamic = "force-dynamic";

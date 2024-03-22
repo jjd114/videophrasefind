@@ -1,14 +1,11 @@
 import { serve } from "@hono/node-server";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
-import dotenv from "dotenv";
 
 import ytdl from "ytdl-core";
 import { getUploadUrl } from "./lib/s3";
 import { client12Labs } from "./twelveLabs/client";
 import { engine } from "./twelveLabs/engines";
-
-dotenv.config();
 
 const app = new Hono();
 
@@ -17,7 +14,7 @@ app.use(
   cors({
     origin: "http://localhost:3000",
     allowMethods: ["POST", "GET"],
-  }),
+  })
 );
 
 app.get("/", async (c) => {
