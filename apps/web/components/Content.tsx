@@ -4,15 +4,15 @@ import { z } from "zod";
 import { useMemo, useRef } from "react";
 import _ from "lodash";
 
-import CaptionsEntry from "@/app/components/CaptionsEntry";
-import Search from "@/app/components/Search";
+import CaptionsEntry from "@/components/CaptionsEntry";
+import Search from "@/components/Search";
 
-import useZodForm from "@/app/hooks/useZodForm";
+import useZodForm from "@/hooks/useZodForm";
 
-import { TranscriptionsSchema } from "@/app/twelveLabs/utils";
+import { TranscriptionsSchema } from "@/twelveLabs/utils";
 
-import useRefresher from "@/app/utils/useRefresher";
-import { useThumbnailer, STEP } from "@/app/utils/thumbnailer";
+import useRefresher from "@/utils/useRefresher";
+import { useThumbnailer, STEP } from "@/utils/thumbnailer";
 
 import Loader from "@/app/video/[s3DirectoryPath]/loader";
 

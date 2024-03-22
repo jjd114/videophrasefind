@@ -1,11 +1,11 @@
 import _ from "lodash";
 import { type Metadata } from "next";
 
-import Content from "@/app/components/Content";
+import Content from "@/components/Content";
 
 import { getVideoUrl } from "@/app/actions";
-import { client12Labs } from "@/app/twelveLabs/client";
-import { transcriptionsSchema } from "@/app/twelveLabs/utils";
+import { client12Labs } from "@/twelveLabs/client";
+import { transcriptionsSchema } from "@/twelveLabs/utils";
 
 interface Props {
   params: {

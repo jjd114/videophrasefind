@@ -1,8 +1,9 @@
 "use server";
+
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { v4 as uuid } from "uuid";
-import { getS3DirectoryUrl } from "@/app/utils/s3";
+import { getS3DirectoryUrl } from "@/utils/s3";
 
 export async function getVideoUrl(s3Directory: string) {
   const url = `${getS3DirectoryUrl(s3Directory)}/video.webm`;
