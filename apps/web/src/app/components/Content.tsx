@@ -14,7 +14,7 @@ import { TranscriptionsSchema } from "@/app/twelveLabs/utils";
 import useRefresher from "@/app/utils/useRefresher";
 import { useThumbnailer, STEP } from "@/app/utils/thumbnailer";
 
-import Loader from "@/app/video/[...s3DirectoryPath]/loader";
+import Loader from "@/app/video/[s3DirectoryPath]/loader";
 
 export const schema = z.object({
   searchQuery: z.string(),

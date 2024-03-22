@@ -14,7 +14,7 @@ import Input from "@/app/components/Input";
 
 import { fetchAndTrigger, getUploadUrl, trigger } from "@/app/actions";
 
-import Loader from "@/app/video/[...s3DirectoryPath]/loader";
+import Loader from "@/app/video/[s3DirectoryPath]/loader";
 
 export const schema = z.object({
   videoUrl: z
