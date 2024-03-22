@@ -36,3 +36,32 @@ export async function getUploadUrl() {
   const downloadUrl = uploadUrl.replace(/\?.*/, "");
   return { uploadUrl, s3Directory: id, downloadUrl };
 }
+
+export async function trigger(url: string, indexName: string) {
+  return fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/trigger`, {
+    method: "POST",
+    body: JSON.stringify({ indexName, url }),
+    headers: {
+      accept: "application/json",
+      "Content-Type": "application/json",
+    },
+    cache: "no-cache",
+  });
+}
+
+export async function fetchAndTrigger(url: string) {
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_API_BASE_URL}/fetch-and-trigger`,
+    {
+      method: "POST",
+      body: JSON.stringify({ url }),
+      headers: {
+        accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      cache: "no-cache",
+    },
+  );
+  const { s3Directory } = await res.json();
+  return { s3Directory };
+}

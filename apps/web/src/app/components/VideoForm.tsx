@@ -12,7 +12,7 @@ import useZodForm from "@/app/hooks/useZodForm";
 import Button from "@/app/components/Button";
 import Input from "@/app/components/Input";
 
-import { getUploadUrl } from "@/app/actions";
+import { fetchAndTrigger, getUploadUrl, trigger } from "@/app/actions";
 
 import Loader from "@/app/video/[...s3DirectoryPath]/loader";
 
@@ -64,15 +64,7 @@ export default function VideoForm() {
       });
 
       // Trigger video transcription manually
-      fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/trigger`, {
-        method: "POST",
-        body: JSON.stringify({ indexName: s3Directory, url: downloadUrl }),
-        headers: {
-          accept: "application/json",
-          "Content-Type": "application/json",
-        },
-        cache: "no-cache",
-      }).then(console.log);
+      await trigger(downloadUrl, s3Directory);
 
       return { s3Directory };
     },
@@ -84,20 +76,7 @@ export default function VideoForm() {
     },
     mutationFn: async ({ url }: { url: string }) => {
       // Video transcription will be triggered automatically
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/fetch-and-trigger`,
-        {
-          method: "POST",
-          body: JSON.stringify({ url }),
-          headers: {
-            accept: "application/json",
-            "Content-Type": "application/json",
-          },
-          cache: "no-cache",
-        },
-      );
-      const { s3Directory } = await res.json();
-      return { s3Directory };
+      return fetchAndTrigger(url);
     },
   });
 
