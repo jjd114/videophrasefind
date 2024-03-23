@@ -3,7 +3,10 @@
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { v4 as uuid } from "uuid";
+
 import { getS3DirectoryUrl } from "@/utils/s3";
+
+import { Entry } from "@plussub/srt-vtt-parser/dist/src/types";
 
 export async function getVideoUrl(s3Directory: string) {
   const url = `${getS3DirectoryUrl(s3Directory)}/video.webm`;
@@ -66,4 +69,20 @@ export async function fetchAndTrigger(url: string) {
   );
   const { s3Directory } = await res.json();
   return { s3Directory };
+}
+
+export async function getSemanticSearchResult(
+  indexName: string,
+  query: string,
+) {
+  return [
+    { id: "", from: 900, to: 610, text: "- I swear," },
+    { id: "", from: 620, to: 810, text: "- man," },
+    {
+      id: "",
+      from: 819,
+      to: 2809,
+      text: "- Liverpool really outplayed Chelsea in this one.",
+    },
+  ] as Entry[];
 }

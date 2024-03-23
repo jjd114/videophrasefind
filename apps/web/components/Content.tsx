@@ -1,9 +1,10 @@
 "use client";
 
 import { z } from "zod";
-import { useEffect, useMemo, useRef } from "react";
+import { useMemo, useRef } from "react";
 import _ from "lodash";
-import { Entry } from "@plussub/srt-vtt-parser/dist/src/types";
+import { useQuery } from "@tanstack/react-query";
+import { usePathname } from "next/navigation";
 
 import CaptionsEntry from "@/components/CaptionsEntry";
 import Search from "@/components/Search";
@@ -16,7 +17,8 @@ import useRefresher from "@/utils/useRefresher";
 import { useThumbnailer, STEP } from "@/utils/thumbnailer";
 
 import Loader from "@/app/video/[s3DirectoryPath]/loader";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+
+import { getSemanticSearchResult } from "@/app/actions";
 
 export const schema = z.object({
   searchQuery: z.string(),
@@ -25,7 +27,6 @@ export const schema = z.object({
 
 interface Props {
   data: TranscriptionsSchema | null;
-  semanticSearchResult: Entry[];
   videoUrl: string | null;
   refreshInterval?: number;
 }
@@ -41,32 +42,18 @@ function getLoaderMessage(videoDurationSeconds?: number) {
   return "Waiting for transcription results. Your video is pretty large, it make take some time (up to half of the video duration). You can save this link and come back later!";
 }
 
-const Content = ({
-  data,
-  semanticSearchResult,
-  videoUrl,
-  refreshInterval,
-}: Props) => {
+const Content = ({ data, videoUrl, refreshInterval }: Props) => {
   useRefresher({ enabled: !(data && videoUrl), interval: refreshInterval });
-
-  const searchParams = useSearchParams();
-
-  console.log(searchParams.toString());
-
-  const pathname = usePathname();
-
-  const { replace } = useRouter();
 
   const { thumbnails } = useThumbnailer(videoUrl);
 
   const videoRef = useRef<HTMLVideoElement>(null);
 
-  console.log(searchParams.get("query"));
+  const pathname = usePathname();
 
   const {
     watch,
     register,
-    resetField,
     formState: { errors },
   } = useZodForm({
     schema,
@@ -80,21 +67,6 @@ const Content = ({
   const searchQuery = watch("searchQuery");
   const semanticSearch = watch("semanticSearch");
 
-  // todo: rewrite/replace to Search onChange
-  useEffect(() => {
-    if (semanticSearch) {
-      const params = new URLSearchParams(searchParams);
-
-      if (searchQuery) {
-        params.set("query", encodeURIComponent(searchQuery));
-      } else {
-        params.delete("query");
-      }
-
-      replace(`${pathname}?${params.toString()}`);
-    }
-  }, [searchQuery]);
-
   const filteredCaptions = useMemo(
     () =>
       data?.parsedCaptions.filter((entry) =>
@@ -102,6 +74,20 @@ const Content = ({
       ),
     [data?.parsedCaptions, searchQuery],
   );
+
+  // todo: debounce?
+  const semanticResponse = useQuery({
+    enabled: semanticSearch && !!searchQuery,
+    refetchOnWindowFocus: false,
+    queryKey: ["semantic"],
+    queryFn: async () => {
+      const indexName = pathname.split("/")[pathname.split("/").length - 1];
+
+      const response = await getSemanticSearchResult(indexName, searchQuery);
+
+      return response;
+    },
+  });
 
   if (!videoUrl)
     return (
@@ -142,16 +128,7 @@ const Content = ({
               <input
                 id="semanticSearch"
                 type="checkbox"
-                defaultChecked={false}
-                {...register("semanticSearch", {
-                  onChange: (e) => {
-                    if (!e.target.checked) {
-                      replace(`${pathname}`);
-                    }
-
-                    resetField("searchQuery");
-                  },
-                })}
+                {...register("semanticSearch")}
               />
               <label className="font-bold" htmlFor="semanticSearch">
                 Semantic search
@@ -162,13 +139,12 @@ const Content = ({
               name="searchQuery"
               register={register}
               errors={errors}
-              defaultValue={searchParams.get("query")?.toString()}
             />
             <div className="text-base font-semibold text-white">
-              {`Results: ${semanticSearch ? semanticSearchResult.length : filteredCaptions?.length || 0}`}
+              {`Results: ${semanticSearch ? semanticResponse.data?.length ?? 0 : filteredCaptions?.length ?? 0}`}
             </div>
             <div className="overflow-y-auto">
-              {(semanticSearch ? semanticSearchResult : filteredCaptions)?.map(
+              {(semanticSearch ? semanticResponse.data : filteredCaptions)?.map(
                 (entry) => {
                   return (
                     <CaptionsEntry
