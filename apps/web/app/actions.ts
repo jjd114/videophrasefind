@@ -75,6 +75,9 @@ export async function getSemanticSearchResult(
   indexName: string,
   query: string,
 ) {
+  console.log(indexName);
+  console.log(query);
+
   return [
     { id: "", from: 900, to: 610, text: "- I swear," },
     { id: "", from: 620, to: 810, text: "- man," },

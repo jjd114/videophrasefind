@@ -19,6 +19,7 @@ import { useThumbnailer, STEP } from "@/utils/thumbnailer";
 import Loader from "@/app/video/[s3DirectoryPath]/loader";
 
 import { getSemanticSearchResult } from "@/app/actions";
+import { useDebounce } from "use-debounce";
 
 export const schema = z.object({
   searchQuery: z.string(),
@@ -65,6 +66,8 @@ const Content = ({ data, videoUrl, refreshInterval }: Props) => {
   });
 
   const searchQuery = watch("searchQuery");
+  const [debouncedSearchQuery] = useDebounce(searchQuery, 500);
+
   const semanticSearch = watch("semanticSearch");
 
   const filteredCaptions = useMemo(
@@ -75,15 +78,17 @@ const Content = ({ data, videoUrl, refreshInterval }: Props) => {
     [data?.parsedCaptions, searchQuery],
   );
 
-  // todo: debounce?
   const semanticResponse = useQuery({
-    enabled: semanticSearch && !!searchQuery,
+    enabled: semanticSearch && !!debouncedSearchQuery,
     refetchOnWindowFocus: false,
-    queryKey: ["semantic"],
+    queryKey: ["semantic", debouncedSearchQuery],
     queryFn: async () => {
       const indexName = pathname.split("/")[pathname.split("/").length - 1];
 
-      const response = await getSemanticSearchResult(indexName, searchQuery);
+      const response = await getSemanticSearchResult(
+        indexName,
+        debouncedSearchQuery,
+      );
 
       return response;
     },
