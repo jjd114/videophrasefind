@@ -141,13 +141,31 @@ const Content = ({ data, indexName, videoUrl, refreshInterval }: Props) => {
               register={register}
               errors={errors}
             />
-            <div className="text-base font-semibold text-white">
-              {`Results: ${semanticSearch ? semanticResponse.data?.length ?? 0 : filteredCaptions?.length ?? 0}`}
-            </div>
-            <div className="overflow-y-auto">
-              {(semanticSearch ? semanticResponse.data : filteredCaptions)?.map(
-                (entry) => {
-                  return (
+            {semanticSearch ? (
+              <>
+                <div className="text-base font-semibold text-white">
+                  {semanticResponse.isLoading
+                    ? "Loading..."
+                    : `Results: ${semanticResponse.data?.length ?? 0}`}
+                </div>
+                <div className="overflow-y-auto">
+                  {semanticResponse.data?.map((i) => (
+                    <CaptionsEntry
+                      key={i.entry.from}
+                      videoRef={videoRef}
+                      entry={i.entry}
+                      thumbnailSrc={i.thumbnailSrc}
+                    />
+                  ))}
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="text-base font-semibold text-white">
+                  {`Results: ${semanticSearch ? semanticResponse.data?.length ?? 0 : filteredCaptions?.length ?? 0}`}
+                </div>
+                <div className="overflow-y-auto">
+                  {filteredCaptions?.map((entry) => (
                     <CaptionsEntry
                       key={entry.from}
                       videoRef={videoRef}
@@ -157,10 +175,10 @@ const Content = ({ data, indexName, videoUrl, refreshInterval }: Props) => {
                         _.last(thumbnails)
                       }
                     />
-                  );
-                },
-              )}
-            </div>
+                  ))}
+                </div>
+              </>
+            )}
           </>
         ) : (
           <Loader message={getLoaderMessage(videoRef.current?.duration)} />

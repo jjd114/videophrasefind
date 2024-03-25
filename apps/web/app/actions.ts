@@ -3,10 +3,13 @@
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { v4 as uuid } from "uuid";
+import { type SearchData } from "twelvelabs-js";
 
 import { getS3DirectoryUrl } from "@/utils/s3";
 
-import { Entry } from "@plussub/srt-vtt-parser/dist/src/types";
+import { type Entry } from "@plussub/srt-vtt-parser/dist/src/types";
+
+import { client12Labs } from "@/twelveLabs/client";
 
 export async function getVideoUrl(s3Directory: string) {
   const url = `${getS3DirectoryUrl(s3Directory)}/video.webm`;
@@ -75,17 +78,25 @@ export async function getSemanticSearchResult(
   indexName: string,
   query: string,
 ) {
-  console.log("index: " + indexName);
-  console.log(query);
+  const [index] = await client12Labs.index.list({ name: indexName });
 
-  return [
-    { id: "", from: 900, to: 610, text: "- I swear," },
-    { id: "", from: 620, to: 810, text: "- man," },
-    {
+  const search = await client12Labs.search.query({
+    indexId: index.id,
+    query: query,
+    options: ["conversation"],
+    conversationOption: "semantic",
+  });
+
+  const result = (search.data as SearchData[]).map((clip) => ({
+    entry: {
       id: "",
-      from: 819,
-      to: 2809,
-      text: "- Liverpool really outplayed Chelsea in this one.",
-    },
-  ] as Entry[];
+      from: clip.start * 1000,
+      to: clip.end * 1000,
+      text: clip.metadata?.[0].text,
+    } as Entry,
+    thumbnailSrc: clip.thumbnailUrl,
+    confidence: clip.confidence,
+  }));
+
+  return result;
 }
