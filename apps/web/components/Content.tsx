@@ -13,8 +13,8 @@ import useZodForm from "@/hooks/useZodForm";
 
 import { TranscriptionsSchema } from "@/twelveLabs/utils";
 
-import useRefresher from "@/utils/useRefresher";
-import { useThumbnailer, STEP } from "@/utils/thumbnailer";
+import useRefresher from "@/hooks/useRefresher";
+import { useThumbnailer, STEP } from "@/hooks/useThumbnailer";
 
 import Loader from "@/app/video/[s3DirectoryPath]/loader";
 
@@ -136,9 +136,7 @@ const Content = ({ data, indexName, videoUrl, refreshInterval }: Props) => {
               </label>
             </div>
             <Search
-              placeholder={
-                semanticSearch ? "Start typing your query" : "Filter"
-              }
+              placeholder={semanticSearch ? "Type your query" : "Filter"}
               name="searchQuery"
               register={register}
               errors={errors}
