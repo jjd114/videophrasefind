@@ -75,7 +75,7 @@ export async function getSemanticSearchResult(
   indexName: string,
   query: string,
 ) {
-  console.log(indexName);
+  console.log("index: " + indexName);
   console.log(query);
 
   return [

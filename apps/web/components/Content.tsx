@@ -4,7 +4,7 @@ import { z } from "zod";
 import { useMemo, useRef } from "react";
 import _ from "lodash";
 import { useQuery } from "@tanstack/react-query";
-import { usePathname } from "next/navigation";
+import { useDebounce } from "use-debounce";
 
 import CaptionsEntry from "@/components/CaptionsEntry";
 import Search from "@/components/Search";
@@ -19,7 +19,6 @@ import { useThumbnailer, STEP } from "@/utils/thumbnailer";
 import Loader from "@/app/video/[s3DirectoryPath]/loader";
 
 import { getSemanticSearchResult } from "@/app/actions";
-import { useDebounce } from "use-debounce";
 
 export const schema = z.object({
   searchQuery: z.string(),
@@ -28,6 +27,7 @@ export const schema = z.object({
 
 interface Props {
   data: TranscriptionsSchema | null;
+  indexName: string;
   videoUrl: string | null;
   refreshInterval?: number;
 }
@@ -43,14 +43,12 @@ function getLoaderMessage(videoDurationSeconds?: number) {
   return "Waiting for transcription results. Your video is pretty large, it make take some time (up to half of the video duration). You can save this link and come back later!";
 }
 
-const Content = ({ data, videoUrl, refreshInterval }: Props) => {
+const Content = ({ data, indexName, videoUrl, refreshInterval }: Props) => {
   useRefresher({ enabled: !(data && videoUrl), interval: refreshInterval });
 
   const { thumbnails } = useThumbnailer(videoUrl);
 
   const videoRef = useRef<HTMLVideoElement>(null);
-
-  const pathname = usePathname();
 
   const {
     watch,
@@ -81,10 +79,8 @@ const Content = ({ data, videoUrl, refreshInterval }: Props) => {
   const semanticResponse = useQuery({
     enabled: semanticSearch && !!debouncedSearchQuery,
     refetchOnWindowFocus: false,
-    queryKey: ["semantic", debouncedSearchQuery],
+    queryKey: ["semantic", indexName, debouncedSearchQuery],
     queryFn: async () => {
-      const indexName = pathname.split("/")[pathname.split("/").length - 1];
-
       const response = await getSemanticSearchResult(
         indexName,
         debouncedSearchQuery,

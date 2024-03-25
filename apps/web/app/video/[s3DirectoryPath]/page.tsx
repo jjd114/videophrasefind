@@ -58,5 +58,7 @@ export default async function VideoPage({
     getTranscriptions(s3DirectoryPath),
   ]);
 
-  return <Content videoUrl={videoUrl} data={data} />;
+  return (
+    <Content videoUrl={videoUrl} data={data} indexName={s3DirectoryPath} />
+  );
 }
