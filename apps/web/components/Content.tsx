@@ -136,7 +136,9 @@ const Content = ({ data, indexName, videoUrl, refreshInterval }: Props) => {
               </label>
             </div>
             <Search
-              placeholder="Filter"
+              placeholder={
+                semanticSearch ? "Start typing your query" : "Filter"
+              }
               name="searchQuery"
               register={register}
               errors={errors}
@@ -155,6 +157,7 @@ const Content = ({ data, indexName, videoUrl, refreshInterval }: Props) => {
                       videoRef={videoRef}
                       entry={i.entry}
                       thumbnailSrc={i.thumbnailSrc}
+                      semanticSearchConfidence={i.confidence}
                     />
                   ))}
                 </div>
@@ -162,7 +165,7 @@ const Content = ({ data, indexName, videoUrl, refreshInterval }: Props) => {
             ) : (
               <>
                 <div className="text-base font-semibold text-white">
-                  {`Results: ${semanticSearch ? semanticResponse.data?.length ?? 0 : filteredCaptions?.length ?? 0}`}
+                  {`Results: ${filteredCaptions?.length ?? 0}`}
                 </div>
                 <div className="overflow-y-auto">
                   {filteredCaptions?.map((entry) => (

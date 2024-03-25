@@ -22,10 +22,12 @@ export default function CaptionsEntry({
   entry,
   videoRef,
   thumbnailSrc,
+  semanticSearchConfidence,
 }: {
   entry: Entry;
   videoRef: RefObject<HTMLVideoElement>;
   thumbnailSrc?: string;
+  semanticSearchConfidence?: string;
 }) {
   const handleClick = () => {
     if (videoRef.current) {
@@ -56,6 +58,9 @@ export default function CaptionsEntry({
         <div className="flex w-[max-content] items-center justify-center rounded-md bg-[#9DA3AE] px-2 text-[#101824]">
           {formatMilliseconds(entry.from)}
         </div>
+        {semanticSearchConfidence && (
+          <div>Confidence: {semanticSearchConfidence}</div>
+        )}
       </div>
     </button>
   );
