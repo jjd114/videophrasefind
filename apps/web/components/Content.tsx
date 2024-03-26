@@ -154,7 +154,7 @@ const Content = ({ data, indexName, videoUrl, refreshInterval }: Props) => {
                   </TooltipTrigger>
                   <TooltipContent sideOffset={12}>
                     <p>
-                      For a general topic search, i.e. &quot;space&quot; <br />
+                      For a general topic search, e.g. &quot;space&quot; <br />
                       will return results like moon and rocket
                     </p>
                   </TooltipContent>
