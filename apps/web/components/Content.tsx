@@ -115,7 +115,7 @@ const Content = ({ data, indexName, videoUrl, refreshInterval }: Props) => {
           </video>
         </div>
       </div>
-      <div className="overflow-scrolls flex max-h-[800px] flex-col gap-5 rounded-[32px]">
+      <div className="flex max-h-[800px] flex-col gap-5 overflow-scroll rounded-[32px]">
         {data ? (
           <>
             <div className="flex items-center justify-center gap-3">
@@ -136,7 +136,7 @@ const Content = ({ data, indexName, videoUrl, refreshInterval }: Props) => {
             />
             {semanticSearch ? (
               <>
-                <div className="text-base font-semibold text-white">
+                <div className="text-base font-semibold">
                   {semanticResponse.isLoading
                     ? "Loading..."
                     : `Results: ${semanticResponse.data?.length ?? 0}`}
@@ -155,7 +155,7 @@ const Content = ({ data, indexName, videoUrl, refreshInterval }: Props) => {
               </>
             ) : (
               <>
-                <div className="text-base font-semibold text-white">
+                <div className="text-base font-semibold">
                   {`Results: ${filteredCaptions?.length ?? 0}`}
                 </div>
                 <div className="overflow-y-auto">

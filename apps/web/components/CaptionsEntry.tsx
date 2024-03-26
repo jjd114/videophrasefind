@@ -52,7 +52,7 @@ export default function CaptionsEntry({
         )}
       </div>
       <div className="flex flex-col gap-1 text-left text-sm">
-        <div className="grow overflow-hidden overflow-ellipsis font-semibold text-white">
+        <div className="grow overflow-hidden overflow-ellipsis font-semibold">
           {entry.text}
         </div>
         <div className="flex w-[max-content] items-center justify-center rounded-md bg-[#9DA3AE] px-2 text-[#101824]">
