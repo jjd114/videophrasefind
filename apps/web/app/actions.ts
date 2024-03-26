@@ -5,7 +5,7 @@ import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { v4 as uuid } from "uuid";
 import { type SearchData } from "twelvelabs-js";
 
-import { getS3DirectoryUrl } from "@/utils/s3";
+import { getS3DirectoryUrl } from "@/lib/s3";
 
 import { type Entry } from "@plussub/srt-vtt-parser/dist/src/types";
 
