@@ -16,6 +16,9 @@ export const metadata: Metadata = {
     template: "%s - VideoPhraseFind",
     default: "VideoPhraseFind",
   },
+  icons: {
+    icon: "/favicon.ico",
+  },
   description: "Search for text spoken in your video.",
 };
 
