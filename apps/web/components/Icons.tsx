@@ -1,5 +1,6 @@
-import { Info } from "lucide-react";
+import { Info, Loader } from "lucide-react";
 
 export const Icons = {
   info: Info,
+  spinner: Loader,
 };

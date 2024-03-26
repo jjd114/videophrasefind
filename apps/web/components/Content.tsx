@@ -169,11 +169,16 @@ const Content = ({ data, indexName, videoUrl, refreshInterval }: Props) => {
             />
             {semanticSearch ? (
               <>
-                <div className="text-base font-semibold">
-                  {semanticResponse.isLoading
-                    ? "Loading..."
-                    : `Results: ${semanticResponse.data?.length ?? 0}`}
-                </div>
+                <span className="text-base font-semibold">
+                  {semanticResponse.isLoading ? (
+                    <span className="flex items-center gap-2">
+                      <span>Loading</span>
+                      <Icons.spinner className="size-4 animate-spin" />
+                    </span>
+                  ) : (
+                    `Results: ${semanticResponse.data?.length ?? 0}`
+                  )}
+                </span>
                 <div className="overflow-y-auto">
                   {semanticResponse.data?.map((i) => (
                     <CaptionsEntry
@@ -188,9 +193,9 @@ const Content = ({ data, indexName, videoUrl, refreshInterval }: Props) => {
               </>
             ) : (
               <>
-                <div className="text-base font-semibold">
+                <span className="text-base font-semibold">
                   {`Results: ${filteredCaptions?.length ?? 0}`}
-                </div>
+                </span>
                 <div className="overflow-y-auto">
                   {filteredCaptions?.map((entry) => (
                     <CaptionsEntry
