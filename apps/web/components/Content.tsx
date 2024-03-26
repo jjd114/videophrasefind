@@ -169,16 +169,19 @@ const Content = ({ data, indexName, videoUrl, refreshInterval }: Props) => {
             />
             {semanticSearch ? (
               <>
-                <span className="text-base font-semibold">
-                  {semanticResponse.isLoading ? (
+                {semanticResponse.isLoading && (
+                  <span className="flex justify-center text-center font-semibold">
                     <span className="flex items-center gap-2">
                       <span>Loading</span>
                       <Icons.spinner className="size-4 animate-spin" />
                     </span>
-                  ) : (
-                    `Results: ${semanticResponse.data?.length ?? 0}`
-                  )}
-                </span>
+                  </span>
+                )}
+                {debouncedSearchQuery && !semanticResponse.isLoading && (
+                  <span className="text-base font-semibold">
+                    {`Results: ${semanticResponse.data?.length ?? 0}`}
+                  </span>
+                )}
                 <div className="overflow-y-auto">
                   {semanticResponse.data?.map((i) => (
                     <CaptionsEntry
