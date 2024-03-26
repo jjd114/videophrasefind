@@ -80,14 +80,7 @@ const Content = ({ data, indexName, videoUrl, refreshInterval }: Props) => {
     enabled: semanticSearch && !!debouncedSearchQuery,
     refetchOnWindowFocus: false,
     queryKey: ["semantic", indexName, debouncedSearchQuery],
-    queryFn: async () => {
-      const response = await getSemanticSearchResult(
-        indexName,
-        debouncedSearchQuery,
-      );
-
-      return response;
-    },
+    queryFn: () => getSemanticSearchResult(indexName, debouncedSearchQuery),
   });
 
   if (!videoUrl)
