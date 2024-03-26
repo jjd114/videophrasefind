@@ -5,9 +5,13 @@ import { useMemo, useRef } from "react";
 import _ from "lodash";
 import { useQuery } from "@tanstack/react-query";
 import { useDebounce } from "use-debounce";
+import { Controller } from "react-hook-form";
 
 import CaptionsEntry from "@/components/CaptionsEntry";
 import Search from "@/components/Search";
+
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 
 import useZodForm from "@/hooks/useZodForm";
 
@@ -52,6 +56,7 @@ const Content = ({ data, indexName, videoUrl, refreshInterval }: Props) => {
 
   const {
     watch,
+    control,
     register,
     formState: { errors },
   } = useZodForm({
@@ -119,14 +124,22 @@ const Content = ({ data, indexName, videoUrl, refreshInterval }: Props) => {
         {data ? (
           <>
             <div className="flex items-center justify-center gap-3">
-              <input
-                id="semanticSearch"
-                type="checkbox"
-                {...register("semanticSearch")}
+              <Controller
+                control={control}
+                name="semanticSearch"
+                render={({ field: { value, onChange } }) => (
+                  <>
+                    <Switch
+                      id="semanticSearchSwitch"
+                      checked={value}
+                      onCheckedChange={onChange}
+                    />
+                    <Label htmlFor="semanticSearchSwitch">
+                      Semantic search
+                    </Label>
+                  </>
+                )}
               />
-              <label className="font-bold" htmlFor="semanticSearch">
-                Semantic search
-              </label>
             </div>
             <Search
               placeholder={semanticSearch ? "Type your query" : "Filter"}
