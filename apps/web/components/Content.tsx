@@ -9,7 +9,7 @@ import { Controller } from "react-hook-form";
 
 import CaptionsEntry from "@/components/CaptionsEntry";
 import Search from "@/components/Search";
-import { Icons } from "@/components/icons";
+import { Icons } from "@/components/Icons";
 
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
