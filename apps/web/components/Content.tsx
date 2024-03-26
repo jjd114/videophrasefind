@@ -9,9 +9,16 @@ import { Controller } from "react-hook-form";
 
 import CaptionsEntry from "@/components/CaptionsEntry";
 import Search from "@/components/Search";
+import { Icons } from "@/components/icons";
 
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 import useZodForm from "@/hooks/useZodForm";
 
@@ -140,6 +147,19 @@ const Content = ({ data, indexName, videoUrl, refreshInterval }: Props) => {
                   </>
                 )}
               />
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <Icons.info className="size-4" />
+                  </TooltipTrigger>
+                  <TooltipContent sideOffset={12}>
+                    <p>
+                      For a general topic search, i.e. &quot;space&quot; <br />
+                      will return results like moon and rocket
+                    </p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             </div>
             <Search
               placeholder={semanticSearch ? "Type your query" : "Filter"}
