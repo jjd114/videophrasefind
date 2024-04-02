@@ -158,10 +158,7 @@ const Content = ({ data, indexName, videoUrl, refreshInterval }: Props) => {
                       For a general topic search, e.g. &quot;space&quot; <br />
                       will return results like moon and rocket. <br />
                     </p>
-                    <Link
-                      className="text-center underline"
-                      href="/about/#semantic-search"
-                    >
+                    <Link className="underline" href="/about/#semantic-search">
                       Read more about the semantic search feature
                     </Link>
                   </TooltipContent>
