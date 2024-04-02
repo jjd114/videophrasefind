@@ -6,6 +6,7 @@ import _ from "lodash";
 import { useQuery } from "@tanstack/react-query";
 import { useDebounce } from "use-debounce";
 import { Controller } from "react-hook-form";
+import Link from "next/link";
 
 import CaptionsEntry from "@/components/CaptionsEntry";
 import Search from "@/components/Search";
@@ -152,11 +153,17 @@ const Content = ({ data, indexName, videoUrl, refreshInterval }: Props) => {
                   <TooltipTrigger>
                     <Icons.info className="size-4" />
                   </TooltipTrigger>
-                  <TooltipContent sideOffset={12}>
+                  <TooltipContent className="text-center" sideOffset={12}>
                     <p>
                       For a general topic search, e.g. &quot;space&quot; <br />
-                      will return results like moon and rocket
+                      will return results like moon and rocket. <br />
                     </p>
+                    <Link
+                      className="text-center underline"
+                      href="/about/#semantic-search"
+                    >
+                      Read more about the semantic search feature
+                    </Link>
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
