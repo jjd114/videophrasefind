@@ -40,6 +40,20 @@ export default function About() {
           </div>
         </div>
       </div>
+      <div id="semantic-search" className="flex flex-col gap-7">
+        <h2 className="text-xl">Semantic search</h2>
+        <div className="rounded-xl border border-[#212A36] bg-[#0D131C] p-6">
+          <div className="text-white/70 md:text-lg">
+            <p>
+              When using semantic search, the platform determines the meaning of
+              a search query, rather than just matching the keywords you&apos;ve
+              specified to the content of your videos. Use this value when
+              understanding the meaning of language and the relationships
+              between different concepts and entities is required.
+            </p>
+          </div>
+        </div>
+      </div>
       <div className="flex flex-col gap-7">
         <h2 className="text-xl">Search a Video with Ease</h2>
         <div className="rounded-2xl border border-[#212A36] bg-[#0D131C] p-6">
