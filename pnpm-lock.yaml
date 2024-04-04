@@ -69,6 +69,9 @@ importers:
       '@clerk/nextjs':
         specifier: ^4.29.11
         version: 4.29.11(next@14.1.4)(react-dom@18.2.0)(react@18.2.0)
+      '@clerk/themes':
+        specifier: ^1.7.11
+        version: 1.7.11(react@18.2.0)
       '@faker-js/faker':
         specifier: ^8.4.1
         version: 8.4.1
@@ -943,6 +946,17 @@ packages:
       js-cookie: 3.0.1
       react: 18.2.0
       swr: 2.2.0(react@18.2.0)
+    dev: false
+
+  /@clerk/themes@1.7.11(react@18.2.0):
+    resolution: {integrity: sha512-ujSEb1PIvab3etaGH4t/YUgVXRQs+DC0swbiQj5R8zO+u3OoBItwyztNelOnej27kZlkCmbiwau8RFVsQqB8Qg==}
+    engines: {node: '>=14'}
+    peerDependencies:
+      react: '>=16'
+    dependencies:
+      '@clerk/types': 3.63.0
+      react: 18.2.0
+      tslib: 2.4.1
     dev: false
 
   /@clerk/types@3.63.0:
