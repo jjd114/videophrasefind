@@ -2,7 +2,16 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { SignInButton, SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
+import {
+  ClerkLoaded,
+  ClerkLoading,
+  SignInButton,
+  SignedIn,
+  SignedOut,
+  UserButton,
+} from "@clerk/nextjs";
+
+import { Icons } from "@/components/Icons";
 
 import { cn } from "@/lib/utils";
 
@@ -31,8 +40,8 @@ const Header = () => {
           <span>VideoPhrase</span>
           <span className="text-purple-600">Find</span>
         </Link>
-        <nav className="flex gap-10">
-          <ul className="flex items-center gap-10">
+        <nav className="flex items-center gap-10">
+          <ul className="flex gap-10">
             {defaultTabs.map((tab) => (
               <Link
                 key={tab}
@@ -48,27 +57,35 @@ const Header = () => {
               </Link>
             ))}
           </ul>
-          <SignedOut>
-            <SignInButton>
-              <button
-                className={cn(
-                  "min-w-[63px] text-center font-medium transition-colors hover:text-neutral-300",
-                  {
-                    "font-bold":
-                      pathname === process.env.NEXT_PUBLIC_CLERK_SIGN_IN_URL ||
-                      pathname === process.env.NEXT_PUBLIC_CLERK_SIGN_UP_URL,
-                  },
-                )}
-              >
-                Sign in
-              </button>
-            </SignInButton>
-          </SignedOut>
-          <SignedIn>
-            <UserButton
-              afterSignOutUrl={process.env.NEXT_PUBLIC_CLERK_AFTER_SIGN_OUT_URL}
-            />
-          </SignedIn>
+          <ClerkLoading>
+            <Icons.spinner className="size-6 animate-spin text-[#9DA3AE]" />
+          </ClerkLoading>
+          <ClerkLoaded>
+            <SignedOut>
+              <SignInButton>
+                <button
+                  className={cn(
+                    "text-center font-medium underline transition-colors hover:text-neutral-300",
+                    {
+                      "font-bold":
+                        pathname ===
+                          process.env.NEXT_PUBLIC_CLERK_SIGN_IN_URL ||
+                        pathname === process.env.NEXT_PUBLIC_CLERK_SIGN_UP_URL,
+                    },
+                  )}
+                >
+                  Sign in
+                </button>
+              </SignInButton>
+            </SignedOut>
+            <SignedIn>
+              <UserButton
+                afterSignOutUrl={
+                  process.env.NEXT_PUBLIC_CLERK_AFTER_SIGN_OUT_URL
+                }
+              />
+            </SignedIn>
+          </ClerkLoaded>
         </nav>
       </div>
     </header>
