@@ -2,19 +2,20 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
 
-const tabs = ["/", "/about", "/help", "/contact", "/sign-in"] as const;
+import { cn } from "@/lib/utils";
+
+const defaultTabs = ["/", "/about", "/help", "/contact"] as const;
 
 const capitalize = (str: string) => {
   return str[0].toUpperCase() + str.slice(1);
 };
 
-const tabText = (tab: (typeof tabs)[number]) => {
+const tabText = (tab: (typeof defaultTabs)[number]) => {
   switch (tab) {
     case "/":
       return "Home";
-    case "/sign-in":
-      return "Sign in";
     default:
       return capitalize(tab.slice(1));
   }
@@ -31,16 +32,39 @@ const Header = () => {
           <span className="text-purple-600">Find</span>
         </Link>
         <nav>
-          <ul className="flex gap-10">
-            {tabs.map((tab) => (
+          <ul className="flex items-center gap-10">
+            {defaultTabs.map((tab) => (
               <Link
                 key={tab}
                 href={tab}
-                className={`${tab === pathname ? "font-bold" : "font-medium hover:text-neutral-300"} transition-colors`}
+                className={cn(
+                  "font-medium transition-colors hover:text-neutral-300",
+                  {
+                    "font-bold": tab === pathname,
+                  },
+                )}
               >
                 <li className="min-w-[63px] text-center">{tabText(tab)}</li>
               </Link>
             ))}
+            <SignedOut>
+              <Link
+                href={process.env.NEXT_PUBLIC_CLERK_SIGN_IN_URL!}
+                className={cn(
+                  "font-medium transition-colors hover:text-neutral-300",
+                  {
+                    "font-bold":
+                      pathname === process.env.NEXT_PUBLIC_CLERK_SIGN_IN_URL! ||
+                      pathname === process.env.NEXT_PUBLIC_CLERK_SIGN_UP_URL!,
+                  },
+                )}
+              >
+                <li className="min-w-[63px] text-center">Sign in</li>
+              </Link>
+            </SignedOut>
+            <SignedIn>
+              <UserButton afterSignOutUrl={"/"} />
+            </SignedIn>
           </ul>
         </nav>
       </div>

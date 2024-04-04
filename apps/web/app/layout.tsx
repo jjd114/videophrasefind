@@ -30,23 +30,23 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <ClerkProvider
-      appearance={{
-        baseTheme: dark,
-        layout: {
-          socialButtonsPlacement: "bottom",
-        },
-        variables: {
-          colorPrimary: "#9333ea",
-          colorBackground: "#0B111A",
-          colorInputBackground: "transparent",
-          colorInputText: "#9DA3AE",
-          borderRadius: "0.5rem",
-          colorAlphaShade: "#e2e8f0",
-        },
-      }}
-    >
-      <html lang="en">
+    <html lang="en">
+      <ClerkProvider
+        appearance={{
+          baseTheme: dark,
+          layout: {
+            socialButtonsPlacement: "bottom",
+          },
+          variables: {
+            colorPrimary: "#9333ea",
+            colorBackground: "#0B111A",
+            colorInputBackground: "transparent",
+            colorInputText: "#9DA3AE",
+            borderRadius: "0.5rem",
+            colorAlphaShade: "#e2e8f0",
+          },
+        }}
+      >
         <body
           className={`${inter.className} flex min-h-screen flex-col bg-[#161E2A]`}
         >
@@ -59,7 +59,7 @@ export default function RootLayout({
             <Footer />
           </QueryProvider>
         </body>
-      </html>
-    </ClerkProvider>
+      </ClerkProvider>
+    </html>
   );
 }
