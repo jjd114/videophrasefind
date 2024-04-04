@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
+import { SignInButton, SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
 
 import { cn } from "@/lib/utils";
 
@@ -31,7 +31,7 @@ const Header = () => {
           <span>VideoPhrase</span>
           <span className="text-purple-600">Find</span>
         </Link>
-        <nav>
+        <nav className="flex gap-10">
           <ul className="flex items-center gap-10">
             {defaultTabs.map((tab) => (
               <Link
@@ -47,25 +47,26 @@ const Header = () => {
                 <li className="min-w-[63px] text-center">{tabText(tab)}</li>
               </Link>
             ))}
-            <SignedOut>
-              <Link
-                href={process.env.NEXT_PUBLIC_CLERK_SIGN_IN_URL!}
+          </ul>
+          <SignedOut>
+            <SignInButton>
+              <button
                 className={cn(
-                  "font-medium transition-colors hover:text-neutral-300",
+                  "min-w-[63px] text-center font-medium transition-colors hover:text-neutral-300",
                   {
                     "font-bold":
-                      pathname === process.env.NEXT_PUBLIC_CLERK_SIGN_IN_URL! ||
-                      pathname === process.env.NEXT_PUBLIC_CLERK_SIGN_UP_URL!,
+                      pathname === process.env.NEXT_PUBLIC_CLERK_SIGN_IN_URL ||
+                      pathname === process.env.NEXT_PUBLIC_CLERK_SIGN_UP_URL,
                   },
                 )}
               >
-                <li className="min-w-[63px] text-center">Sign in</li>
-              </Link>
-            </SignedOut>
-            <SignedIn>
-              <UserButton afterSignOutUrl={"/"} />
-            </SignedIn>
-          </ul>
+                Sign in
+              </button>
+            </SignInButton>
+          </SignedOut>
+          <SignedIn>
+            <UserButton afterSignOutUrl={"/"} />
+          </SignedIn>
         </nav>
       </div>
     </header>
