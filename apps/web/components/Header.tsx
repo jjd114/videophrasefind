@@ -3,10 +3,21 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-const tabs = ["/", "/about", "/help", "/contact"] as const;
+const tabs = ["/", "/about", "/help", "/contact", "/sign-in"] as const;
 
 const capitalize = (str: string) => {
   return str[0].toUpperCase() + str.slice(1);
+};
+
+const tabText = (tab: (typeof tabs)[number]) => {
+  switch (tab) {
+    case "/":
+      return "Home";
+    case "/sign-in":
+      return "Sign in";
+    default:
+      return capitalize(tab.slice(1));
+  }
 };
 
 const Header = () => {
@@ -23,13 +34,11 @@ const Header = () => {
           <ul className="flex gap-10">
             {tabs.map((tab) => (
               <Link
-                className={`${tab === pathname ? "font-bold" : "font-medium hover:text-neutral-300"} transition-colors`}
                 key={tab}
                 href={tab}
+                className={`${tab === pathname ? "font-bold" : "font-medium hover:text-neutral-300"} transition-colors`}
               >
-                <li className="min-w-[63px] text-center">
-                  {tab === "/" ? "Home" : capitalize(tab.slice(1))}
-                </li>
+                <li className="min-w-[63px] text-center">{tabText(tab)}</li>
               </Link>
             ))}
           </ul>
