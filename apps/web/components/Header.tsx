@@ -65,7 +65,7 @@ const Header = () => {
               <SignInButton>
                 <button
                   className={cn(
-                    "text-center font-medium underline transition-colors hover:text-neutral-300",
+                    "min-w-[63px] text-center font-medium underline transition-colors hover:text-neutral-300",
                     {
                       "font-bold":
                         pathname ===
