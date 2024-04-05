@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
 import { ClerkProvider } from "@clerk/nextjs";
-import { dark } from "@clerk/themes";
 
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
@@ -33,11 +32,11 @@ export default function RootLayout({
     <html lang="en">
       <ClerkProvider
         appearance={{
-          baseTheme: dark,
           layout: {
             socialButtonsPlacement: "bottom",
           },
           variables: {
+            colorText: "white",
             colorPrimary: "#9333ea",
             colorBackground: "#0B111A",
             colorInputBackground: "transparent",
