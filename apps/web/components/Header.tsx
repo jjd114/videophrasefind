@@ -40,6 +40,19 @@ const Header = () => {
           <span className="text-purple-600">Find</span>
         </Link>
         <nav className="flex items-center gap-8">
+          <SignedIn>
+            <Link
+              href="/videos"
+              className={cn(
+                "min-w-[63px] text-center font-medium transition-colors hover:text-neutral-300",
+                {
+                  "font-bold": pathname === "/videos",
+                },
+              )}
+            >
+              Your videos
+            </Link>
+          </SignedIn>
           <ul className="flex gap-8">
             {defaultTabs.map((tab) => (
               <Link
