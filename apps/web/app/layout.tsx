@@ -44,7 +44,7 @@ export default function RootLayout({
             colorAlphaShade: "#e2e8f0",
           },
           elements: {
-            card: 'bg-[#0b111a]',
+            card: "shadow-none bg-[#0b111a]",
             footer: "justify-center",
             footerAction: "gap-2",
           },
