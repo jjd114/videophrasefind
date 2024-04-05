@@ -7,7 +7,7 @@ export default authMiddleware({
     "/contact",
     "/help",
     "/terms-of-service",
-    "/video(.*)",
+    "/video/:s3DirectoryPath",
   ],
 });
 
