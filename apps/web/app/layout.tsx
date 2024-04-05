@@ -33,7 +33,7 @@ export default function RootLayout({
       <ClerkProvider
         appearance={{
           layout: {
-            socialButtonsPlacement: "bottom",
+            socialButtonsPlacement: "top",
           },
           variables: {
             colorText: "white",
