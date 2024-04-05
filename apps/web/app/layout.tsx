@@ -38,13 +38,13 @@ export default function RootLayout({
           variables: {
             colorText: "white",
             colorPrimary: "#9333ea",
-            colorBackground: "#0B111A",
             colorInputBackground: "transparent",
             colorInputText: "#9DA3AE",
             borderRadius: "0.5rem",
             colorAlphaShade: "#e2e8f0",
           },
           elements: {
+            card: 'bg-[#0b111a]',
             footer: "justify-center",
             footerAction: "gap-2",
           },
