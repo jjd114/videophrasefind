@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
-import { ClerkProvider } from "@clerk/nextjs";
 
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 
+import ClerkProvider from "@/components/providers/clerkProvider";
 import QueryProvider from "@/components/providers/queryProvider";
 
 import "@/styles/globals.css";
@@ -30,26 +30,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <ClerkProvider
-        appearance={{
-          layout: {
-            socialButtonsPlacement: "top",
-          },
-          variables: {
-            colorText: "white",
-            colorPrimary: "#9333ea",
-            colorInputBackground: "transparent",
-            colorInputText: "#9DA3AE",
-            borderRadius: "0.5rem",
-            colorAlphaShade: "#e2e8f0",
-          },
-          elements: {
-            card: "shadow-none bg-[#0b111a]",
-            footer: "justify-center",
-            footerAction: "gap-2",
-          },
-        }}
-      >
+      <ClerkProvider>
         <body
           className={`${inter.className} flex min-h-screen flex-col bg-[#161E2A]`}
         >
