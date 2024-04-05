@@ -23,6 +23,7 @@ export default function ClerkProvider({
           card: "shadow-none bg-[#0b111a]",
           footer: "justify-center",
           footerAction: "gap-2",
+          providerIcon__apple: "invert-[1]",
         },
       }}
     >
