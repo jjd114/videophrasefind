@@ -39,8 +39,8 @@ const Header = () => {
           <span>VideoPhrase</span>
           <span className="text-purple-600">Find</span>
         </Link>
-        <nav className="flex items-center gap-10">
-          <ul className="flex gap-10">
+        <nav className="flex items-center gap-8">
+          <ul className="flex gap-8">
             {defaultTabs.map((tab) => (
               <Link
                 key={tab}
@@ -56,29 +56,32 @@ const Header = () => {
               </Link>
             ))}
           </ul>
-          <ClerkLoading>
-            <Icons.spinner className="size-6 animate-spin text-[#9DA3AE]" />
-          </ClerkLoading>
-          <ClerkLoaded>
-            <SignedOut>
-              <Link
-                href="/sign-in"
-                className={cn(
-                  "min-w-[63px] text-center font-medium underline transition-colors hover:text-neutral-300",
-                  {
-                    "font-bold":
-                      pathname === process.env.NEXT_PUBLIC_CLERK_SIGN_IN_URL ||
-                      pathname === process.env.NEXT_PUBLIC_CLERK_SIGN_UP_URL,
-                  },
-                )}
-              >
-                Sign in
-              </Link>
-            </SignedOut>
-            <SignedIn>
-              <UserButton afterSignOutUrl="/" />
-            </SignedIn>
-          </ClerkLoaded>
+          <div className="flex w-[63px] justify-center">
+            <ClerkLoading>
+              <Icons.spinner className="size-6 animate-spin text-[#9DA3AE]" />
+            </ClerkLoading>
+            <ClerkLoaded>
+              <SignedOut>
+                <Link
+                  href="/sign-in"
+                  className={cn(
+                    "text-center font-medium underline transition-colors hover:text-neutral-300",
+                    {
+                      "font-bold":
+                        pathname ===
+                          process.env.NEXT_PUBLIC_CLERK_SIGN_IN_URL ||
+                        pathname === process.env.NEXT_PUBLIC_CLERK_SIGN_UP_URL,
+                    },
+                  )}
+                >
+                  Sign in
+                </Link>
+              </SignedOut>
+              <SignedIn>
+                <UserButton afterSignOutUrl="/" />
+              </SignedIn>
+            </ClerkLoaded>
+          </div>
         </nav>
       </div>
     </header>
