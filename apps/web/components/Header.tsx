@@ -79,11 +79,7 @@ const Header = () => {
               </SignInButton>
             </SignedOut>
             <SignedIn>
-              <UserButton
-                afterSignOutUrl={
-                  process.env.NEXT_PUBLIC_CLERK_AFTER_SIGN_OUT_URL
-                }
-              />
+              <UserButton afterSignOutUrl="/" />
             </SignedIn>
           </ClerkLoaded>
         </nav>
