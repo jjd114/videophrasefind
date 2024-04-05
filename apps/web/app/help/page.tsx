@@ -54,6 +54,8 @@ const steps: {
   },
 ];
 
+export const dynamic = "force-static";
+
 export const metadata: Metadata = {
   title: "Help",
   description: "Help page is here to teach you how to use the app",
@@ -61,7 +63,7 @@ export const metadata: Metadata = {
 
 export default function Help() {
   return (
-    <>
+    <div className="flex w-full max-w-[800px] flex-col gap-7">
       <h2 className="text-center text-xl font-medium sm:text-2xl">
         How to use the app?
       </h2>
@@ -90,6 +92,6 @@ export default function Help() {
           </li>
         ))}
       </ul>
-    </>
+    </div>
   );
 }

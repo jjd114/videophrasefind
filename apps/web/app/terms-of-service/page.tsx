@@ -27,6 +27,8 @@ const SmallText = <D extends "r" | "l" | "t" | "b" | "", S extends number>({
   children: React.ReactNode;
 }) => <span className={`${margins} text-lg text-white/70`}>{children}</span>;
 
+export const dynamic = "force-static";
+
 export const metadata: Metadata = {
   title: "Terms of Service",
   description: "See our terms of service and how they relate to you",
