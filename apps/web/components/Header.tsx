@@ -5,7 +5,6 @@ import { usePathname } from "next/navigation";
 import {
   ClerkLoaded,
   ClerkLoading,
-  SignInButton,
   SignedIn,
   SignedOut,
   UserButton,
@@ -62,21 +61,19 @@ const Header = () => {
           </ClerkLoading>
           <ClerkLoaded>
             <SignedOut>
-              <SignInButton>
-                <button
-                  className={cn(
-                    "min-w-[63px] text-center font-medium underline transition-colors hover:text-neutral-300",
-                    {
-                      "font-bold":
-                        pathname ===
-                          process.env.NEXT_PUBLIC_CLERK_SIGN_IN_URL ||
-                        pathname === process.env.NEXT_PUBLIC_CLERK_SIGN_UP_URL,
-                    },
-                  )}
-                >
-                  Sign in
-                </button>
-              </SignInButton>
+              <Link
+                href="/sign-in"
+                className={cn(
+                  "min-w-[63px] text-center font-medium underline transition-colors hover:text-neutral-300",
+                  {
+                    "font-bold":
+                      pathname === process.env.NEXT_PUBLIC_CLERK_SIGN_IN_URL ||
+                      pathname === process.env.NEXT_PUBLIC_CLERK_SIGN_UP_URL,
+                  },
+                )}
+              >
+                Sign in
+              </Link>
             </SignedOut>
             <SignedIn>
               <UserButton afterSignOutUrl="/" />
