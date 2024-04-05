@@ -1,3 +1,7 @@
+import { ClerkLoaded, ClerkLoading } from "@clerk/nextjs";
+
+import { AuthSpinner } from "@/app/(auth)/AuthSpinner";
+
 export default function AuthLayout({
   children,
 }: {
@@ -5,7 +9,10 @@ export default function AuthLayout({
 }) {
   return (
     <section className="flex w-full items-center justify-center">
-      {children}
+      <ClerkLoaded>{children}</ClerkLoaded>
+      <ClerkLoading>
+        <AuthSpinner />
+      </ClerkLoading>
     </section>
   );
 }
