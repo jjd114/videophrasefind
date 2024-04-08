@@ -8,13 +8,6 @@ generator client {
   provider = "prisma-client-js"
 }
 
-enum MembershipStatus {
-  FREE
-  PRO
-}
-
-model Membership {
-  status MembershipStatus @default(FREE)
-
+model Video {
   userId String @unique
 }
