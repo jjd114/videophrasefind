@@ -9,5 +9,13 @@ generator client {
 }
 
 model Video {
+  indexId String
+  videoId String
+
+  title    String
+  duration Decimal
+
+  createdAt DateTime @default(now())
+
   userId String @unique
 }
