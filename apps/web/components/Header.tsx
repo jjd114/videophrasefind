@@ -50,7 +50,7 @@ const Header = () => {
                 },
               )}
             >
-              Your videos
+              Videos
             </Link>
           </SignedIn>
           <ul className="flex gap-8">
