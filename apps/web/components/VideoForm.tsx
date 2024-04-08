@@ -74,20 +74,7 @@ export default function VideoForm() {
     onMutate: () => {
       setStatus("triggering video upload to our storage");
     },
-    mutationFn: async ({ url }: { url: string }) => {
-      // Video transcription will be triggered automatically
-      return fetchAndTrigger(url);
-    },
-  });
-
-  const onSubmit = handleSubmit(async (formData) => {
-    const { s3Directory } = formData.videoUrl
-      ? await externalUploadMutation.mutateAsync({ url: formData.videoUrl })
-      : await localUploadMutation.mutateAsync({ file: acceptedFiles[0] });
-
-    startTransition(() => {
-      router.push(`/video/${s3Directory}`);
-    });
+    mutationFn: ({ url }: { url: string }) => fetchAndTrigger(url), // Video transcription will be triggered automatically
   });
 
   if (localUploadMutation.isPending)
@@ -106,7 +93,15 @@ export default function VideoForm() {
 
   return (
     <form
-      onSubmit={onSubmit}
+      onSubmit={handleSubmit(async (formData) => {
+        const { s3Directory } = formData.videoUrl
+          ? await externalUploadMutation.mutateAsync({ url: formData.videoUrl })
+          : await localUploadMutation.mutateAsync({ file: acceptedFiles[0] });
+
+        startTransition(() => {
+          router.push(`/video/${s3Directory}`);
+        });
+      })}
       className="flex w-full flex-col items-center gap-8 rounded-[32px] bg-[#0B111A] p-4 min-[1050px]:max-w-[512px]"
     >
       <section className="size-full">
