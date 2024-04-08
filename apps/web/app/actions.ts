@@ -1,5 +1,6 @@
 "use server";
 
+import { z } from "zod";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { v4 as uuid } from "uuid";
@@ -58,6 +59,11 @@ export async function trigger(url: string, indexName: string) {
 }
 
 export async function fetchAndTrigger(url: string) {
+  const schema = z.object({
+    s3Directory: z.string(),
+    videoTitle: z.string(),
+  });
+
   const res = await fetch(
     `${process.env.NEXT_PUBLIC_API_BASE_URL}/fetch-and-trigger`,
     {
@@ -70,8 +76,8 @@ export async function fetchAndTrigger(url: string) {
       cache: "no-cache",
     },
   );
-  const { s3Directory, videoTitle } = await res.json();
-  return { s3Directory, videoTitle };
+
+  return schema.parse(await res.json());
 }
 
 export async function getSemanticSearchResult(
