@@ -70,8 +70,8 @@ export async function fetchAndTrigger(url: string) {
       cache: "no-cache",
     },
   );
-  const { s3Directory } = await res.json();
-  return { s3Directory };
+  const { s3Directory, videoTitle } = await res.json();
+  return { s3Directory, videoTitle };
 }
 
 export async function getSemanticSearchResult(

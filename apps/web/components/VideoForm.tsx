@@ -66,7 +66,7 @@ export default function VideoForm() {
       // Trigger video transcription manually
       await trigger(downloadUrl, s3Directory);
 
-      return { s3Directory };
+      return { s3Directory, videoTitle: file.name };
     },
   });
 
@@ -93,10 +93,12 @@ export default function VideoForm() {
 
   return (
     <form
-      onSubmit={handleSubmit(async (formData) => {
-        const { s3Directory } = formData.videoUrl
-          ? await externalUploadMutation.mutateAsync({ url: formData.videoUrl })
+      onSubmit={handleSubmit(async ({ videoUrl }) => {
+        const { s3Directory, videoTitle } = videoUrl
+          ? await externalUploadMutation.mutateAsync({ url: videoUrl })
           : await localUploadMutation.mutateAsync({ file: acceptedFiles[0] });
+
+        console.log(videoTitle);
 
         startTransition(() => {
           router.push(`/video/${s3Directory}`);

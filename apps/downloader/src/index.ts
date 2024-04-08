@@ -97,7 +97,7 @@ app.post("/fetch-and-trigger", async (c) => {
     return trigger12LabsTask({ indexName: s3Directory, url: downloadUrl });
   });
 
-  return c.json({ s3Directory });
+  return c.json({ s3Directory, videoTitle: info.videoDetails.title });
 });
 
 const port = 5173;
