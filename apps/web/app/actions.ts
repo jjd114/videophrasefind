@@ -125,26 +125,33 @@ export async function saveVideo({
   videoId,
   userId,
   videoTitle,
+  indexName,
 }: {
   indexId: string;
   videoId: string;
   userId: string;
   videoTitle: string;
+  indexName: string;
 }) {
   const {
     metadata: { duration, size },
   } = await client12Labs.index.video.retrieve(indexId, videoId);
 
-  const video = await db.video.create({
+  const index = await db.index.create({
     data: {
-      indexId,
-      videoId,
+      id: indexId,
+      indexName,
+    },
+  });
+
+  db.video.create({
+    data: {
+      id: videoId,
       title: videoTitle,
       duration,
       size,
       userId,
+      indexId: index.id,
     },
   });
-
-  return video;
 }

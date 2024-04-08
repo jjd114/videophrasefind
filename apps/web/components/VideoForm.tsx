@@ -135,7 +135,13 @@ export default function VideoForm() {
 
           console.log("videoId: " + videoId);
 
-          await saveVideo({ indexId, videoId, videoTitle, userId });
+          await saveVideo({
+            indexId,
+            videoId,
+            videoTitle,
+            userId,
+            indexName: s3Directory,
+          });
         }
 
         startTransition(() => {
