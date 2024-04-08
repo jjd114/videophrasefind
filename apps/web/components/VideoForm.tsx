@@ -66,7 +66,7 @@ export default function VideoForm() {
       // Trigger video transcription manually
       await trigger(downloadUrl, s3Directory);
 
-      return { s3Directory, videoTitle: file.name };
+      return { s3Directory, videoTitle: file.name.split(".")[0] };
     },
   });
 
