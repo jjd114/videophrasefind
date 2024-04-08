@@ -1,6 +1,7 @@
 "use server";
 
 import { z } from "zod";
+import { type Entry } from "@plussub/srt-vtt-parser/dist/src/types";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { v4 as uuid } from "uuid";
@@ -8,9 +9,9 @@ import { type SearchData } from "twelvelabs-js";
 
 import { getS3DirectoryUrl } from "@/lib/s3";
 
-import { type Entry } from "@plussub/srt-vtt-parser/dist/src/types";
-
 import { client12Labs } from "@/twelveLabs/client";
+
+import { db } from "@/lib/db";
 
 export async function getVideoUrl(s3Directory: string) {
   const url = `${getS3DirectoryUrl(s3Directory)}/video.webm`;
@@ -105,4 +106,45 @@ export async function getSemanticSearchResult(
   }));
 
   return result;
+}
+
+export async function getIndexId(indexName: string) {
+  const [index] = await client12Labs.index.list({ name: indexName });
+
+  return index?.id;
+}
+
+export async function getVideoId(indexId: string) {
+  const [index] = await client12Labs.index.video.list(indexId);
+
+  return index?.id;
+}
+
+export async function saveVideo({
+  indexId,
+  videoId,
+  userId,
+  videoTitle,
+}: {
+  indexId: string;
+  videoId: string;
+  userId: string;
+  videoTitle: string;
+}) {
+  const {
+    metadata: { duration, size },
+  } = await client12Labs.index.video.retrieve(indexId, videoId);
+
+  const video = await db.video.create({
+    data: {
+      indexId,
+      videoId,
+      title: videoTitle,
+      duration,
+      size,
+      userId,
+    },
+  });
+
+  return video;
 }

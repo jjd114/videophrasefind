@@ -6,13 +6,21 @@ import { useMutation } from "@tanstack/react-query";
 import { useState, useTransition } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@clerk/nextjs";
 
 import useZodForm from "@/hooks/useZodForm";
 
 import Button from "@/components/Button";
 import Input from "@/components/Input";
 
-import { fetchAndTrigger, getUploadUrl, trigger } from "@/app/actions";
+import {
+  fetchAndTrigger,
+  getIndexId,
+  getUploadUrl,
+  getVideoId,
+  saveVideo,
+  trigger,
+} from "@/app/actions";
 
 import Loader from "@/app/video/[s3DirectoryPath]/loader";
 
@@ -25,6 +33,8 @@ export const schema = z.object({
 });
 
 export default function VideoForm() {
+  const { userId, isSignedIn, isLoaded } = useAuth();
+
   const router = useRouter();
 
   const [status, setStatus] = useState("no status");
@@ -98,7 +108,35 @@ export default function VideoForm() {
           ? await externalUploadMutation.mutateAsync({ url: videoUrl })
           : await localUploadMutation.mutateAsync({ file: acceptedFiles[0] });
 
-        console.log(videoTitle);
+        if (userId && isLoaded && isSignedIn) {
+          setStatus(
+            "Saving your video in database. please, don't leave the page...",
+          );
+
+          let indexId = await getIndexId(s3Directory);
+
+          while (!indexId) {
+            indexId = await getIndexId(s3Directory);
+            console.log(indexId);
+            console.log("waiting for index ready...");
+            await new Promise((resolve) => setTimeout(resolve, 500));
+          }
+
+          console.log("indexId: " + indexId);
+
+          let videoId = await getVideoId(indexId);
+
+          while (!videoId) {
+            videoId = await getVideoId(indexId);
+            console.log(videoId);
+            console.log("waiting for videoId ready...");
+            await new Promise((resolve) => setTimeout(resolve, 500));
+          }
+
+          console.log("videoId: " + videoId);
+
+          await saveVideo({ indexId, videoId, videoTitle, userId });
+        }
 
         startTransition(() => {
           router.push(`/video/${s3Directory}`);
