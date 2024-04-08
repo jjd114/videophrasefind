@@ -137,7 +137,7 @@ export async function saveVideo({
     metadata: { duration, size },
   } = await client12Labs.index.video.retrieve(indexId, videoId);
 
-  const index = await db.index.create({
+  await db.index.create({
     data: {
       id: indexId,
       indexName,
@@ -151,7 +151,7 @@ export async function saveVideo({
       duration,
       size,
       userId,
-      indexId: index.id,
+      indexId: indexId,
     },
   });
 }
