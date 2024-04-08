@@ -144,7 +144,7 @@ export async function saveVideo({
     },
   });
 
-  db.video.create({
+  await db.video.create({
     data: {
       id: videoId,
       title: videoTitle,
