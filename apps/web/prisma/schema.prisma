@@ -1,0 +1,20 @@
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum MembershipStatus {
+  FREE
+  PRO
+}
+
+model Membership {
+  status MembershipStatus @default(FREE)
+
+  userId String @unique
+}

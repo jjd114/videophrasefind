@@ -8,7 +8,9 @@
     "web:build": "turbo --filter=web build",
     "web:format:check": "turbo --filter=web format:check",
     "web:format:write": "turbo --filter=web format:write",
-    "web:lint": "turbo --filter=web lint"
+    "web:lint": "turbo --filter=web lint",
+    "web:db:push": "turbo --filter=web db:push",
+    "web:prisma:generate": "turbo --filter=web prisma:generate"
   },
   "devDependencies": {
     "prettier": "^3.2.5",

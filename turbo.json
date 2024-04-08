@@ -22,6 +22,14 @@
     "lint": {
       "cache": false,
       "outputs": []
+    },
+    "db:push": {
+      "cache": false,
+      "outputs": []
+    },
+    "prisma:generate": {
+      "cache": false,
+      "outputs": []
     }
   }
 }
