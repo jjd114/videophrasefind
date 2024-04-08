@@ -78,7 +78,7 @@ const Header = () => {
                 <Link
                   href="/sign-in"
                   className={cn(
-                    "text-center font-medium underline transition-colors hover:text-neutral-300",
+                    "text-center font-medium transition-colors hover:text-neutral-300",
                     {
                       "font-bold":
                         pathname ===
