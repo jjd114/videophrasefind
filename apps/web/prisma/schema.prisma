@@ -9,15 +9,15 @@ generator client {
 }
 
 model Index {
-  id String @id @unique
+  id String @id
 
   indexName String
 
-  Video Video?
+  video Video?
 }
 
 model Video {
-  id String @id @unique
+  id String @id
 
   title     String
   duration  Decimal
