@@ -1,4 +1,4 @@
-export default function HelpLayout({
+export default function VideosLayout({
   children,
 }: {
   children: React.ReactNode;

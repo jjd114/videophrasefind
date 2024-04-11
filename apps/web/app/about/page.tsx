@@ -1,6 +1,8 @@
 import { type Metadata } from "next";
 import Link from "next/link";
 
+export const dynamic = "force-static";
+
 export const metadata: Metadata = {
   title: "About",
   description:
@@ -9,7 +11,7 @@ export const metadata: Metadata = {
 
 export default function About() {
   return (
-    <section className="flex flex-col gap-14 overflow-scroll rounded-[32px] bg-[#0B111A] p-8 md:p-[46px]">
+    <div className="flex max-w-[800px] flex-col gap-14 rounded-[32px] bg-[#0B111A] p-8 md:p-[46px]">
       <div className="flex flex-col gap-8">
         <h2 className="text-[26px] font-medium leading-[30px]">
           About the project
@@ -76,6 +78,6 @@ export default function About() {
           </div>
         </div>
       </div>
-    </section>
+    </div>
   );
 }

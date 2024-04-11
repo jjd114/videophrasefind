@@ -2,6 +2,8 @@ import { type Metadata } from "next";
 
 import VideoForm from "@/components/VideoForm";
 
+export const dynamic = "force-static";
+
 export const metadata: Metadata = {
   title: "Home - VideoPhraseFind",
   description:

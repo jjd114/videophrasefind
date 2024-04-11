@@ -10,6 +10,18 @@
     "start": {
       "dependsOn": ["build"],
       "cache": false
+    },
+    "format:check": {
+      "cache": false,
+      "outputs": []
+    },
+    "format:write": {
+      "cache": false,
+      "outputs": []
+    },
+    "lint": {
+      "cache": false,
+      "outputs": []
     }
   }
 }
