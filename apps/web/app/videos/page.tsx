@@ -45,15 +45,17 @@ export default async function VideosPage() {
             <div className="flex flex-1 flex-col justify-between gap-3 overflow-hidden">
               <div className="flex justify-between">
                 <span>{`Title: ${video.title}`}</span>
-                <span>{`Created: ${formatDate(video.createdAt)} at ${formatTime(video.createdAt)}`}</span>
+                <span>{`Created at: ${formatDate(video.createdAt)} at ${formatTime(video.createdAt)}`}</span>
               </div>
               <div className="flex gap-10">
                 <span>
+                  Size:{" "}
                   {video?.size
                     ? `${(video.size / 1e6).toFixed(2)}MB`
                     : "no size yet"}
                 </span>
                 <span>
+                  Duration:{" "}
                   {video?.duration
                     ? `${video.duration.toFixed(2)} sec.`
                     : "no duration yet"}
