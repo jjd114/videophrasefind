@@ -1,6 +1,11 @@
+import Image from "next/image";
 import Link from "next/link";
 import { currentUser } from "@clerk/nextjs";
 import { db } from "database";
+
+import { formatDate, formatTime } from "@/lib/utils";
+
+import { Icons } from "@/components/Icons";
 
 const getVideos = async (userId: string) => {
   return await db.video.findMany({
@@ -15,25 +20,51 @@ export default async function VideosPage() {
 
   const videos = await getVideos(user.id);
 
-  console.log(videos);
-
   if (videos.length === 0) {
     return <div>you have no videos yet</div>;
   }
 
   return (
-    <div className="flex max-w-[800px] flex-col gap-8">
+    <div className="flex w-full max-w-[1000px] flex-col gap-8">
       {videos.map((video) => (
         <Link key={video.id} href={`/video/${video.indexName}`}>
-          <div className="flex flex-col gap-3 rounded-lg border border-white p-5">
-            <span>{`video id: ${video.id}`}</span>
-            <span>{`video title: ${video.title}`}</span>
-            <span>{`video index id: ${video?.indexId || "no index id yet"}`}</span>
-            <span>{`video index name: ${video.indexName}`}</span>
-            <span>{`video size: ${video?.size || "no size yet"}`}</span>
-            <span>{`video duration: ${video.duration || "no duration yet"}`}</span>
-            <span>{`video duration: ${video.thumbnailUrl || "no thumbnail yet"}`}</span>
-            <span>{`video createdAt: ${video.createdAt}`}</span>
+          <div className="flex items-center gap-7 rounded-2xl bg-[#0b111a] p-8">
+            <div className="relative flex aspect-video h-28 items-center justify-center rounded-xl bg-[#ffffff1f]">
+              {video.thumbnailUrl ? (
+                <Image
+                  fill
+                  src={video.thumbnailUrl}
+                  alt="thumbnail"
+                  objectFit="contain"
+                  className="rounded-xl"
+                />
+              ) : (
+                <Icons.spinner className="size-5 animate-spin" />
+              )}
+            </div>
+            <div className="flex flex-1 flex-col justify-between gap-3 overflow-hidden">
+              <div className="flex justify-between">
+                <span>{`Title: ${video.title}`}</span>
+                <span>{`Created: ${formatDate(video.createdAt)} at ${formatTime(video.createdAt)}`}</span>
+              </div>
+              <div className="flex gap-10">
+                <span>
+                  {video?.size
+                    ? `${(video.size / 1e6).toFixed(2)}MB`
+                    : "no size yet"}
+                </span>
+                <span>
+                  {video?.duration
+                    ? `${video.duration.toFixed(2)} sec.`
+                    : "no duration yet"}
+                </span>
+              </div>
+              <div className="flex flex-col">
+                <span>{`Index id: ${video?.indexId || "no index id yet"}`}</span>
+                <span className="truncate">{`Index name: ${video.indexName}`}</span>
+                <span>{`Video id: ${video.id}`}</span>
+              </div>
+            </div>
           </div>
         </Link>
       ))}

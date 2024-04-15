@@ -108,8 +108,6 @@ export default function VideoForm() {
           indexName: s3Directory,
         });
 
-        console.log({ videoId });
-
         startTransition(() => {
           router.push(`/video/${s3Directory}`);
         });
