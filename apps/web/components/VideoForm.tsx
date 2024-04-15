@@ -99,15 +99,20 @@ export default function VideoForm() {
   return (
     <form
       onSubmit={handleSubmit(async ({ videoUrl }) => {
-        // const { s3Directory, videoTitle } = videoUrl
-        //   ? await externalUploadMutation.mutateAsync({ url: videoUrl })
-        //   : await localUploadMutation.mutateAsync({ file: acceptedFiles[0] });
+        const { s3Directory, videoTitle } = videoUrl
+          ? await externalUploadMutation.mutateAsync({ url: videoUrl })
+          : await localUploadMutation.mutateAsync({ file: acceptedFiles[0] });
 
-        const videoId = await saveVideo({ videoTitle: "hello wrold" });
+        const videoId = await saveVideo({
+          videoTitle,
+          indexName: s3Directory,
+        });
 
-        // startTransition(() => {
-        //   router.push(`/video/${s3Directory}`);
-        // });
+        console.log({ videoId });
+
+        startTransition(() => {
+          router.push(`/video/${s3Directory}`);
+        });
       })}
       className="flex w-full flex-col items-center gap-8 rounded-[32px] bg-[#0B111A] p-4 min-[1050px]:max-w-[512px]"
     >

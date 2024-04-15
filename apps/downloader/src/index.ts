@@ -2,6 +2,7 @@ import { serve } from "@hono/node-server";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import ytdl from "ytdl-core";
+import { db } from "database";
 
 import { getUploadUrl } from "./lib/s3";
 
@@ -22,6 +23,74 @@ app.get("/", async (c) => {
   return c.text("Hello from Root!");
 });
 
+const getIndexId = async (indexName: string) => {
+  const [index] = await client12Labs.index.list({ name: indexName });
+
+  return index?.id;
+};
+
+const get12LabsVideoId = async (indexId: string) => {
+  const [index] = await client12Labs.index.video.list(indexId);
+
+  return index?.id;
+};
+
+app.patch("/save-video-metadata", async (c) => {
+  const { videoId, indexName } = await c.req.json<{
+    videoId: string;
+    indexName: string;
+  }>();
+
+  console.log(videoId, indexName);
+
+  console.log("start saving video metadata...");
+
+  let indexId = await getIndexId(indexName);
+
+  while (!indexId) {
+    indexId = await getIndexId(indexName);
+    console.log(indexId);
+    console.log("waiting for index ready...");
+    await new Promise((resolve) => setTimeout(resolve, 500));
+  }
+
+  await db.video.update({
+    where: { id: videoId },
+    data: {
+      indexId,
+    },
+  });
+
+  console.log("indexId: " + indexId);
+
+  let twelveLabsVideoId = await get12LabsVideoId(indexId);
+
+  while (!twelveLabsVideoId) {
+    twelveLabsVideoId = await get12LabsVideoId(indexId);
+    console.log(videoId);
+    console.log("waiting for videoId ready...");
+    await new Promise((resolve) => setTimeout(resolve, 500));
+  }
+
+  console.log("12LabsVideoId: " + twelveLabsVideoId);
+
+  const {
+    metadata: { duration, size },
+  } = await client12Labs.index.video.retrieve(indexId, twelveLabsVideoId);
+
+  await db.video.update({
+    where: { id: videoId },
+    data: {
+      duration,
+      size,
+    },
+  });
+
+  return c.json({ message: "Video metadata was successfully saved" });
+});
+
+app.patch("/save-video-thumbnail", async (c) => {});
+
 async function trigger12LabsTask({
   indexName,
   url,
@@ -36,13 +105,13 @@ async function trigger12LabsTask({
     engines: engine,
     addons: ["thumbnail"],
   });
-  console.log({ index });
+  // console.log({ index });
 
   const task = await client12Labs.task.create({
     indexId: index.id,
     url,
   });
-  console.log({ task });
+  // console.log({ task });
   return task;
 }
 

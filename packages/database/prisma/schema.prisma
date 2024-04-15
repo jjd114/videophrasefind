@@ -8,24 +8,18 @@ generator client {
   provider = "prisma-client-js"
 }
 
-model Index {
-  id String @id
-
-  indexName String
-
-  video Video?
-}
-
 model Video {
-  id String @id
+  id String @id @default(cuid())
 
-  title     String
-  duration  Decimal
-  size      Int
   createdAt DateTime @default(now())
 
-  userId  String
-  indexId String @unique
+  userId String
 
-  index Index @relation(fields: [indexId], references: [id])
+  title        String
+  duration     Decimal?
+  size         Int?
+  thumbnailUrl String?
+
+  indexId   String?
+  indexName String
 }

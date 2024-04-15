@@ -25,11 +25,11 @@ export const metadata: Metadata = {
 
 async function getTranscriptions(indexName: string) {
   const [index] = await client12Labs.index.list({ name: indexName });
-  console.log({ index, indexName });
+  // console.log({ index, indexName });
   if (!index) return { ready: false, data: null };
 
   const [task] = await client12Labs.task.list({ indexId: index.id });
-  console.log({ task });
+  // console.log({ task });
   if (!task) return { ready: false, data: null };
 
   if (task.status !== "ready")
@@ -40,7 +40,7 @@ async function getTranscriptions(indexName: string) {
     };
 
   const [video] = await client12Labs.index.video.list(index.id);
-  console.log({ video });
+  // console.log({ video });
   const result = await client12Labs.index.video.transcription(
     index.id,
     video.id,

@@ -8,6 +8,8 @@ import { v4 as uuid } from "uuid";
 import { type SearchData } from "twelvelabs-js";
 import { auth } from "@clerk/nextjs";
 
+import { db } from "database";
+
 import { getS3DirectoryUrl } from "@/lib/s3";
 
 import { client12Labs } from "@/twelveLabs/client";
@@ -107,10 +109,36 @@ export async function getSemanticSearchResult(
   return result;
 }
 
-export async function saveVideo({ videoTitle }: { videoTitle: string }) {
+export async function saveVideo({
+  videoTitle,
+  indexName,
+}: {
+  videoTitle: string;
+  indexName: string;
+}) {
   const { userId } = await auth();
 
   if (!userId) return null;
 
-  console.log(videoTitle, userId);
+  const { id } = await db.video.create({
+    data: {
+      title: videoTitle,
+      indexName,
+      userId,
+    },
+  });
+
+  fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/save-video-metadata`, {
+    method: "PATCH",
+    body: JSON.stringify({ videoId: id, indexName }),
+    headers: {
+      accept: "application/json",
+      "Content-Type": "application/json",
+    },
+    cache: "no-cache",
+  });
+
+  // triggerSaveVideoThumbnail()
+
+  return id;
 }
