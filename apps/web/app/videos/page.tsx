@@ -1,7 +1,6 @@
-import { currentUser } from "@clerk/nextjs";
-
-import { db } from "@/lib/db";
 import Link from "next/link";
+import { currentUser } from "@clerk/nextjs";
+import { db } from "database";
 
 const getVideos = async (userId: string) => {
   return await db.video.findMany({

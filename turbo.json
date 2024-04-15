@@ -2,14 +2,20 @@
   "$schema": "https://turbo.build/schema.json",
   "pipeline": {
     "build": {
+      "dependsOn": ["^db:generate"],
       "outputs": [".next/**"]
     },
     "dev": {
+      "dependsOn": ["^db:generate"],
       "cache": false
     },
     "start": {
       "dependsOn": ["build"],
       "cache": false
+    },
+    "lint": {
+      "cache": false,
+      "outputs": []
     },
     "format:check": {
       "cache": false,
@@ -19,17 +25,11 @@
       "cache": false,
       "outputs": []
     },
-    "lint": {
-      "cache": false,
-      "outputs": []
+    "db:generate": {
+      "cache": false
     },
     "db:push": {
-      "cache": false,
-      "outputs": []
-    },
-    "prisma:generate": {
-      "cache": false,
-      "outputs": []
+      "cache": false
     }
   }
 }
