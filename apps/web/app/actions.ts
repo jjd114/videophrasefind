@@ -6,12 +6,11 @@ import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { v4 as uuid } from "uuid";
 import { type SearchData } from "twelvelabs-js";
+import { auth } from "@clerk/nextjs";
 
 import { getS3DirectoryUrl } from "@/lib/s3";
 
 import { client12Labs } from "@/twelveLabs/client";
-
-import { db } from "@/lib/db";
 
 export async function getVideoUrl(s3Directory: string) {
   const url = `${getS3DirectoryUrl(s3Directory)}/video.webm`;
@@ -108,50 +107,10 @@ export async function getSemanticSearchResult(
   return result;
 }
 
-export async function getIndexId(indexName: string) {
-  const [index] = await client12Labs.index.list({ name: indexName });
+export async function saveVideo({ videoTitle }: { videoTitle: string }) {
+  const { userId } = await auth();
 
-  return index?.id;
-}
+  if (!userId) return null;
 
-export async function getVideoId(indexId: string) {
-  const [index] = await client12Labs.index.video.list(indexId);
-
-  return index?.id;
-}
-
-export async function saveVideo({
-  indexId,
-  videoId,
-  userId,
-  videoTitle,
-  indexName,
-}: {
-  indexId: string;
-  videoId: string;
-  userId: string;
-  videoTitle: string;
-  indexName: string;
-}) {
-  const {
-    metadata: { duration, size },
-  } = await client12Labs.index.video.retrieve(indexId, videoId);
-
-  await db.index.create({
-    data: {
-      id: indexId,
-      indexName,
-    },
-  });
-
-  await db.video.create({
-    data: {
-      id: videoId,
-      title: videoTitle,
-      duration,
-      size,
-      userId,
-      indexId: indexId,
-    },
-  });
+  console.log(videoTitle, userId);
 }

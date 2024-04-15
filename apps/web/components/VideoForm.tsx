@@ -6,7 +6,6 @@ import { useMutation } from "@tanstack/react-query";
 import { useState, useTransition } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useAuth } from "@clerk/nextjs";
 
 import useZodForm from "@/hooks/useZodForm";
 
@@ -15,9 +14,7 @@ import Input from "@/components/Input";
 
 import {
   fetchAndTrigger,
-  getIndexId,
   getUploadUrl,
-  getVideoId,
   saveVideo,
   trigger,
 } from "@/app/actions";
@@ -33,8 +30,6 @@ export const schema = z.object({
 });
 
 export default function VideoForm() {
-  const { userId, isSignedIn, isLoaded } = useAuth();
-
   const router = useRouter();
 
   const [status, setStatus] = useState("no status");
@@ -104,49 +99,15 @@ export default function VideoForm() {
   return (
     <form
       onSubmit={handleSubmit(async ({ videoUrl }) => {
-        const { s3Directory, videoTitle } = videoUrl
-          ? await externalUploadMutation.mutateAsync({ url: videoUrl })
-          : await localUploadMutation.mutateAsync({ file: acceptedFiles[0] });
+        // const { s3Directory, videoTitle } = videoUrl
+        //   ? await externalUploadMutation.mutateAsync({ url: videoUrl })
+        //   : await localUploadMutation.mutateAsync({ file: acceptedFiles[0] });
 
-        if (userId && isLoaded && isSignedIn) {
-          setStatus(
-            "Saving your video in database. please, don't leave the page...",
-          );
+        const videoId = await saveVideo({ videoTitle: "hello wrold" });
 
-          let indexId = await getIndexId(s3Directory);
-
-          while (!indexId) {
-            indexId = await getIndexId(s3Directory);
-            console.log(indexId);
-            console.log("waiting for index ready...");
-            await new Promise((resolve) => setTimeout(resolve, 500));
-          }
-
-          console.log("indexId: " + indexId);
-
-          let videoId = await getVideoId(indexId);
-
-          while (!videoId) {
-            videoId = await getVideoId(indexId);
-            console.log(videoId);
-            console.log("waiting for videoId ready...");
-            await new Promise((resolve) => setTimeout(resolve, 500));
-          }
-
-          console.log("videoId: " + videoId);
-
-          await saveVideo({
-            indexId,
-            videoId,
-            videoTitle,
-            userId,
-            indexName: s3Directory,
-          });
-        }
-
-        startTransition(() => {
-          router.push(`/video/${s3Directory}`);
-        });
+        // startTransition(() => {
+        //   router.push(`/video/${s3Directory}`);
+        // });
       })}
       className="flex w-full flex-col items-center gap-8 rounded-[32px] bg-[#0B111A] p-4 min-[1050px]:max-w-[512px]"
     >
