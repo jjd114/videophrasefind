@@ -7,7 +7,7 @@ import {
 
 const app = new Hono();
 
-app.patch("/save-metadata", async (c) => {
+app.patch("/trigger-save-metadata", async (c) => {
   const { videoId, indexName } = await c.req.json<{
     videoId: string;
     indexName: string;

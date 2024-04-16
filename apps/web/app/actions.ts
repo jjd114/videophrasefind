@@ -130,7 +130,7 @@ export async function saveVideo({
   });
 
   const metadataRes = await fetch(
-    `${process.env.NEXT_PUBLIC_API_BASE_URL}/video/save-metadata`,
+    `${process.env.NEXT_PUBLIC_API_BASE_URL}/video/trigger-save-metadata`,
     {
       method: "PATCH",
       body: JSON.stringify({ videoId: id, indexName }),
