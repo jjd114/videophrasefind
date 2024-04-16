@@ -129,7 +129,7 @@ export async function saveVideo({
     },
   });
 
-  const res = await fetch(
+  const metadataRes = await fetch(
     `${process.env.NEXT_PUBLIC_API_BASE_URL}/video/save-metadata`,
     {
       method: "PATCH",
@@ -142,7 +142,22 @@ export async function saveVideo({
     },
   );
 
-  console.log(await res.json());
+  console.log(await metadataRes.json());
+
+  const statusUpdateRes = await fetch(
+    `${process.env.NEXT_PUBLIC_API_BASE_URL}/video/trigger-status-update`,
+    {
+      method: "PATCH",
+      body: JSON.stringify({ videoId: id, indexName }),
+      headers: {
+        accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      cache: "no-cache",
+    },
+  );
+
+  console.log(await statusUpdateRes.json());
 
   return id;
 }

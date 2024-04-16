@@ -66,6 +66,7 @@ export default async function VideosPage() {
                 <span className="truncate">{`Index name: ${video.indexName}`}</span>
                 <span>{`Video id: ${video.id}`}</span>
                 <span>{`12Labs video id: ${video.twelveLabsVideoId || "no twelve labs video id yet"}`}</span>
+                <span>{`Transcriptions status: ${video.status}`}</span>
               </div>
             </div>
           </div>

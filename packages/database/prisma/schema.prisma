@@ -8,6 +8,11 @@ generator client {
   provider = "prisma-client-js"
 }
 
+enum Status {
+  PROCESSING
+  READY
+}
+
 model Video {
   id String @id @default(cuid())
 
@@ -15,6 +20,7 @@ model Video {
   duration     Decimal?
   size         Int?
   thumbnailUrl String?
+  status       Status   @default(PROCESSING)
 
   userId String?
 

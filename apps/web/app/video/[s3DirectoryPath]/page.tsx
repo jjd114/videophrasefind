@@ -23,6 +23,13 @@ export const metadata: Metadata = {
     "Here you can see your transcribed video and search for keywords without watching the video",
 };
 
+// async function getTranscriptions2(videoId: string) {
+// const status = await getVideoReadyStatus(videoId)
+// if (status !== "ready") return { ready: false, data: null };
+// const {twelveLabsVideoId, indexId} = getVideoIds(videoId)
+// const result = await client12Labs.index.video.transcription(indexId, twelveLabsVideoId);
+// }
+
 async function getTranscriptions(indexName: string) {
   const [index] = await client12Labs.index.list({ name: indexName });
   // console.log({ index, indexName });
@@ -35,7 +42,6 @@ async function getTranscriptions(indexName: string) {
   if (task.status !== "ready")
     return {
       ready: false,
-      estimatedTime: task.estimatedTime,
       data: null,
     };
 
@@ -46,8 +52,7 @@ async function getTranscriptions(indexName: string) {
     video.id,
   );
 
-  const data = transcriptionsSchema.parse(result);
-  return { ready: true, data };
+  return { ready: true, data: transcriptionsSchema.parse(result) };
 }
 
 export default async function VideoPage({

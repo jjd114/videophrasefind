@@ -4,6 +4,32 @@ import { client12Labs } from "../../twelveLabs/client";
 
 import { get12LabsVideoId, getIndexId } from "./utils";
 
+export const triggerUpdateVideoProcessingStatusTask = async ({
+  videoId,
+  indexName,
+}: {
+  videoId: string;
+  indexName: string;
+}) => {
+  let indexId = await getIndexId(indexName);
+
+  while (!indexId) {
+    indexId = await getIndexId(indexName);
+    console.log("waiting for index ready...", { indexId });
+    await new Promise((resolve) => setTimeout(resolve, 500));
+  }
+
+  let status = (await client12Labs.task.list({ indexId }))[0]?.status;
+
+  while (status !== "ready") {
+    status = (await client12Labs.task.list({ indexId }))[0]?.status;
+    console.log("waiting for video ready...", { status });
+    await new Promise((resolve) => setTimeout(resolve, 5000));
+  }
+
+  await db.video.update({ where: { id: videoId }, data: { status: "READY" } });
+};
+
 export const triggerSaveMetadataTask = async ({
   videoId,
   indexName,

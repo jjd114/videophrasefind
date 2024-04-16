@@ -1,6 +1,9 @@
 import { Hono } from "hono";
 
-import { triggerSaveMetadataTask } from "./tasks";
+import {
+  triggerSaveMetadataTask,
+  triggerUpdateVideoProcessingStatusTask,
+} from "./tasks";
 
 const app = new Hono();
 
@@ -10,7 +13,18 @@ app.patch("/save-metadata", async (c) => {
     indexName: string;
   }>();
   triggerSaveMetadataTask({ videoId, indexName });
-  return c.json({ message: "Video metadata save task was triggered!" });
+  return c.json({ message: "Save video metadata task was triggered!" });
+});
+
+app.patch("/trigger-status-update", async (c) => {
+  const { videoId, indexName } = await c.req.json<{
+    videoId: string;
+    indexName: string;
+  }>();
+  triggerUpdateVideoProcessingStatusTask({ videoId, indexName });
+  return c.json({
+    message: "Video processing task status update was triggered!",
+  });
 });
 
 export default app;
