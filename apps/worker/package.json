@@ -1,5 +1,5 @@
 {
-  "name": "downloader",
+  "name": "worker",
   "scripts": {
     "dev": "tsx watch src/index.ts",
     "build": "tsc",
