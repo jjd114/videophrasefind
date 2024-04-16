@@ -15,7 +15,7 @@ app.use(
   "/*",
   cors({
     origin: "http://localhost:3000",
-    allowMethods: ["POST", "GET"],
+    allowMethods: ["POST", "GET", "PATCH"],
   })
 );
 
