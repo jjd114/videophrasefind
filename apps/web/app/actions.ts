@@ -131,7 +131,7 @@ export async function saveVideo({
     },
   });
 
-  fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/save-video-metadata`, {
+  fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/video/save-metadata`, {
     method: "PATCH",
     body: JSON.stringify({ videoId: id, indexName }),
     headers: {
@@ -141,7 +141,7 @@ export async function saveVideo({
     cache: "no-cache",
   });
 
-  fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/save-video-thumbnail`, {
+  fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/video/save-thumbnail`, {
     method: "PATCH",
     body: JSON.stringify({ videoId: id, indexName }),
     headers: {
