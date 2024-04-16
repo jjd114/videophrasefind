@@ -13,7 +13,7 @@ model Video {
 
   createdAt DateTime @default(now())
 
-  userId String
+  userId String?
 
   title        String
   duration     Decimal?

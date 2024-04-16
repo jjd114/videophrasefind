@@ -121,8 +121,6 @@ export async function saveVideo({
 }) {
   const { userId } = await auth();
 
-  if (!userId) return null;
-
   const { id } = await db.video.create({
     data: {
       title: videoTitle,
