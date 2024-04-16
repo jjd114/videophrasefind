@@ -141,15 +141,5 @@ export async function saveVideo({
     cache: "no-cache",
   });
 
-  fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/video/save-thumbnail`, {
-    method: "PATCH",
-    body: JSON.stringify({ videoId: id, indexName }),
-    headers: {
-      accept: "application/json",
-      "Content-Type": "application/json",
-    },
-    cache: "no-cache",
-  });
-
   return id;
 }

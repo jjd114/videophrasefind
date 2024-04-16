@@ -103,6 +103,8 @@ export default function VideoForm() {
           ? await externalUploadMutation.mutateAsync({ url: videoUrl })
           : await localUploadMutation.mutateAsync({ file: acceptedFiles[0] });
 
+        setStatus("triggering save video metadata job");
+
         const videoId = await saveVideo({
           videoTitle,
           indexName: s3Directory,
