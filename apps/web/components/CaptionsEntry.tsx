@@ -46,8 +46,7 @@ export default function CaptionsEntry({
             fill
             src={thumbnailSrc}
             alt="thumbnail"
-            objectFit="contain"
-            className="rounded-xl"
+            className="rounded-xl object-contain"
           />
         )}
       </div>

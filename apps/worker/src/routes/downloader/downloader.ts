@@ -1,7 +1,7 @@
 import { Hono } from "hono";
 import ytdl from "ytdl-core";
 
-import { trigger12LabsTask } from "./lib";
+import { trigger12LabsTask } from "./tasks";
 
 import { getUploadUrl } from "../../lib/s3";
 

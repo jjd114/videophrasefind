@@ -36,8 +36,7 @@ export default async function VideosPage() {
                   fill
                   src={video.thumbnailUrl}
                   alt="thumbnail"
-                  objectFit="contain"
-                  className="rounded-xl"
+                  className="rounded-xl object-contain"
                 />
               ) : (
                 <Icons.spinner className="size-5 animate-spin" />

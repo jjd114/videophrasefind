@@ -131,15 +131,20 @@ export async function saveVideo({
     },
   });
 
-  fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/video/save-metadata`, {
-    method: "PATCH",
-    body: JSON.stringify({ videoId: id, indexName }),
-    headers: {
-      accept: "application/json",
-      "Content-Type": "application/json",
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_API_BASE_URL}/video/save-metadata`,
+    {
+      method: "PATCH",
+      body: JSON.stringify({ videoId: id, indexName }),
+      headers: {
+        accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      cache: "no-cache",
     },
-    cache: "no-cache",
-  });
+  );
+
+  console.log(await res.json());
 
   return id;
 }
