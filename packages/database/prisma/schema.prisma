@@ -11,15 +11,17 @@ generator client {
 model Video {
   id String @id @default(cuid())
 
-  createdAt DateTime @default(now())
-
-  userId String?
-
   title        String
   duration     Decimal?
   size         Int?
   thumbnailUrl String?
 
+  userId String?
+
+  twelveLabsVideoId String?
+
   indexId   String?
   indexName String
+
+  createdAt DateTime @default(now())
 }

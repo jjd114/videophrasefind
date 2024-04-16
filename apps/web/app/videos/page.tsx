@@ -8,7 +8,7 @@ import { formatDate, formatTime } from "@/lib/utils";
 import { Icons } from "@/components/Icons";
 
 const getVideos = async (userId: string) => {
-  return await db.video.findMany({
+  return db.video.findMany({
     where: { userId },
     orderBy: { createdAt: "desc" },
   });
@@ -50,21 +50,22 @@ export default async function VideosPage() {
               <div className="flex gap-10">
                 <span>
                   Size:{" "}
-                  {video?.size
+                  {video.size
                     ? `${(video.size / 1e6).toFixed(2)}MB`
                     : "no size yet"}
                 </span>
                 <span>
                   Duration:{" "}
-                  {video?.duration
+                  {video.duration
                     ? `${video.duration.toFixed(2)} sec.`
                     : "no duration yet"}
                 </span>
               </div>
               <div className="flex flex-col">
-                <span>{`Index id: ${video?.indexId || "no index id yet"}`}</span>
+                <span>{`Index id: ${video.indexId || "no index id yet"}`}</span>
                 <span className="truncate">{`Index name: ${video.indexName}`}</span>
                 <span>{`Video id: ${video.id}`}</span>
+                <span>{`12Labs video id: ${video.twelveLabsVideoId || "no twelve labs video id yet"}`}</span>
               </div>
             </div>
           </div>

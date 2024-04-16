@@ -17,8 +17,7 @@ export const triggerSaveMetadataTask = async ({
 
   while (!indexId) {
     indexId = await getIndexId(indexName);
-    console.log(indexId);
-    console.log("waiting for index ready...");
+    console.log("waiting for index ready...", { indexId });
     await new Promise((resolve) => setTimeout(resolve, 500));
   }
 
@@ -29,18 +28,20 @@ export const triggerSaveMetadataTask = async ({
     },
   });
 
-  console.log("indexId: " + indexId);
-
   let twelveLabsVideoId = await get12LabsVideoId(indexId);
 
   while (!twelveLabsVideoId) {
     twelveLabsVideoId = await get12LabsVideoId(indexId);
-    console.log(videoId);
-    console.log("waiting for videoId ready...");
+    console.log("waiting for videoId ready...", { twelveLabsVideoId });
     await new Promise((resolve) => setTimeout(resolve, 500));
   }
 
-  console.log("12LabsVideoId: " + twelveLabsVideoId);
+  await db.video.update({
+    where: { id: videoId },
+    data: {
+      twelveLabsVideoId,
+    },
+  });
 
   const {
     metadata: { duration, size },
@@ -61,8 +62,7 @@ export const triggerSaveMetadataTask = async ({
   while (!hls) {
     hls = (await client12Labs.index.video.retrieve(indexId, twelveLabsVideoId))
       .hls;
-    console.log(hls);
-    console.log("waiting for hls ready...");
+    console.log("waiting for hls ready...", { hls });
     await new Promise((resolve) => setTimeout(resolve, 500));
   }
 
