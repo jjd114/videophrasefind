@@ -10,6 +10,7 @@ import { Icons } from "@/components/Icons";
 const getVideos = async (userId: string) => {
   return await db.video.findMany({
     where: { userId },
+    orderBy: { createdAt: "desc" },
   });
 };
 

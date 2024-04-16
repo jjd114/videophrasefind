@@ -48,15 +48,18 @@ export async function getUploadUrl() {
 }
 
 export async function trigger(url: string, indexName: string) {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/trigger`, {
-    method: "POST",
-    body: JSON.stringify({ indexName, url }),
-    headers: {
-      accept: "application/json",
-      "Content-Type": "application/json",
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_API_BASE_URL}/downloader/trigger`,
+    {
+      method: "POST",
+      body: JSON.stringify({ indexName, url }),
+      headers: {
+        accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      cache: "no-cache",
     },
-    cache: "no-cache",
-  });
+  );
   return res.json();
 }
 
@@ -67,7 +70,7 @@ export async function fetchAndTrigger(url: string) {
   });
 
   const res = await fetch(
-    `${process.env.NEXT_PUBLIC_API_BASE_URL}/fetch-and-trigger`,
+    `${process.env.NEXT_PUBLIC_API_BASE_URL}/downloader/fetch-and-trigger`,
     {
       method: "POST",
       body: JSON.stringify({ url }),
