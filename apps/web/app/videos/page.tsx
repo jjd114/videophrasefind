@@ -28,7 +28,7 @@ export default async function VideosPage() {
   return (
     <div className="flex w-full max-w-[1000px] flex-col gap-8">
       {videos.map((video) => (
-        <Link key={video.id} href={`/video/${video.indexName}`}>
+        <Link key={video.id} href={`/video/${video.id}`}>
           <div className="flex items-center gap-7 rounded-2xl bg-[#0b111a] p-8">
             <div className="relative flex aspect-video h-28 items-center justify-center rounded-xl bg-[#ffffff1f]">
               {video.thumbnailUrl ? (
@@ -66,7 +66,17 @@ export default async function VideosPage() {
                 <span className="truncate">{`Index name: ${video.indexName}`}</span>
                 <span>{`Video id: ${video.id}`}</span>
                 <span>{`12Labs video id: ${video.twelveLabsVideoId || "no twelve labs video id yet"}`}</span>
-                <span>{`Transcriptions status: ${video.status}`}</span>
+                <span>
+                  Video processing status:{" "}
+                  {video.status === "PROCESSING" ? (
+                    <span className="flex items-center gap-3">
+                      processing{" "}
+                      <Icons.spinner className="size-5 animate-spin" />
+                    </span>
+                  ) : (
+                    <span>ready</span>
+                  )}
+                </span>
               </div>
             </div>
           </div>

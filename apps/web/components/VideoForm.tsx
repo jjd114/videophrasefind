@@ -12,14 +12,10 @@ import useZodForm from "@/hooks/useZodForm";
 import Button from "@/components/Button";
 import Input from "@/components/Input";
 
-import {
-  fetchAndTrigger,
-  getUploadUrl,
-  saveVideo,
-  trigger,
-} from "@/app/actions";
+import { fetchAndTrigger, getUploadUrl, trigger } from "@/app/actions";
+import { saveVideo } from "@/app/video-actions";
 
-import Loader from "@/app/video/[s3DirectoryPath]/loader";
+import Loader from "@/app/video/[id]/loader";
 
 export const schema = z.object({
   videoUrl: z
@@ -82,6 +78,14 @@ export default function VideoForm() {
     mutationFn: ({ url }: { url: string }) => fetchAndTrigger(url), // Video transcription will be triggered automatically
   });
 
+  const saveVideoMutation = useMutation({
+    onMutate: () => {
+      setStatus("triggering save video metadata job");
+    },
+    mutationFn: (data: { videoTitle: string; indexName: string }) =>
+      saveVideo({ videoTitle: data.videoTitle, indexName: data.indexName }),
+  });
+
   if (localUploadMutation.isPending)
     return (
       <div className="flex w-full max-w-[512px]">
@@ -103,15 +107,14 @@ export default function VideoForm() {
           ? await externalUploadMutation.mutateAsync({ url: videoUrl })
           : await localUploadMutation.mutateAsync({ file: acceptedFiles[0] });
 
-        setStatus("triggering save video metadata job");
-
-        const videoId = await saveVideo({
-          videoTitle,
+        const videoId = await saveVideoMutation.mutateAsync({
           indexName: s3Directory,
+          videoTitle,
         });
 
+        // If I do redirect on the server side -> redirect time is not included in the mutation isPending time
         startTransition(() => {
-          router.push(`/video/${s3Directory}`);
+          router.push(`/video/${videoId}`);
         });
       })}
       className="flex w-full flex-col items-center gap-8 rounded-[32px] bg-[#0B111A] p-4 min-[1050px]:max-w-[512px]"
