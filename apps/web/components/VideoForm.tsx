@@ -15,7 +15,7 @@ import Input from "@/components/Input";
 import { fetchAndTrigger, getUploadUrl, trigger } from "@/app/actions";
 import { saveVideo } from "@/app/video-actions";
 
-import Loader from "@/app/video/[id]/loader";
+import { Icons } from "./Icons";
 
 export const schema = z.object({
   videoUrl: z
@@ -54,7 +54,7 @@ export default function VideoForm() {
 
   const localUploadMutation = useMutation({
     onMutate: () => {
-      setStatus("uploading your video to our storage");
+      setStatus("uploading your video to our storage...");
     },
     mutationFn: async ({ file }: { file: File }) => {
       const { uploadUrl, s3Directory, downloadUrl } = await getUploadUrl();
@@ -73,30 +73,29 @@ export default function VideoForm() {
 
   const externalUploadMutation = useMutation({
     onMutate: () => {
-      setStatus("triggering video upload to our storage");
+      setStatus("triggering video upload to our storage...");
     },
     mutationFn: ({ url }: { url: string }) => fetchAndTrigger(url), // Video transcription will be triggered automatically
   });
 
   const saveVideoMutation = useMutation({
     onMutate: () => {
-      setStatus("triggering save video metadata job");
+      setStatus("triggering save video metadata job...");
     },
     mutationFn: (data: { videoTitle: string; indexName: string }) =>
       saveVideo({ videoTitle: data.videoTitle, indexName: data.indexName }),
   });
 
-  if (localUploadMutation.isPending)
-    return (
-      <div className="flex w-full max-w-[512px]">
-        <Loader message="Uploading your video" />
-      </div>
-    );
-
   if (isSubmitting || isPending)
     return (
-      <div className="flex w-full max-w-[512px]">
-        <Loader message={`Video processing.. status=${status}`} />
+      <div className="flex w-full max-w-[512px] flex-col items-center gap-4">
+        <Icons.spinner className="size-20 animate-spin text-[#9DA3AE]" />
+        <div className="text-center">
+          <h2 className="mb-4 text-lg font-bold">Video processing...</h2>
+          <p className="text-md animate-slide text-center text-[#9DA3AE]">
+            {status}
+          </p>
+        </div>
       </div>
     );
 

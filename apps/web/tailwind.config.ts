@@ -67,8 +67,15 @@ const config = {
           from: { height: "var(--radix-accordion-content-height)" },
           to: { height: "0" },
         },
+        slide: {
+          from: {
+            transform: "translateY(-60%) rotateX(-90deg)",
+          },
+          to: { transform: "translateY(0) rotateX(0deg)" },
+        },
       },
       animation: {
+        slide: "slide .45s linear",
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
       },
