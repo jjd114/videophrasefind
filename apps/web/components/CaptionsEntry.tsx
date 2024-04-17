@@ -4,7 +4,7 @@ import { Entry } from "@plussub/srt-vtt-parser/dist/src/types";
 import { RefObject } from "react";
 import Image from "next/image";
 
-function padTime(time?: number) {
+export function padTime(time?: number) {
   return _.padStart(time?.toFixed(0), 2, "0");
 }
 
