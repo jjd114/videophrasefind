@@ -17,7 +17,7 @@ export default function ClerkProvider({
           colorInputBackground: "transparent",
           colorInputText: "#9DA3AE",
           borderRadius: "0.5rem",
-          colorAlphaShade: "#e2e8f0",
+          // TODO: migrate colorAlphaShade: "#e2e8f0",
         },
         elements: {
           card: "shadow-none bg-[#0b111a]",

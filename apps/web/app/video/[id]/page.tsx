@@ -19,7 +19,6 @@ interface Props {
 }
 
 export const dynamic = "force-dynamic";
-export const runtime = "nodejs";
 
 export const metadata: Metadata = {
   title: "Transcription",

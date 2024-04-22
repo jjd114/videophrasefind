@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { currentUser } from "@clerk/nextjs";
+import { auth } from "@clerk/nextjs/server";
 import { Prisma, db } from "database";
 import { intervalToDuration } from "date-fns";
 
@@ -30,11 +30,8 @@ const getVideos = async (userId: string) => {
 };
 
 export default async function VideosPage() {
-  const user = await currentUser();
-
-  if (!user) return <div>no user found</div>;
-
-  const videos = await getVideos(user.id);
+  const { userId } = auth().protect();
+  const videos = await getVideos(userId);
 
   if (videos.length === 0)
     return (

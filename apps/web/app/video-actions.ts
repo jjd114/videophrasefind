@@ -1,7 +1,7 @@
 "use server";
 
 import { db } from "database";
-import { auth } from "@clerk/nextjs";
+import { auth } from "@clerk/nextjs/server";
 
 import { getS3DirectoryUrl } from "@/lib/s3";
 
@@ -58,7 +58,7 @@ export async function saveVideo({
   videoTitle: string;
   indexName: string;
 }) {
-  const { userId } = await auth();
+  const { userId } = auth();
 
   const { id } = await db.video.create({
     data: {

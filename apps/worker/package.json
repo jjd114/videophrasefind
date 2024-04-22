@@ -6,21 +6,21 @@
     "start": "node dist/index.js"
   },
   "dependencies": {
-    "@aws-sdk/client-s3": "^3.537.0",
-    "@aws-sdk/s3-request-presigner": "^3.537.0",
-    "@hono/node-server": "^1.8.2",
+    "@aws-sdk/client-s3": "^3.556.0",
+    "@aws-sdk/s3-request-presigner": "^3.556.0",
+    "@hono/node-server": "^1.11.0",
+    "database": "workspace:*",
     "dotenv": "^16.4.5",
-    "hono": "^4.1.2",
+    "hono": "^4.2.6",
     "twelvelabs-js": "^0.1.22",
     "uuid": "^9.0.1",
-    "ytdl-core": "^4.11.5",
-    "database": "workspace:*"
+    "ytdl-core": "^4.11.5"
   },
   "devDependencies": {
-    "@types/node": "^20.11.17",
+    "@types/node": "^20.12.7",
     "@types/node-fetch": "^2.6.11",
     "@types/uuid": "^9.0.8",
-    "tsx": "^3.12.2",
-    "typescript": "^5.4.3"
+    "tsx": "^4.7.2",
+    "typescript": "^5.4.5"
   }
 }
