@@ -9,7 +9,10 @@ export function getS3DirectoryUrl(videoId: string) {
   return `${S3_BASE}/${videoId}`;
 }
 
-export async function getUploadUrl(videoId: string) {
+export async function getUploadUrl(
+  videoId: string,
+  videoSize: "full" | "cropped"
+) {
   const client = new S3Client({
     region: process.env.AWS_REGION || "eu-north-1",
     credentials: {
@@ -20,7 +23,10 @@ export async function getUploadUrl(videoId: string) {
 
   const command = new PutObjectCommand({
     Bucket: process.env.AWS_BUCKET || "",
-    Key: `videos/${videoId}/video.webm`,
+    Key:
+      videoSize === "full"
+        ? `videos/${videoId}/video.webm`
+        : `videos/${videoId}/video.cropped.webm`,
   });
 
   return getSignedUrl(client, command, { expiresIn: 3600 });

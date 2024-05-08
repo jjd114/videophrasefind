@@ -2,9 +2,9 @@ import { Hono } from "hono";
 import ytdl from "ytdl-core";
 import { db } from "database";
 
-import { trigger12LabsTask } from "./tasks";
-
 import { getS3DirectoryUrl, getUploadUrl } from "../../lib/s3";
+
+import { trigger12LabsTask } from "./tasks";
 
 const app = new Hono();
 
@@ -25,7 +25,7 @@ app.post("/fetch-and-trigger", async (c) => {
 
   const info = await ytdl.getInfo(url);
 
-  await db.video.update({
+  await db.videoMetadata.update({
     where: {
       id: videoId,
     },
@@ -59,7 +59,16 @@ app.post("/fetch-and-trigger", async (c) => {
     const blob = new Blob(chunks, { type: mimeType });
     const file = new File([blob], filename, { type: mimeType });
 
-    await fetch(await getUploadUrl(videoId), {
+    await db.videoMetadata.update({
+      where: {
+        id: videoId,
+      },
+      data: {
+        size: file.size,
+      },
+    });
+
+    await fetch(await getUploadUrl(videoId, "full"), {
       method: "PUT",
       body: file,
     });

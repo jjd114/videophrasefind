@@ -23,7 +23,19 @@ const formatVideoDuration = (videoDuration: Prisma.Decimal) => {
 };
 
 const getVideos = async (userId: string) => {
-  return db.video.findMany({
+  // await db.videoMetadata.delete({
+  //   where: {
+  //     id: "",
+  //   },
+  // });
+
+  // await db.videoMetadata.deleteMany({
+  //   where: {
+  //     userId: "",
+  //   },
+  // });
+
+  return db.videoMetadata.findMany({
     where: { userId },
     orderBy: { createdAt: "desc" },
   });
