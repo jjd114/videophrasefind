@@ -1,28 +1,38 @@
 import { Hono } from "hono";
 import ytdl from "ytdl-core";
+import { db } from "database";
 
 import { trigger12LabsTask } from "./tasks";
 
-import { getUploadUrl } from "../../lib/s3";
+import { getS3DirectoryUrl, getUploadUrl } from "../../lib/s3";
 
 const app = new Hono();
 
 app.post("/trigger", async (c) => {
-  const { indexName, url } = await c.req.json<{
-    indexName: string;
-    url: string;
+  const { videoId } = await c.req.json<{
+    videoId: string;
   }>();
-  trigger12LabsTask({ indexName, url });
-  return c.json({ message: "Job triggered" });
+  trigger12LabsTask({ videoId });
+  return c.json({ message: "TwelveLabs video upload job triggered!" });
 });
 
 app.post("/fetch-and-trigger", async (c) => {
-  const { url } = await c.req.json<{
+  const { url, videoId } = await c.req.json<{
     url: string;
+    videoId: string;
   }>();
-  console.log("Fetching video", { url });
+  console.log("Fetching video", { url, videoId });
 
   const info = await ytdl.getInfo(url);
+
+  await db.video.update({
+    where: {
+      id: videoId,
+    },
+    data: {
+      title: info.videoDetails.title,
+    },
+  });
 
   const format = ytdl.chooseFormat(info.formats, {
     quality: "22", // iTag value: resolution=720p, container=mp4, ...
@@ -41,25 +51,27 @@ app.post("/fetch-and-trigger", async (c) => {
     chunks.push(chunk);
   });
 
-  const s3path = encodeURIComponent(url);
-  const { uploadUrl, downloadUrl, s3Directory } = await getUploadUrl(s3path);
-
   readable.on("end", async () => {
-    console.log("Fetching done, uploading to s3", { downloadUrl });
+    console.log("Fetching done, uploading to s3", {
+      downloadUrl: `${getS3DirectoryUrl(videoId)}/video.webm`,
+    });
+
     const blob = new Blob(chunks, { type: mimeType });
     const file = new File([blob], filename, { type: mimeType });
 
-    // trigger, but not wait, we will wait on a client side using polling
-    await fetch(uploadUrl, {
+    await fetch(await getUploadUrl(videoId), {
       method: "PUT",
       body: file,
     });
-    console.log("Upload done", { downloadUrl });
 
-    return trigger12LabsTask({ indexName: s3Directory, url: downloadUrl });
+    console.log("Upload done", {
+      downloadUrl: `${getS3DirectoryUrl(videoId)}/video.webm`,
+    });
+
+    trigger12LabsTask({ videoId });
   });
 
-  return c.json({ s3Directory, videoTitle: info.videoDetails.title });
+  return c.json({ message: "Fetch and trigger job triggered!" });
 });
 
 export default app;

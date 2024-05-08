@@ -11,14 +11,17 @@ import useZodForm from "@/hooks/useZodForm";
 
 import Button from "@/components/Button";
 import Input from "@/components/Input";
+import { Icons } from "@/components/Icons";
 
-import { fetchAndTrigger, getUploadUrl, trigger } from "@/app/actions";
-import { saveVideo } from "@/app/video-actions";
-
-import { Icons } from "./Icons";
+import {
+  fetchYTVideoAndTriggerTranscription,
+  getUploadUrl,
+  triggerTranscription,
+} from "@/app/actions";
+import { createVideo, saveVideoTitle } from "@/app/video-actions";
 
 export const schema = z.object({
-  videoUrl: z
+  ytUrl: z
     .string()
     .url({ message: "Invalid URL" })
     .transform((s) => s.replaceAll(/&.*$/g, "")) // Cleanup youtube links
@@ -26,11 +29,13 @@ export const schema = z.object({
 });
 
 export default function VideoForm() {
-  const router = useRouter();
-
   const [status, setStatus] = useState("no status");
 
   const [isPending, startTransition] = useTransition();
+
+  const router = useRouter();
+
+  const { acceptedFiles, getRootProps, getInputProps } = useDropzone();
 
   const {
     register,
@@ -39,12 +44,10 @@ export default function VideoForm() {
   } = useZodForm({
     schema,
     defaultValues: {
-      videoUrl: "",
+      ytUrl: "",
     },
     mode: "onBlur",
   });
-
-  const { acceptedFiles, getRootProps, getInputProps } = useDropzone();
 
   const files = acceptedFiles.map((file: FileWithPath) => (
     <li key={file.path}>
@@ -52,41 +55,44 @@ export default function VideoForm() {
     </li>
   ));
 
-  const localUploadMutation = useMutation({
+  const createVideoMutation = useMutation({
     onMutate: () => {
-      setStatus("uploading your video to our storage...");
+      setStatus("Triggering save video metadata jobs...");
     },
-    mutationFn: async ({ file }: { file: File }) => {
-      const { uploadUrl, s3Directory, downloadUrl } = await getUploadUrl();
-
-      await fetch(uploadUrl, {
-        method: "PUT",
-        body: file,
-      });
-
-      // Trigger video transcription manually
-      await trigger(downloadUrl, s3Directory);
-
-      return { s3Directory, videoTitle: file.name.split(".")[0] };
-    },
+    mutationFn: () => createVideo(),
   });
 
   const externalUploadMutation = useMutation({
     onMutate: () => {
-      setStatus("triggering video upload to our storage...");
+      setStatus("Triggering video upload to our storage...");
     },
-    mutationFn: ({ url }: { url: string }) => fetchAndTrigger(url), // Video transcription will be triggered automatically
+    mutationFn: ({ ytUrl, videoId }: { ytUrl: string; videoId: string }) =>
+      fetchYTVideoAndTriggerTranscription(ytUrl, videoId), // Video transcription on 12Labs will be triggered automatically
   });
 
-  const saveVideoMutation = useMutation({
+  const localUploadMutation = useMutation({
     onMutate: () => {
-      setStatus("triggering save video metadata job...");
+      setStatus("Uploading your video to our storage...");
     },
-    mutationFn: (data: { videoTitle: string; indexName: string }) =>
-      saveVideo({ videoTitle: data.videoTitle, indexName: data.indexName }),
+    mutationFn: async ({ file, videoId }: { file: File; videoId: string }) => {
+      await fetch(await getUploadUrl(videoId), {
+        method: "PUT",
+        body: file,
+      });
+
+      await saveVideoTitle({ videoTitle: file.name.split(".")[0], videoId });
+
+      return triggerTranscription(videoId); // Trigger video transcription on 12Labs manually
+    },
   });
 
-  if (isSubmitting || isPending)
+  if (
+    isSubmitting ||
+    isPending ||
+    localUploadMutation.isPending ||
+    externalUploadMutation.isPending ||
+    createVideoMutation.isPending
+  )
     return (
       <div className="flex w-full max-w-[512px] flex-col items-center gap-4">
         <Icons.spinner className="size-20 animate-spin text-[#9DA3AE]" />
@@ -101,19 +107,30 @@ export default function VideoForm() {
 
   return (
     <form
-      onSubmit={handleSubmit(async ({ videoUrl }) => {
-        const { s3Directory, videoTitle } = videoUrl
-          ? await externalUploadMutation.mutateAsync({ url: videoUrl })
-          : await localUploadMutation.mutateAsync({ file: acceptedFiles[0] });
-
-        const videoId = await saveVideoMutation.mutateAsync({
-          indexName: s3Directory,
-          videoTitle,
-        });
-
-        // If I do redirect on the server side -> redirect time is not included in the mutation isPending time
-        startTransition(() => {
-          router.push(`/video/${videoId}`);
+      onSubmit={handleSubmit(({ ytUrl }) => {
+        createVideoMutation.mutate(undefined, {
+          onSuccess: async (videoId) => {
+            if (ytUrl) {
+              const { message } = await externalUploadMutation.mutateAsync({
+                ytUrl,
+                videoId,
+              });
+              console.log({ message });
+            } else {
+              const { message } = await localUploadMutation.mutateAsync({
+                file: acceptedFiles[0],
+                videoId,
+              });
+              console.log({ message });
+            }
+            /*
+              If I do redirect on the server side,
+              redirect time is not included in the mutation isPending time
+            */
+            startTransition(() => {
+              router.push(`/video/${videoId}`);
+            });
+          },
         });
       })}
       className="flex w-full flex-col items-center gap-8 rounded-[32px] bg-[#0B111A] p-4 min-[1050px]:max-w-[512px]"
@@ -156,7 +173,7 @@ export default function VideoForm() {
       <Input
         className="w-full"
         placeholder="Paste video URL"
-        name="videoUrl"
+        name="ytUrl"
         register={register}
         errors={errors}
       />
@@ -166,6 +183,8 @@ export default function VideoForm() {
           isSubmitting ||
           isPending ||
           localUploadMutation.isPending ||
+          externalUploadMutation.isPending ||
+          createVideoMutation.isPending ||
           !isValid ||
           (!isDirty && acceptedFiles.length === 0)
         }
