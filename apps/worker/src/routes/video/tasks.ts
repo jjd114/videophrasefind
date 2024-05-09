@@ -1,27 +1,12 @@
 import { db } from "database";
 
-import {
-  get12LabsVideoId,
-  get12LabsIndexId,
-  getVideoProcessingStatus,
-  getHLS,
-} from "./utils";
+import { get12LabsVideoId, getVideoProcessingStatus, getHLS } from "./utils";
 
 export const triggerUpdateVideoProcessingStatusTask = async ({
-  videoId,
+  twelveLabsIndexId,
 }: {
-  videoId: string;
+  twelveLabsIndexId: string;
 }) => {
-  let twelveLabsIndexId = await get12LabsIndexId(videoId);
-
-  while (!twelveLabsIndexId) {
-    twelveLabsIndexId = await get12LabsIndexId(videoId);
-    console.log("(status update task) waiting for index ready...", {
-      twelveLabsIndexId,
-    });
-    await new Promise((resolve) => setTimeout(resolve, 500));
-  }
-
   let status = await getVideoProcessingStatus(twelveLabsIndexId);
 
   while (status !== "ready") {
@@ -30,25 +15,22 @@ export const triggerUpdateVideoProcessingStatusTask = async ({
     await new Promise((resolve) => setTimeout(resolve, 5000));
   }
 
-  await db.videoMetadata.update({ where: { id: videoId }, data: { status: "READY" } });
+  await db.twelveLabsVideo.update({
+    where: {
+      twelveLabsIndexId,
+    },
+    data: { status: "READY" },
+  });
 };
 
 export const triggerSaveMetadataTask = async ({
   videoId,
+  twelveLabsIndexId,
 }: {
   videoId: string;
+  twelveLabsIndexId: string;
 }) => {
   console.log("start saving video metadata...", { videoId });
-
-  let twelveLabsIndexId = await get12LabsIndexId(videoId);
-
-  while (!twelveLabsIndexId) {
-    twelveLabsIndexId = await get12LabsIndexId(videoId);
-    console.log("(save MD task) 2 waiting for index ready...", {
-      twelveLabsIndexId,
-    });
-    await new Promise((resolve) => setTimeout(resolve, 500));
-  }
 
   let twelveLabsVideoId = await get12LabsVideoId(twelveLabsIndexId);
 
@@ -60,34 +42,19 @@ export const triggerSaveMetadataTask = async ({
     await new Promise((resolve) => setTimeout(resolve, 500));
   }
 
-  await db.videoMetadata.update({
-    where: { id: videoId },
+  await db.twelveLabsVideo.update({
+    where: { twelveLabsIndexId },
     data: {
       twelveLabsVideoId,
     },
   });
-
-  // const {
-  //   metadata: { duration, size },
-  // } = await client12Labs.index.video.retrieve(
-  //   twelveLabsIndexId,
-  //   twelveLabsVideoId
-  // );
-
-  // await db.videoMetadata.update({
-  //   where: { id: videoId },
-  //   data: {
-  //     duration,
-  //     size,
-  //   },
-  // });
 
   let hls = await getHLS({ twelveLabsIndexId, twelveLabsVideoId });
 
   while (!hls) {
     hls = await getHLS({ twelveLabsIndexId, twelveLabsVideoId });
     console.log("waiting for hls ready...", { hls });
-    await new Promise((resolve) => setTimeout(resolve, 500));
+    await new Promise((resolve) => setTimeout(resolve, 750));
   }
 
   await db.videoMetadata.update({

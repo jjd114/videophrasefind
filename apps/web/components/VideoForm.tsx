@@ -91,7 +91,7 @@ export default function VideoForm() {
 
   const createVideoMutation = useMutation({
     onMutate: () => {
-      setStatus("Triggering save video metadata jobs...");
+      setStatus("Creating a video...");
     },
     mutationFn: createVideo,
     onSuccess: async (videoId) => {
