@@ -2,7 +2,7 @@ import { db } from "database";
 
 import { get12LabsVideoId, getVideoProcessingStatus, getHLS } from "./utils";
 
-export async function triggerUpdateVideoProcessingStatusTask({
+export async function triggerUpdateVideoProcessingTaskStatus({
   twelveLabsIndexId,
 }: {
   twelveLabsIndexId: string;

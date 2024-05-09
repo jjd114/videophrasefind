@@ -13,7 +13,7 @@ import {
 
 import {
   triggerSaveMetadataTask,
-  triggerUpdateVideoProcessingStatusTask,
+  triggerUpdateVideoProcessingTaskStatus,
 } from "../video/tasks";
 
 export async function trigger12LabsTask({ videoId }: { videoId: string }) {
@@ -68,5 +68,5 @@ export async function trigger12LabsTask({ videoId }: { videoId: string }) {
   }
 
   triggerSaveMetadataTask({ twelveLabsIndexId, videoId });
-  triggerUpdateVideoProcessingStatusTask({ twelveLabsIndexId });
+  triggerUpdateVideoProcessingTaskStatus({ twelveLabsIndexId });
 }
