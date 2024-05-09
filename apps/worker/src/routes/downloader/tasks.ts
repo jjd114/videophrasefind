@@ -53,19 +53,12 @@ export async function trigger12LabsTask({ videoId }: { videoId: string }) {
     },
   });
 
-  if (shouldBeCropped) {
-    await cropAndUploadToS3(videoId);
+  shouldBeCropped && (await cropAndUploadToS3(videoId));
 
-    await client12Labs.task.create({
-      indexId: index.id,
-      url: `${getS3DirectoryUrl(videoId)}/video.cropped.webm`,
-    });
-  } else {
-    await client12Labs.task.create({
-      indexId: index.id,
-      url: `${getS3DirectoryUrl(videoId)}/video.webm`,
-    });
-  }
+  await client12Labs.task.create({
+    indexId: twelveLabsIndexId,
+    url: `${getS3DirectoryUrl(videoId)}/video.${shouldBeCropped ? "cropped." : ""}webm`,
+  });
 
   triggerSaveMetadataTask({ twelveLabsIndexId, videoId });
   triggerUpdateVideoProcessingTaskStatus({ twelveLabsIndexId });
