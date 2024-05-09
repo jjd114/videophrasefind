@@ -2,17 +2,17 @@ import { db } from "database";
 
 import { get12LabsVideoId, getVideoProcessingStatus, getHLS } from "./utils";
 
-export const triggerUpdateVideoProcessingStatusTask = async ({
+export async function triggerUpdateVideoProcessingStatusTask({
   twelveLabsIndexId,
 }: {
   twelveLabsIndexId: string;
-}) => {
+}) {
   let status = await getVideoProcessingStatus(twelveLabsIndexId);
 
   while (status !== "ready") {
     status = await getVideoProcessingStatus(twelveLabsIndexId);
     console.log("waiting for video ready...", { status });
-    await new Promise((resolve) => setTimeout(resolve, 5000));
+    await new Promise((resolve) => setTimeout(resolve, 7000));
   }
 
   await db.twelveLabsVideo.update({
@@ -21,22 +21,22 @@ export const triggerUpdateVideoProcessingStatusTask = async ({
     },
     data: { status: "READY" },
   });
-};
+}
 
-export const triggerSaveMetadataTask = async ({
+export async function triggerSaveMetadataTask({
   videoId,
   twelveLabsIndexId,
 }: {
   videoId: string;
   twelveLabsIndexId: string;
-}) => {
+}) {
   console.log("start saving video metadata...", { videoId });
 
   let twelveLabsVideoId = await get12LabsVideoId(twelveLabsIndexId);
 
   while (!twelveLabsVideoId) {
     twelveLabsVideoId = await get12LabsVideoId(twelveLabsIndexId);
-    console.log("(save MD task) waiting for videoId ready...", {
+    console.log("(save MD task) waiting for twelveLabsVideoId ready...", {
       twelveLabsVideoId,
     });
     await new Promise((resolve) => setTimeout(resolve, 500));
@@ -63,4 +63,4 @@ export const triggerSaveMetadataTask = async ({
       thumbnailUrl: hls.thumbnailUrls?.[0],
     },
   });
-};
+}
