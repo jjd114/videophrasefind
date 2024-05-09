@@ -83,7 +83,7 @@ export async function getSemanticSearchResult(videoId: string, query: string) {
     },
   });
 
-  if (!data?.twelveLabsVideos?.[0].twelveLabsIndexId) return [];
+  if (!data?.twelveLabsVideos[0].twelveLabsIndexId) return [];
 
   const search = await client12Labs.search.query({
     indexId: data.twelveLabsVideos[0].twelveLabsIndexId,

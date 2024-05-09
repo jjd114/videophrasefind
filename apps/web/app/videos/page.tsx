@@ -101,10 +101,10 @@ export default async function VideosPage() {
                     )}
                   </span>
                 </span>
-                {!video.twelveLabsVideos[0].full && (
+                {video.twelveLabsVideos[0] && (
                   <span className="flex items-center gap-2 text-white/70">
                     <Icons.audioLines strokeWidth={1.5} className="size-5" />
-                    <span className="font-semibold">{`${formatDuration(video.twelveLabsVideos[0].duration)}`}</span>
+                    <span className="font-semibold">{`${formatDuration(video.twelveLabsVideos[0].duration)} ${!video.twelveLabsVideos[0].full ? "(Cropped)" : "(Full)"}`}</span>
                   </span>
                 )}
                 <span className="flex items-center gap-2 text-white/70">
@@ -113,9 +113,8 @@ export default async function VideosPage() {
                 </span>
               </div>
               <span className="flex gap-3 font-semibold">
-                {`Transcriptions (${video.twelveLabsVideos[0].full ? "Full" : "Cropped"})`}
-                :
-                {video.twelveLabsVideos[0].status === "PROCESSING" ? (
+                {`Transcriptions`}:
+                {video.twelveLabsVideos[0]?.status !== "READY" ? (
                   <span className="flex items-center gap-2 text-amber-300">
                     please wait, we&apos;re processing your video
                     <Icons.spinner className="size-5 animate-spin" />

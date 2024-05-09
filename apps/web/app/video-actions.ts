@@ -29,7 +29,7 @@ export async function get12LabsVideoProcessingStatus(videoId: string) {
     },
   });
 
-  return data?.twelveLabsVideos?.[0]?.status;
+  return data?.twelveLabsVideos[0]?.status;
 }
 
 export async function get12LabsVideoIds(videoId: string) {
@@ -45,7 +45,7 @@ export async function get12LabsVideoIds(videoId: string) {
     },
   });
 
-  return data?.twelveLabsVideos?.[0];
+  return data?.twelveLabsVideos[0];
 }
 
 export async function createVideo() {
