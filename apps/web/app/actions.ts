@@ -70,16 +70,23 @@ export async function fetchYTVideoAndTriggerTranscription(
 }
 
 export async function getSemanticSearchResult(videoId: string, query: string) {
-  const video = await db.videoMetadata.findUnique({
+  const data = await db.videoMetadata.findUnique({
     where: {
       id: videoId,
     },
+    select: {
+      twelveLabsVideos: {
+        select: {
+          twelveLabsIndexId: true,
+        },
+      },
+    },
   });
 
-  if (!video?.twelveLabsIndexId) return [];
+  if (!data?.twelveLabsVideos?.[0].twelveLabsIndexId) return [];
 
   const search = await client12Labs.search.query({
-    indexId: video.twelveLabsIndexId,
+    indexId: data.twelveLabsVideos[0].twelveLabsIndexId,
     query: query,
     options: ["conversation"],
     conversationOption: "semantic",

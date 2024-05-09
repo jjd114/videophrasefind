@@ -5,6 +5,7 @@ import {
   CalendarDays,
   Zap,
   Frown,
+  AudioLines,
 } from "lucide-react";
 
 export const Icons = {
@@ -14,4 +15,5 @@ export const Icons = {
   date: CalendarDays,
   ready: Zap,
   sadFace: Frown,
+  audioLines: AudioLines,
 };
