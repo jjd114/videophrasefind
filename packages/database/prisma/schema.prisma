@@ -41,4 +41,26 @@ model TwelveLabsVideo {
   videoMetadataId String
 
   videoMetadata VideoMetadata @relation(fields: [videoMetadataId], references: [id], onDelete: Cascade)
+
+  transaction Transaction?
+}
+
+enum Type {
+  IN
+  OUT
+}
+
+model Transaction {
+  id String @id @default(cuid())
+
+  type        Type
+  description String
+  credits     Decimal
+
+  userId String
+
+  twelveLabsIndexId String?          @unique
+  twelveLabsVideo   TwelveLabsVideo? @relation(fields: [twelveLabsIndexId], references: [twelveLabsIndexId])
+
+  createdAt DateTime @default(now())
 }
