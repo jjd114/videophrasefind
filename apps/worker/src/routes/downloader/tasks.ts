@@ -14,7 +14,9 @@ import {
 import {
   triggerSaveMetadataTask,
   triggerUpdateVideoProcessingTaskStatus,
-} from "../video/tasks";
+} from "../../video/tasks";
+
+import { triggerCreateTransactionTask } from "../../transaction/tasks";
 
 export async function trigger12LabsTask({ videoId }: { videoId: string }) {
   console.log(`Triggering 12Labs task for: ${videoId}`);
@@ -60,6 +62,12 @@ export async function trigger12LabsTask({ videoId }: { videoId: string }) {
     url: `${getS3DirectoryUrl(videoId)}/video.${shouldBeCropped ? "cropped." : ""}webm`,
   });
 
+  triggerCreateTransactionTask({
+    videoId,
+    twelveLabsIndexId,
+    shouldBeCropped,
+    transcriptionDuration: duration,
+  });
   triggerSaveMetadataTask({ twelveLabsIndexId, videoId });
   triggerUpdateVideoProcessingTaskStatus({ twelveLabsIndexId });
 }
