@@ -28,7 +28,6 @@ export async function triggerCreateTransactionTask({
 
   await db.transaction.create({
     data: {
-      type: "OUT",
       description: transactionDescription[shouldBeCropped ? "cropped" : "full"],
       credits: calculateCredits(transcriptionDuration),
       twelveLabsIndexId,

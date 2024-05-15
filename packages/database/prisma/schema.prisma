@@ -45,15 +45,9 @@ model TwelveLabsVideo {
   transaction Transaction?
 }
 
-enum Type {
-  IN
-  OUT
-}
-
 model Transaction {
   id String @id @default(cuid())
 
-  type        Type
   description String
   credits     Int
 

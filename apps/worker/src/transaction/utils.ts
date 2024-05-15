@@ -4,5 +4,5 @@ export const transactionDescription = {
 };
 
 export function calculateCredits(duration: number) {
-  return Math.floor(duration * 10); // just an example. We need to think about this
+  return -1 * Math.floor(duration * 10); // just an example. We need to think about this
 }
