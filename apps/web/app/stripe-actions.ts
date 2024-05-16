@@ -30,3 +30,14 @@ export async function createCheckoutSession(formData: FormData) {
 
   redirect(session.url as string);
 }
+
+export async function createPortalSession() {
+  const customerId = process.env.TEST_CUSTOMER_ID!; // temporary / for testing
+
+  const portalSession = await stripe.billingPortal.sessions.create({
+    customer: customerId,
+    return_url: "http://localhost:3000",
+  });
+
+  redirect(portalSession.url);
+}
