@@ -22,8 +22,8 @@ app.post("/webhook", async (c) => {
   const webhookSecret = process.env.WEBHOOK_SIGNING_SECRET;
 
   if (webhookSecret) {
-    const signature = c.req.header("stripe-signature") as string;
     const rawText = await c.req.text();
+    const signature = c.req.header("stripe-signature") as string;
 
     try {
       event = stripe.webhooks.constructEvent(rawText, signature, webhookSecret);
@@ -37,14 +37,31 @@ app.post("/webhook", async (c) => {
     }
   }
 
-  switch (event?.type) {
-    case "checkout.session.completed":
-      console.log(
-        "userId from clerk: " + event.data.object.client_reference_id
-      );
-      break;
-    default:
-      console.log("Unhandled event type");
+  try {
+    switch (event?.type) {
+      case "checkout.session.completed":
+        console.log(`clerk userId: ${event.data.object.client_reference_id}`);
+        // - save userId, customerId, sessionId, subscription status in the database
+        // - add transaction in the Transaction table
+        break;
+      case "invoice.paid":
+        console.log("add credits", {
+          customerId: event.data.object.customer,
+        });
+        // Continue to provision the subscription as payments continue to be made.
+        // Store the status in your database and check when a user accesses your service.
+        // This approach helps you avoid hitting rate limits.
+        // - add transaction in the Transaction table
+        break;
+      case "invoice.payment_failed":
+        // Occurs whenever an invoice payment attempt fails,
+        // due either to a declined payment or to the lack of a stored payment method.
+        break;
+      default:
+        console.log("Unhandled event type");
+    }
+  } catch (err) {
+    console.log(err);
   }
 
   return c.json({
