@@ -5,7 +5,7 @@ import {
   createPortalSession,
 } from "@/app/stripe-actions";
 
-import Button from "@/components/Button";
+import { CheckoutButton } from "@/app/pricing/checkout-button";
 
 export const metadata: Metadata = {
   title: "Subscription",
@@ -28,14 +28,14 @@ export default function Contact() {
             </div>
             <form action={createCheckoutSession}>
               <input type="hidden" name="lookup_key" value={`pro-${type}`} />
-              <Button>Checkout</Button>
+              <CheckoutButton />
             </form>
           </div>
         ))}
       </div>
       {true && (
         <form className="text-center font-bold" action={createPortalSession}>
-          <button id="checkout-and-portal-button" type="submit">
+          <button type="submit">
             <span className="underline">Manage your billing information</span>
           </button>
         </form>
