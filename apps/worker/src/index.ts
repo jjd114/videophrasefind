@@ -16,6 +16,8 @@ app.use(
   })
 );
 
+// The minimum event types to monitor:
+// https://docs.stripe.com/billing/subscriptions/build-subscriptions?platform=web&ui=stripe-hosted#provision-and-monitor
 app.post("/webhook", async (c) => {
   let event;
 
@@ -43,6 +45,7 @@ app.post("/webhook", async (c) => {
         console.log(`clerk userId: ${event.data.object.client_reference_id}`);
         // - save userId, customerId, sessionId, subscription status in the database
         // - add transaction in the Transaction table
+        // - event.data.object is a checkout session (https://docs.stripe.com/api/events/types#checkout_session_object)
         break;
       case "invoice.paid":
         console.log("add credits", {
@@ -52,10 +55,12 @@ app.post("/webhook", async (c) => {
         // Store the status in your database and check when a user accesses your service.
         // This approach helps you avoid hitting rate limits.
         // - add transaction in the Transaction table
+        // - event.data.object is an invoice (https://docs.stripe.com/api/invoices/object)
         break;
       case "invoice.payment_failed":
         // Occurs whenever an invoice payment attempt fails,
         // due either to a declined payment or to the lack of a stored payment method.
+        // - event.data.object is an invoice (https://docs.stripe.com/api/invoices/object)
         break;
       default:
         console.log("Unhandled event type");
