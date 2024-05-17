@@ -14,7 +14,7 @@ import { Icons } from "@/components/Icons";
 
 import { cn } from "@/lib/utils";
 
-const defaultTabs = ["/", "/about", "/help", "/contact"] as const;
+const defaultTabs = ["/", "/about", "/help", "/contact", "/pricing"] as const;
 
 const capitalize = (str: string) => {
   return str[0].toUpperCase() + str.slice(1);

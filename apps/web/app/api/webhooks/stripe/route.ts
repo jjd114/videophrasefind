@@ -1,4 +1,3 @@
-// import { auth } from "@clerk/nextjs/server";
 import { headers } from "next/headers";
 import { db } from "database";
 
@@ -60,7 +59,7 @@ export async function POST(req: Request) {
     // await db.membership.create({
     //   data: {
     //     stripeCurrentPeriodEnd: new Date(
-    //       subscription.current_period_end * 1000
+    //       subscription.current_period_end
     //     ),
     //   },
     // });
