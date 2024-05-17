@@ -59,3 +59,22 @@ model Transaction {
 
   createdAt DateTime @default(now())
 }
+
+enum MembershipStatus {
+  active
+  inactive
+}
+
+model Membership {
+  id String @id @default(cuid())
+
+  status MembershipStatus
+
+  userId String @unique
+
+  stripeCustomerId       String    @unique
+  stripeSubscriptionId   String    @unique
+  stripeCurrentPeriodEnd DateTime?
+
+  createdAt DateTime @default(now())
+}
