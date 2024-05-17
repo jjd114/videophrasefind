@@ -2,9 +2,8 @@
 
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
-import { Stripe } from "stripe";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string);
+import { stripe } from "@/lib/stripe";
 
 export async function createCheckoutSession(formData: FormData) {
   const { userId } = auth();

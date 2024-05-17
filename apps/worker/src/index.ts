@@ -2,8 +2,6 @@ import { serve } from "@hono/node-server";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 
-import { stripe } from "./lib/stripe";
-
 import downloader from "./routes/downloader/downloader";
 
 const app = new Hono();
@@ -15,65 +13,6 @@ app.use(
     allowMethods: ["POST", "GET", "PATCH"],
   })
 );
-
-// The minimum event types to monitor:
-// https://docs.stripe.com/billing/subscriptions/build-subscriptions?platform=web&ui=stripe-hosted#provision-and-monitor
-app.post("/webhook", async (c) => {
-  let event;
-
-  const webhookSecret = process.env.WEBHOOK_SIGNING_SECRET;
-
-  if (webhookSecret) {
-    const rawText = await c.req.text();
-    const signature = c.req.header("stripe-signature") as string;
-
-    try {
-      event = stripe.webhooks.constructEvent(rawText, signature, webhookSecret);
-    } catch (err) {
-      console.log(`Webhook signature verification failed!`);
-
-      return c.json({
-        success: false,
-        message: "Error occureed in /webhook endpoint!",
-      });
-    }
-  }
-
-  try {
-    switch (event?.type) {
-      case "checkout.session.completed":
-        console.log(`clerk userId: ${event.data.object.client_reference_id}`);
-        // - save userId, customerId, sessionId, subscription status in the database
-        // - add transaction in the Transaction table
-        // - event.data.object is a checkout session (https://docs.stripe.com/api/events/types#checkout_session_object)
-        break;
-      case "invoice.paid":
-        console.log("add credits", {
-          customerId: event.data.object.customer,
-        });
-        // Continue to provision the subscription as payments continue to be made.
-        // Store the status in your database and check when a user accesses your service.
-        // This approach helps you avoid hitting rate limits.
-        // - add transaction in the Transaction table
-        // - event.data.object is an invoice (https://docs.stripe.com/api/invoices/object)
-        break;
-      case "invoice.payment_failed":
-        // Occurs whenever an invoice payment attempt fails,
-        // due either to a declined payment or to the lack of a stored payment method.
-        // - event.data.object is an invoice (https://docs.stripe.com/api/invoices/object)
-        break;
-      default:
-        console.log("Unhandled event type");
-    }
-  } catch (err) {
-    console.log(err);
-  }
-
-  return c.json({
-    success: true,
-    message: "Hello World from /webhook endpoint!",
-  });
-});
 
 app.get("/", async (c) => {
   return c.text("Hello from Root!");

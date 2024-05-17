@@ -14,7 +14,6 @@
     "fluent-ffmpeg": "^2.1.2",
     "get-video-duration": "^4.1.0",
     "hono": "^4.2.6",
-    "stripe": "^15.6.0",
     "twelvelabs-js": "^0.1.22",
     "uuid": "^9.0.1",
     "ytdl-core": "^4.11.5"
