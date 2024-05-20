@@ -63,6 +63,7 @@ model Transaction {
 enum MembershipStatus {
   active
   inactive
+  paused
 }
 
 model Membership {
@@ -72,8 +73,8 @@ model Membership {
 
   userId String @unique
 
-  stripeCustomerId       String    @unique
-  stripeSubscriptionId   String    @unique
+  stripeCustomerId       String?   @unique
+  stripeSubscriptionId   String?   @unique
   stripeCurrentPeriodEnd DateTime?
 
   createdAt DateTime @default(now())
