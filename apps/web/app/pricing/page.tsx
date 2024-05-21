@@ -44,7 +44,7 @@ export default async function Contact() {
 
   return (
     <section className="flex flex-col gap-6">
-      {!membership ? (
+      {!membership || membership.status === "inactive" ? (
         <div className="flex gap-12">
           {types.map((type) => (
             <div
