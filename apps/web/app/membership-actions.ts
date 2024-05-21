@@ -3,7 +3,7 @@
 import { auth } from "@clerk/nextjs/server";
 import { db } from "database";
 
-export async function calculateCredits() {
+export async function getProMemberData() {
   const { userId } = auth();
 
   if (!userId) return null;
@@ -25,5 +25,8 @@ export async function calculateCredits() {
     },
   });
 
-  return data.reduce((acc, current) => acc + current.credits, 0);
+  return {
+    credits: data.reduce((acc, current) => acc + current.credits, 0),
+    membershipStatus: membership.status,
+  };
 }
