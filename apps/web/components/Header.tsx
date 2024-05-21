@@ -8,7 +8,11 @@ import {
   SignedIn,
   SignedOut,
   UserButton,
+  useAuth,
 } from "@clerk/nextjs";
+import { useQuery } from "@tanstack/react-query";
+
+import { calculateCredits } from "@/app/membership-actions";
 
 import { Icons } from "@/components/Icons";
 
@@ -32,9 +36,17 @@ const tabText = (tab: (typeof leftTabs)[number]) => {
 const Header = () => {
   const pathname = usePathname();
 
+  const { userId } = useAuth();
+
+  const creditsQuery = useQuery({
+    enabled: !!userId,
+    queryKey: ["credits", userId],
+    queryFn: () => calculateCredits(),
+  });
+
   return (
     <header className="flex items-center justify-center bg-[#101824] px-7 py-4">
-      <div className="flex w-full max-w-[calc(theme(screens.2xl)-2*theme(padding.7))] items-center gap-8 max-[580px]:flex-col max-[580px]:gap-4">
+      <div className="flex w-full max-w-[calc(theme(screens.2xl)-2*theme(padding.7))] items-center gap-8">
         <Link href="/" className="text-xl font-extrabold">
           <span>VideoPhrase</span>
           <span className="text-purple-600">Find</span>
@@ -71,10 +83,16 @@ const Header = () => {
               >
                 Videos
               </Link>
+              {creditsQuery.data && (
+                <span className="flex items-center gap-4 text-sm font-bold text-emerald-300">
+                  <span>{creditsQuery.data}</span>
+                  <Icons.credits strokeWidth={2.0} className="size-4" />
+                </span>
+              )}
             </SignedIn>
-            <div className="flex w-[63px] justify-center">
+            <div className="flex w-[50px] items-center justify-end">
               <ClerkLoading>
-                <Icons.spinner className="size-5 animate-spin text-[#9DA3AE]" />
+                <Icons.spinner className="size-6 animate-spin text-[#9DA3AE]" />
               </ClerkLoading>
               <ClerkLoaded>
                 <SignedOut>
