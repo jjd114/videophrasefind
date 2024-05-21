@@ -91,7 +91,7 @@ export default async function Contact() {
               <ul>
                 <li>{`Membership status: ${membership.status}`}</li>
                 {membership.stripeCurrentPeriodEnd ? (
-                  <li>{`Next payment date: ${formatDate(membership.stripeCurrentPeriodEnd)} at ${formatTime(membership.stripeCurrentPeriodEnd)}`}</li>
+                  <li>{`Next payment date: ${formatDate(membership.stripeCurrentPeriodEnd, true)} at ${formatTime(membership.stripeCurrentPeriodEnd)}`}</li>
                 ) : null}
               </ul>
               <form action={createPortalSession}>
