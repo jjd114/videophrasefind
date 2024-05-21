@@ -60,7 +60,7 @@ export default async function Contact() {
                   <p className="text-sm text-white/70">{`Billed ${type === "month" ? "Monthly" : "Yearly"}`}</p>
                 </div>
               </div>
-              <div className="flex flex-col gap-4">
+              <div className="flex flex-1 flex-col gap-4">
                 <h5>{`What's included in the ${type === "month" ? "Pro" : "Pro Max"} plan`}</h5>
                 <ul className="flex flex-col gap-2 text-white/70">
                   {(type === "month" ? proIncluded : proMaxIncluded).map(
