@@ -105,7 +105,7 @@ export async function trigger12LabsTask({ videoId }: { videoId: string }) {
         description:
           transactionDescription[videoShouldBeCropped ? "cropped" : "full"],
         credits:
-          videoShouldBeCropped || !hasEnoughCredits
+          videoShouldBeCropped || !hasEnoughCredits // add this ternary, because we don't want to have negative balance. Paid user without enough credits === not paid user
             ? 0
             : calculateCredits(duration),
         twelveLabsIndexId,
