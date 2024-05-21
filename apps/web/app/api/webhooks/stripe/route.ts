@@ -145,6 +145,8 @@ export async function POST(req: Request) {
     try {
       console.log(`handling: ${event.type}`);
 
+      await stripe.customers.del(event.data.object.customer as string);
+
       await db.membership.update({
         where: {
           stripeSubscriptionId: event.data.object.id,
