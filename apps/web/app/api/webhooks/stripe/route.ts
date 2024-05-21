@@ -67,7 +67,7 @@ export async function POST(req: Request) {
 
     await db.transaction.create({
       data: {
-        credits: subscriptionInterval === "month" ? 10000 : 10000 * 10,
+        credits: subscriptionInterval === "month" ? 18000 : 18000 * 10,
         description: "VideoPhraseFind Pro (Initial)",
         userId: event.data.object.client_reference_id as string,
       },
@@ -118,7 +118,7 @@ export async function POST(req: Request) {
     await db.transaction.create({
       data: {
         userId,
-        credits: subscriptionInterval === "month" ? 10000 : 10000 * 10,
+        credits: subscriptionInterval === "month" ? 18000 : 18000 * 10,
         description: "VideoPhraseFind Pro (Provision)",
       },
     });
