@@ -72,6 +72,12 @@ const Header = () => {
           </nav>
           <nav className="flex items-center gap-8">
             <SignedIn>
+              {creditsQuery.data && (
+                <span className="flex items-center gap-4 text-sm font-bold text-emerald-300">
+                  <span>{creditsQuery.data}</span>
+                  <Icons.credits strokeWidth={2.0} className="size-4" />
+                </span>
+              )}
               <Link
                 href="/videos"
                 className={cn(
@@ -83,12 +89,6 @@ const Header = () => {
               >
                 Videos
               </Link>
-              {creditsQuery.data && (
-                <span className="flex items-center gap-4 text-sm font-bold text-emerald-300">
-                  <span>{creditsQuery.data}</span>
-                  <Icons.credits strokeWidth={2.0} className="size-4" />
-                </span>
-              )}
             </SignedIn>
             <div className="flex w-[50px] items-center justify-end">
               <ClerkLoading>

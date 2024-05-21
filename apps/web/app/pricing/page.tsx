@@ -2,13 +2,16 @@ import { type Metadata } from "next";
 import { auth } from "@clerk/nextjs/server";
 import { db } from "database";
 
+import { Icons } from "@/components/Icons";
+import { Button } from "@/components/ui/button";
+import { CheckoutButton } from "@/app/pricing/checkout-button";
+
 import {
   createCheckoutSession,
   createPortalSession,
 } from "@/app/stripe-actions";
 
-import { CheckoutButton } from "@/app/pricing/checkout-button";
-import { Icons } from "@/components/Icons";
+import { formatDate, formatTime } from "@/lib/utils";
 
 export const metadata: Metadata = {
   title: "Subscription",
@@ -18,11 +21,12 @@ const types = ["month", "year"] as const;
 
 const proIncluded = [
   "18000 credits ~ 300 min. of video transcription",
-  "Other Pro features",
+  "Cropped videos re-transcription",
 ] as const;
 
 const proMaxIncluded = [
   "180000 credits ~ 3000 min. of video transcription",
+  "Cropped videos re-transcription",
   "Another Pro Max feature #1",
   "Another Pro Max feature #2",
 ] as const;
@@ -45,7 +49,7 @@ export default async function Contact() {
           {types.map((type) => (
             <div
               key={type}
-              className="flex min-w-[300px] flex-col gap-14 rounded-2xl border border-slate-800 bg-[#0B111A] p-10 text-center shadow-md"
+              className="flex flex-col gap-14 rounded-2xl border border-slate-800 bg-[#0B111A] p-10 text-center shadow-md"
             >
               <div className="flex flex-col gap-5 text-center">
                 <h3 className="text-2xl font-bold">
@@ -83,21 +87,24 @@ export default async function Contact() {
       ) : (
         <>
           {membership.stripeCustomerId ? (
-            <form
-              className="text-center font-bold"
-              action={createPortalSession}
-            >
-              <input
-                type="hidden"
-                name="customer_id"
-                value={membership.stripeCustomerId}
-              />
-              <button type="submit">
-                <span className="underline">
+            <div className="flex w-full max-w-[450px] flex-col gap-14 rounded-2xl border border-slate-800 bg-[#0B111A] p-10 text-center shadow-md">
+              <ul>
+                <li>{`Membership status: ${membership.status}`}</li>
+                {membership.stripeCurrentPeriodEnd ? (
+                  <li>{`Next payment date: ${formatDate(membership.stripeCurrentPeriodEnd)} at ${formatTime(membership.stripeCurrentPeriodEnd)}`}</li>
+                ) : null}
+              </ul>
+              <form action={createPortalSession}>
+                <input
+                  type="hidden"
+                  name="customer_id"
+                  value={membership.stripeCustomerId}
+                />
+                <Button className="size-full">
                   Manage your billing information
-                </span>
-              </button>
-            </form>
+                </Button>
+              </form>
+            </div>
           ) : null}
         </>
       )}
