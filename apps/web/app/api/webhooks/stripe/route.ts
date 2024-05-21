@@ -67,8 +67,8 @@ export async function POST(req: Request) {
 
     await db.transaction.create({
       data: {
-        credits: subscriptionInterval === "month" ? 3000 : 3000 * 12,
-        description: "Subscribed",
+        credits: subscriptionInterval === "month" ? 10000 : 10000 * 10,
+        description: "VideoPhraseFind Pro (Initial)",
         userId: event.data.object.client_reference_id as string,
       },
     });
@@ -89,10 +89,10 @@ export async function POST(req: Request) {
     });
 
     if (!result) {
-      console.log(
-        "We need to wait for the initial subscription before provision",
+      return new Response(
+        "We need to wait for the initial subscription before provision access",
+        { status: 200 },
       );
-      return new Response(null, { status: 200 });
     }
 
     const subscription = await stripe.subscriptions.retrieve(
@@ -118,8 +118,8 @@ export async function POST(req: Request) {
     await db.transaction.create({
       data: {
         userId,
-        credits: subscriptionInterval === "month" ? 3000 : 3000 * 12,
-        description: "Continue to provision the subscription",
+        credits: subscriptionInterval === "month" ? 10000 : 10000 * 10,
+        description: "VideoPhraseFind Pro (Provision)",
       },
     });
   }
