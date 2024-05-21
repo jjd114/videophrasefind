@@ -8,6 +8,8 @@ import { stripe } from "@/lib/stripe";
 export async function createCheckoutSession(formData: FormData) {
   const { userId } = auth();
 
+  if (!userId) redirect("/sign-in");
+
   const prices = await stripe.prices.list({
     lookup_keys: [formData.get("lookup_key") as string],
     expand: ["data.product"],
@@ -15,7 +17,7 @@ export async function createCheckoutSession(formData: FormData) {
 
   const session = await stripe.checkout.sessions.create({
     billing_address_collection: "auto",
-    client_reference_id: userId as string,
+    client_reference_id: userId,
     mode: "subscription",
     success_url: `http://localhost:3000/about`,
     cancel_url: `http://localhost:3000/contact`,
@@ -30,8 +32,8 @@ export async function createCheckoutSession(formData: FormData) {
   redirect(session.url as string);
 }
 
-export async function createPortalSession() {
-  const customerId = process.env.TEST_CUSTOMER_ID!; // temporary / for testing
+export async function createPortalSession(formData: FormData) {
+  const customerId = formData.get("customer_id") as string;
 
   const portalSession = await stripe.billingPortal.sessions.create({
     customer: customerId,

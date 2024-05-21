@@ -9,7 +9,7 @@ export function CheckoutButton() {
 
   return (
     <Button isLoading={status.pending} disabled={status.pending}>
-      {`${status.pending ? "Loading..." : "Get started"}`}
+      {`${status.pending ? "Loading..." : "Get Started"}`}
     </Button>
   );
 }

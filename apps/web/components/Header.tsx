@@ -48,7 +48,7 @@ const Header = () => {
     <header className="flex items-center justify-center bg-[#101824] px-7 py-4">
       <div className="flex w-full max-w-[calc(theme(screens.2xl)-2*theme(padding.7))] items-center gap-8">
         <Link href="/" className="text-xl font-extrabold">
-          <span>VideoPhrase</span>
+          VideoPhrase
           <span className="text-purple-600">Find</span>
         </Link>
         <div className="flex flex-1 items-center justify-between">

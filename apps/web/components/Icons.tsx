@@ -7,6 +7,7 @@ import {
   Frown,
   AudioLines,
   Gem,
+  Check,
 } from "lucide-react";
 
 export const Icons = {
@@ -18,4 +19,5 @@ export const Icons = {
   sadFace: Frown,
   audioLines: AudioLines,
   credits: Gem,
+  check: Check,
 };
