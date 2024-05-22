@@ -5,11 +5,11 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export function formatDate(date: Date, includeYear: boolean = false) {
+export function formatDate(date: Date) {
   return new Date(date.toString()).toLocaleDateString(undefined, {
     day: "numeric",
-    month: "short",
-    year: includeYear ? "numeric" : undefined,
+    month: "numeric",
+    year: "2-digit",
   });
 }
 
