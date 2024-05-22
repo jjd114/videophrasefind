@@ -90,6 +90,7 @@ export default async function Contact() {
             <div className="flex w-full max-w-[450px] flex-col gap-14 rounded-2xl border border-slate-800 bg-[#0B111A] p-10 text-center shadow-md">
               <ul>
                 <li>{`Membership status: ${membership.status}`}</li>
+                <li>{`Membership type: ${membership.type}`}</li>
                 {membership.stripeCurrentPeriodEnd ? (
                   <li>{`Next payment date: ${formatDate(membership.stripeCurrentPeriodEnd, true)} at ${formatTime(membership.stripeCurrentPeriodEnd)}`}</li>
                 ) : null}

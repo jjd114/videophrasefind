@@ -75,7 +75,7 @@ const Header = () => {
               {membershipQuery.data && (
                 <span className="flex items-center gap-4 text-sm font-bold text-emerald-300">
                   <span>{`${membershipQuery.data.credits}`}</span>
-                  <Icons.credits strokeWidth={2.0} className="size-4" />
+                  <Icons.credits strokeWidth={2.0} className="size-5" />
                   <span>{`${membershipQuery.data.type === "pro" ? "Pro" : "Pro Max"} (${membershipQuery.data.status[0].toUpperCase() + membershipQuery.data.status.slice(1)})`}</span>
                 </span>
               )}
