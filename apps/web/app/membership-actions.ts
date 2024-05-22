@@ -3,7 +3,7 @@
 import { auth } from "@clerk/nextjs/server";
 import { db } from "database";
 
-export async function getProMemberData() {
+export async function getMembershipData() {
   const { userId } = auth();
 
   if (!userId) return null;
@@ -27,6 +27,7 @@ export async function getProMemberData() {
 
   return {
     credits: data.reduce((acc, current) => acc + current.credits, 0),
-    membershipStatus: membership.status,
+    status: membership.status,
+    type: membership.type,
   };
 }

@@ -12,7 +12,7 @@ import {
 } from "@clerk/nextjs";
 import { useQuery } from "@tanstack/react-query";
 
-import { getProMemberData } from "@/app/membership-actions";
+import { getMembershipData } from "@/app/membership-actions";
 
 import { Icons } from "@/components/Icons";
 
@@ -38,10 +38,10 @@ const Header = () => {
 
   const { userId } = useAuth();
 
-  const proMemberQuery = useQuery({
+  const membershipQuery = useQuery({
     enabled: !!userId,
     queryKey: ["credits", userId],
-    queryFn: () => getProMemberData(),
+    queryFn: () => getMembershipData(),
   });
 
   return (
@@ -72,11 +72,11 @@ const Header = () => {
           </nav>
           <nav className="flex items-center gap-8">
             <SignedIn>
-              {proMemberQuery.data && (
+              {membershipQuery.data && (
                 <span className="flex items-center gap-4 text-sm font-bold text-emerald-300">
-                  <span>{`${proMemberQuery.data.credits}`}</span>
+                  <span>{`${membershipQuery.data.credits}`}</span>
                   <Icons.credits strokeWidth={2.0} className="size-4" />
-                  <span>{`Pro (${proMemberQuery.data.membershipStatus[0].toUpperCase() + proMemberQuery.data.membershipStatus.slice(1)})`}</span>
+                  <span>{`${membershipQuery.data.type === "pro" ? "Pro" : "Pro Max"} (${membershipQuery.data.status[0].toUpperCase() + membershipQuery.data.status.slice(1)})`}</span>
                 </span>
               )}
               <Link
