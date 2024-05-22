@@ -88,7 +88,7 @@ const Header = () => {
                         <Icons.credits strokeWidth={2.0} className="size-5" />
                       </TooltipTrigger>
                       <TooltipContent className="text-center" sideOffset={12}>
-                        <p>
+                        <p className="font-normal">
                           The amount of credits that you can spend
                           <br />
                           to transcribe videos

@@ -6,7 +6,14 @@ import { intervalToDuration } from "date-fns";
 
 import { padTime } from "@/components/CaptionsEntry";
 
-import { formatDate, formatTime } from "@/lib/utils";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+
+import { cn, formatDate, formatTime } from "@/lib/utils";
 
 import { Icons } from "@/components/Icons";
 
@@ -106,13 +113,22 @@ export default async function VideosPage() {
                     {video.twelveLabsVideos[0].transaction &&
                       -1 * video.twelveLabsVideos[0].transaction.credits >
                         0 && (
-                        <span className="flex items-center gap-2 text-white/70">
-                          <Icons.handCredits
-                            strokeWidth={1.5}
-                            className="size-5"
-                          />
-                          <span className="font-semibold">{`${video.twelveLabsVideos[0].transaction.credits} credits`}</span>
-                        </span>
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger className="group">
+                              <span className="flex items-center gap-2 text-white/70  underline-offset-4 group-hover:underline">
+                                <Icons.handCredits
+                                  strokeWidth={1.5}
+                                  className="size-5"
+                                />
+                                <span className="font-semibold">{`${video.twelveLabsVideos[0].transaction.credits} credits`}</span>
+                              </span>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p>{`The video cost you ${-1 * video.twelveLabsVideos[0].transaction.credits} credits`}</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
                       )}
                   </>
                 )}
