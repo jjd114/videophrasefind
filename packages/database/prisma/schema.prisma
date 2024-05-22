@@ -66,10 +66,16 @@ enum MembershipStatus {
   paused
 }
 
+enum MembershipType {
+  pro
+  promax
+}
+
 model Membership {
   id String @id @default(cuid())
 
   status MembershipStatus
+  type   MembershipType?
 
   userId String @unique
 

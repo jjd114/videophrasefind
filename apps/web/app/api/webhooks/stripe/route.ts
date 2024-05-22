@@ -37,10 +37,14 @@ export async function POST(req: Request) {
       event.data.object.subscription as string,
     );
 
+    const subscriptionInterval = subscription.items.data[0].plan.interval;
+    const billedMonthly = subscriptionInterval === "month";
+
     if (!membership?.userId) {
       await db.membership.create({
         data: {
           status: "active",
+          type: billedMonthly ? "pro" : "promax",
           userId: event.data.object.client_reference_id as string,
           stripeCustomerId: subscription.customer as string,
           stripeSubscriptionId: subscription.id,
@@ -54,6 +58,7 @@ export async function POST(req: Request) {
         where: { userId: membership.userId },
         data: {
           status: "active",
+          type: billedMonthly ? "pro" : "promax",
           stripeCustomerId: subscription.customer as string,
           stripeSubscriptionId: subscription.id,
           stripeCurrentPeriodEnd: new Date(
@@ -63,11 +68,9 @@ export async function POST(req: Request) {
       });
     }
 
-    const subscriptionInterval = subscription.items.data[0].plan.interval;
-
     await db.transaction.create({
       data: {
-        credits: subscriptionInterval === "month" ? 18000 : 18000 * 10,
+        credits: billedMonthly ? 18000 : 18000 * 10,
         description: "VideoPhraseFind Pro (Initial)",
         userId: event.data.object.client_reference_id as string,
       },
@@ -99,7 +102,8 @@ export async function POST(req: Request) {
       event.data.object.subscription as string,
     );
 
-    console.log({ result });
+    const subscriptionInterval = subscription.items.data[0].plan.interval;
+    const billedMonthly = subscriptionInterval === "month";
 
     const { userId } = await db.membership.update({
       where: {
@@ -113,12 +117,10 @@ export async function POST(req: Request) {
       },
     });
 
-    const subscriptionInterval = subscription.items.data[0].plan.interval;
-
     await db.transaction.create({
       data: {
         userId,
-        credits: subscriptionInterval === "month" ? 18000 : 18000 * 10,
+        credits: billedMonthly ? 18000 : 18000 * 10,
         description: "VideoPhraseFind Pro (Provision)",
       },
     });
@@ -153,6 +155,7 @@ export async function POST(req: Request) {
         },
         data: {
           status: "inactive",
+          type: null,
           stripeCustomerId: null,
           stripeSubscriptionId: null,
           stripeCurrentPeriodEnd: null,
