@@ -91,7 +91,7 @@ const Header = () => {
                         <p>
                           The amount of credits that you can spend
                           <br />
-                          to transcribe videos and buy other feature
+                          to transcribe videos
                         </p>
                       </TooltipContent>
                     </Tooltip>
