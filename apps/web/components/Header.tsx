@@ -16,6 +16,13 @@ import { getMembershipData } from "@/app/membership-actions";
 
 import { Icons } from "@/components/Icons";
 
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+
 import { cn } from "@/lib/utils";
 
 const leftTabs = ["/", "/about", "/help", "/contact", "/pricing"] as const;
@@ -75,7 +82,20 @@ const Header = () => {
               {membershipQuery.data && (
                 <span className="flex items-center gap-4 text-sm font-bold text-emerald-300">
                   <span>{`${membershipQuery.data.credits}`}</span>
-                  <Icons.credits strokeWidth={2.0} className="size-5" />
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger>
+                        <Icons.credits strokeWidth={2.0} className="size-5" />
+                      </TooltipTrigger>
+                      <TooltipContent className="text-center" sideOffset={12}>
+                        <p>
+                          The amount of credits that you can spend
+                          <br />
+                          to transcribe videos and buy other feature
+                        </p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
                   <span>{`${membershipQuery.data.type === "pro" ? "Pro" : "Pro Max"} (${membershipQuery.data.status[0].toUpperCase() + membershipQuery.data.status.slice(1)})`}</span>
                 </span>
               )}
