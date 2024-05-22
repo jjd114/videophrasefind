@@ -3,7 +3,6 @@ import { auth } from "@clerk/nextjs/server";
 import { db } from "database";
 
 import { Icons } from "@/components/Icons";
-import { Button } from "@/components/ui/button";
 import { CheckoutButton } from "@/app/pricing/checkout-button";
 
 import {
@@ -14,16 +13,18 @@ import {
 import { formatDate } from "@/lib/utils";
 
 export const metadata: Metadata = {
-  title: "Subscription",
+  title: "Pricing",
 };
 
 const types = ["month", "year"] as const;
 
+const proPrice = 7;
 const proIncluded = [
   "18000 credits ~ 300 min. of video transcription",
   "Cropped videos re-transcription",
 ] as const;
 
+const proMaxPrice = 80;
 const proMaxIncluded = [
   "180000 credits ~ 3000 min. of video transcription",
   "Cropped videos re-transcription",
@@ -58,7 +59,7 @@ export default async function Contact() {
             {types.map((type) => (
               <div
                 key={type}
-                className="flex flex-col gap-14 rounded-2xl border border-slate-800 bg-[#0B111A] p-10 text-center shadow-md transition-transform hover:scale-[1.02]"
+                className="flex flex-col gap-14 rounded-2xl border border-slate-800 bg-[#0B111A] p-10 text-center shadow-md transition-transform hover:scale-[1.04]"
               >
                 <div className="flex flex-col gap-5 text-center">
                   <h3 className="text-2xl font-bold">
@@ -69,7 +70,7 @@ export default async function Contact() {
                     {` ${type === "month" ? "Pro" : "Pro Max"}`}
                   </h3>
                   <div>
-                    <h5 className="text-7xl font-bold">{`$${type === "month" ? "7" : "80"}.00`}</h5>
+                    <h5 className="text-7xl font-bold">{`$${type === "month" ? proPrice : proMaxPrice}.00`}</h5>
                     <p className="text-sm text-white/70">{`Billed ${type === "month" ? "Monthly" : "Yearly"}`}</p>
                   </div>
                 </div>
@@ -114,7 +115,7 @@ export default async function Contact() {
                 {membership.stripeCurrentPeriodEnd && (
                   <p className="text-sm text-white/70">
                     Your next bill is for{" "}
-                    <span className="font-semibold">{`$${membership.type === "pro" ? "8" : "80"}.00`}</span>{" "}
+                    <span className="font-semibold">{`$${membership.type === "pro" ? proPrice : proMaxPrice}.00`}</span>{" "}
                     on{" "}
                     <span className="font-semibold">{`${formatDate(membership.stripeCurrentPeriodEnd)}`}</span>
                     .
