@@ -45,44 +45,58 @@ export default async function Contact() {
   return (
     <section>
       {!membership || membership.status === "inactive" ? (
-        <div className="flex gap-14">
-          {types.map((type) => (
-            <div
-              key={type}
-              className="flex flex-col gap-14 rounded-2xl border border-slate-800 bg-[#0B111A] p-10 text-center shadow-md transition-transform hover:scale-[1.02]"
-            >
-              <div className="flex flex-col gap-5 text-center">
-                <h3 className="text-2xl font-bold">
-                  VideoPhrase
-                  <span className="bg-gradient-to-r from-purple-600  to-indigo-400 bg-clip-text text-transparent">
-                    Find
-                  </span>
-                  {` ${type === "month" ? "Pro" : "Pro Max"}`}
-                </h3>
-                <div>
-                  <h5 className="text-7xl font-bold">{`$${type === "month" ? "7" : "80"}.00`}</h5>
-                  <p className="text-sm text-white/70">{`Billed ${type === "month" ? "Monthly" : "Yearly"}`}</p>
+        <div className="flex flex-col gap-10">
+          <div className="flex flex-col gap-2 text-center">
+            <h2 className="text-6xl font-bold leading-[1.1]">
+              Choose your plan
+            </h2>
+            <p className="text-white/70">
+              Unlock all features including full video transcription.
+            </p>
+          </div>
+          <div className="flex gap-14">
+            {types.map((type) => (
+              <div
+                key={type}
+                className="flex flex-col gap-14 rounded-2xl border border-slate-800 bg-[#0B111A] p-10 text-center shadow-md transition-transform hover:scale-[1.02]"
+              >
+                <div className="flex flex-col gap-5 text-center">
+                  <h3 className="text-2xl font-bold">
+                    VideoPhrase
+                    <span className="bg-gradient-to-r from-purple-600  to-indigo-400 bg-clip-text text-transparent">
+                      Find
+                    </span>
+                    {` ${type === "month" ? "Pro" : "Pro Max"}`}
+                  </h3>
+                  <div>
+                    <h5 className="text-7xl font-bold">{`$${type === "month" ? "7" : "80"}.00`}</h5>
+                    <p className="text-sm text-white/70">{`Billed ${type === "month" ? "Monthly" : "Yearly"}`}</p>
+                  </div>
                 </div>
+                <div className="flex flex-1 flex-col gap-4">
+                  <h5>{`What's included in the ${type === "month" ? "Pro" : "Pro Max"} plan`}</h5>
+                  <ul className="flex flex-col gap-2 text-white/70">
+                    {(type === "month" ? proIncluded : proMaxIncluded).map(
+                      (bullet) => (
+                        <li key={bullet} className="flex items-center gap-2">
+                          <Icons.check className="size-4" />
+                          <span>{bullet}</span>
+                        </li>
+                      ),
+                    )}
+                  </ul>
+                </div>
+                <form action={createCheckoutSession}>
+                  <input
+                    type="hidden"
+                    name="lookup_key"
+                    value={`pro-${type}`}
+                  />
+                  <CheckoutButton text="Get Started" />
+                </form>
               </div>
-              <div className="flex flex-1 flex-col gap-4">
-                <h5>{`What's included in the ${type === "month" ? "Pro" : "Pro Max"} plan`}</h5>
-                <ul className="flex flex-col gap-2 text-white/70">
-                  {(type === "month" ? proIncluded : proMaxIncluded).map(
-                    (bullet) => (
-                      <li key={bullet} className="flex items-center gap-2">
-                        <Icons.check className="size-4" />
-                        <span>{bullet}</span>
-                      </li>
-                    ),
-                  )}
-                </ul>
-              </div>
-              <form action={createCheckoutSession}>
-                <input type="hidden" name="lookup_key" value={`pro-${type}`} />
-                <CheckoutButton text="Get Started" />
-              </form>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       ) : (
         <>
