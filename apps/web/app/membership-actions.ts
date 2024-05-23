@@ -14,19 +14,24 @@ export async function getMembershipData() {
     },
   });
 
-  if (!membership) return null;
-
-  const data = await db.transaction.findMany({
-    where: {
-      userId: userId as string,
-    },
-    select: {
-      credits: true,
-    },
-  });
+  if (!membership)
+    return {
+      credits: null,
+      status: "active",
+      type: "hobby",
+    } as const;
 
   return {
-    credits: data.reduce((acc, current) => acc + current.credits, 0),
+    credits: (
+      await db.transaction.findMany({
+        where: {
+          userId,
+        },
+        select: {
+          credits: true,
+        },
+      })
+    ).reduce((acc, current) => acc + current.credits, 0),
     status: membership.status,
     type: membership.type,
   };

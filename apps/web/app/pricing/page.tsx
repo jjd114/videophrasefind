@@ -73,11 +73,11 @@ export default async function Contact() {
               Unlock all features including full video transcription.
             </p>
           </div>
-          <div className="flex gap-10">
+          <div className="flex gap-7">
             {cards.map((card) => (
               <div
                 key={card.type}
-                className="flex min-w-[435px] flex-col gap-14 rounded-2xl border border-slate-800 bg-[#0B111A] p-8 text-center shadow-md transition-transform hover:scale-[1.04]"
+                className="flex min-w-[435px] flex-col gap-14 rounded-2xl border border-slate-800 bg-[#0B111A] p-8 text-center shadow-md transition-transform hover:scale-[1.02]"
               >
                 <div className="flex flex-col gap-5 text-center">
                   <h3 className="text-2xl font-bold">

@@ -16,6 +16,7 @@ import { getMembershipData } from "@/app/membership-actions";
 
 import { Icons } from "@/components/Icons";
 
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Tooltip,
   TooltipContent,
@@ -23,13 +24,9 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
-import { cn } from "@/lib/utils";
+import { cn, capitalize } from "@/lib/utils";
 
 const leftTabs = ["/", "/about", "/help", "/contact", "/pricing"] as const;
-
-const capitalize = (str: string) => {
-  return str[0].toUpperCase() + str.slice(1);
-};
 
 const tabText = (tab: (typeof leftTabs)[number]) => {
   switch (tab) {
@@ -79,25 +76,39 @@ const Header = () => {
           </nav>
           <nav className="flex items-center gap-8">
             <SignedIn>
-              {membershipQuery.data && (
-                <span className="flex items-center gap-4 text-sm font-bold text-emerald-300">
-                  <span>{`${membershipQuery.data.credits}`}</span>
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger>
-                        <Icons.credits strokeWidth={2.0} className="size-5" />
-                      </TooltipTrigger>
-                      <TooltipContent className="text-center" sideOffset={12}>
-                        <p className="font-normal">
-                          The amount of credits that you can spend
-                          <br />
-                          to transcribe videos
-                        </p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                  <span>{`${membershipQuery.data.type === "pro" ? "Pro" : "Pro Max"} (${membershipQuery.data.status[0].toUpperCase() + membershipQuery.data.status.slice(1)})`}</span>
-                </span>
+              {!membershipQuery.isLoading ? (
+                <>
+                  {membershipQuery.data && (
+                    <span className="flex items-center gap-4 text-sm font-bold text-emerald-300">
+                      {membershipQuery.data.credits !== null ? (
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger className="flex gap-4">
+                              <span>{`${membershipQuery.data.credits}`}</span>
+                              <Icons.credits
+                                strokeWidth={2.0}
+                                className="size-5"
+                              />
+                            </TooltipTrigger>
+                            <TooltipContent
+                              className="text-center"
+                              sideOffset={12}
+                            >
+                              <p className="font-normal">
+                                The amount of credits that you can spend
+                                <br />
+                                to transcribe videos
+                              </p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                      ) : null}
+                      <span>{`${capitalize(membershipQuery.data.type as string)} Plan ${membershipQuery.data.type !== "hobby" ? `(${capitalize(membershipQuery.data.status)})` : ""}`}</span>
+                    </span>
+                  )}
+                </>
+              ) : (
+                <Skeleton className="h-[20px] w-[135px] rounded-xl" />
               )}
               <Link
                 href="/videos"
