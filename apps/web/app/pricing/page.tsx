@@ -48,7 +48,7 @@ const cards = [
       "Another Pro Max feature #2",
     ],
   },
-];
+] as const;
 
 export default async function Contact() {
   const { userId } = auth();
