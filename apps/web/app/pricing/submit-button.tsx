@@ -5,11 +5,17 @@ import { useFormStatus } from "react-dom";
 import { Button } from "@/components/ui/button";
 import { Icons } from "@/components/Icons";
 
-export function CheckoutButton({ text }: { text: string }) {
+export function SubmitButton({
+  text,
+  disabled = false,
+}: {
+  text: string;
+  disabled?: boolean;
+}) {
   const status = useFormStatus();
 
   return (
-    <Button className="size-full" disabled={status.pending}>
+    <Button className="size-full" disabled={status.pending || disabled}>
       {status.pending ? (
         <span className="flex items-center gap-2">
           <span>Loading</span>

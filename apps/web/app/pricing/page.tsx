@@ -3,7 +3,7 @@ import { auth } from "@clerk/nextjs/server";
 import { db } from "database";
 
 import { Icons } from "@/components/Icons";
-import { CheckoutButton } from "@/app/pricing/checkout-button";
+import { SubmitButton } from "@/app/pricing/submit-button";
 
 import {
   createCheckoutSession,
@@ -11,26 +11,44 @@ import {
 } from "@/app/stripe-actions";
 
 import { formatDate } from "@/lib/utils";
+import { redirect } from "next/navigation";
 
 export const metadata: Metadata = {
   title: "Pricing",
 };
 
-const types = ["month", "year"] as const;
-
-const proPrice = 7;
-const proIncluded = [
-  "18000 credits ~ 300 min. of video transcription",
-  "Cropped videos re-transcription",
-] as const;
-
-const proMaxPrice = 80;
-const proMaxIncluded = [
-  "180000 credits ~ 3000 min. of video transcription",
-  "Cropped videos re-transcription",
-  "Another Pro Max feature #1",
-  "Another Pro Max feature #2",
-] as const;
+const cards = [
+  {
+    type: "Hobby",
+    price: 0,
+    billed: "Monthly",
+    lookup_key: undefined,
+    bullets: [
+      "Transcribe videos up to 1 minute",
+      "Semantic search",
+      "Uploads history",
+    ],
+  },
+  {
+    type: "Pro",
+    price: 7,
+    billed: "Monthly",
+    lookup_key: "pro-month",
+    bullets: ["18000 credits / month", "Cropped videos re-transcription"],
+  },
+  {
+    type: "Pro Max",
+    price: 80,
+    billed: "Yearly",
+    lookup_key: "pro-year",
+    bullets: [
+      "180000 credits / year",
+      "Cropped videos re-transcription",
+      "Another Pro Max feature #1",
+      "Another Pro Max feature #2",
+    ],
+  },
+];
 
 export default async function Contact() {
   const { userId } = auth();
@@ -55,11 +73,11 @@ export default async function Contact() {
               Unlock all features including full video transcription.
             </p>
           </div>
-          <div className="flex gap-14">
-            {types.map((type) => (
+          <div className="flex gap-10">
+            {cards.map((card) => (
               <div
-                key={type}
-                className="flex flex-col gap-14 rounded-2xl border border-slate-800 bg-[#0B111A] p-10 text-center shadow-md transition-transform hover:scale-[1.04]"
+                key={card.type}
+                className="flex min-w-[435px] flex-col gap-14 rounded-2xl border border-slate-800 bg-[#0B111A] p-8 text-center shadow-md transition-transform hover:scale-[1.04]"
               >
                 <div className="flex flex-col gap-5 text-center">
                   <h3 className="text-2xl font-bold">
@@ -67,34 +85,48 @@ export default async function Contact() {
                     <span className="bg-gradient-to-r from-purple-600  to-indigo-400 bg-clip-text text-transparent">
                       Find
                     </span>
-                    {` ${type === "month" ? "Pro" : "Pro Max"}`}
+                    {` ${card.type}`}
                   </h3>
                   <div>
-                    <h5 className="text-7xl font-bold">{`$${type === "month" ? proPrice : proMaxPrice}.00`}</h5>
-                    <p className="text-sm text-white/70">{`Billed ${type === "month" ? "Monthly" : "Yearly"}`}</p>
+                    <h5 className="text-7xl font-bold">{`$${card.price}.00`}</h5>
+                    <p className="text-sm text-white/70">{`Billed ${card.billed}`}</p>
                   </div>
                 </div>
                 <div className="flex flex-1 flex-col gap-4">
-                  <h5>{`What's included in the ${type === "month" ? "Pro" : "Pro Max"} plan`}</h5>
+                  <h5>{`What's included in the ${card.type} plan`}</h5>
                   <ul className="flex flex-col gap-2 text-white/70">
-                    {(type === "month" ? proIncluded : proMaxIncluded).map(
-                      (bullet) => (
-                        <li key={bullet} className="flex items-center gap-2">
-                          <Icons.check className="size-4" />
-                          <span>{bullet}</span>
-                        </li>
-                      ),
-                    )}
+                    {card.bullets.map((bullet) => (
+                      <li key={bullet} className="flex items-center gap-2">
+                        <Icons.check className="size-4" />
+                        <span>{bullet}</span>
+                      </li>
+                    ))}
                   </ul>
                 </div>
-                <form action={createCheckoutSession}>
-                  <input
-                    type="hidden"
-                    name="lookup_key"
-                    value={`pro-${type}`}
-                  />
-                  <CheckoutButton text="Get Started" />
-                </form>
+                {card.type === "Hobby" ? (
+                  <form
+                    action={async () => {
+                      "use server";
+
+                      if (userId) redirect("/");
+
+                      redirect("sign-in");
+                    }}
+                  >
+                    <SubmitButton
+                      text={userId ? "Start Transcribing" : "Get Started"}
+                    />
+                  </form>
+                ) : (
+                  <form action={createCheckoutSession}>
+                    <input
+                      type="hidden"
+                      name="lookup_key"
+                      value={card.lookup_key}
+                    />
+                    <SubmitButton text={"Get Started"} />
+                  </form>
+                )}
               </div>
             ))}
           </div>
@@ -115,7 +147,7 @@ export default async function Contact() {
                 {membership.stripeCurrentPeriodEnd && (
                   <p className="text-sm text-white/70">
                     Your next bill is for{" "}
-                    <span className="font-semibold">{`$${membership.type === "pro" ? proPrice : proMaxPrice}.00`}</span>{" "}
+                    <span className="font-semibold">{`$${membership.type === "pro" ? 7 : 80}.00`}</span>{" "}
                     on{" "}
                     <span className="font-semibold">{`${formatDate(membership.stripeCurrentPeriodEnd)}`}</span>
                     .
@@ -128,7 +160,7 @@ export default async function Contact() {
                   name="customer_id"
                   value={membership.stripeCustomerId}
                 />
-                <CheckoutButton text="Manage your billing information" />
+                <SubmitButton text="Manage your billing information" />
               </form>
             </div>
           )}

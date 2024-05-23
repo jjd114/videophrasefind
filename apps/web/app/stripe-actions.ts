@@ -19,8 +19,8 @@ export async function createCheckoutSession(formData: FormData) {
     billing_address_collection: "auto",
     client_reference_id: userId,
     mode: "subscription",
-    success_url: `http://localhost:3000/about`,
-    cancel_url: `http://localhost:3000/contact`,
+    success_url: `http://localhost:3000/`,
+    cancel_url: `http://localhost:3000/pricing`,
     line_items: [
       {
         price: prices.data[0].id,
