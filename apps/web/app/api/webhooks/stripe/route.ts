@@ -29,44 +29,40 @@ export async function POST(req: Request) {
   if (event.type === "checkout.session.completed") {
     console.log(`handling: ${event.type}`);
 
-    const membership = await db.membership.findUnique({
-      where: { userId: event.data.object.client_reference_id as string },
-    });
-
     const subscription = await stripe.subscriptions.retrieve(
       event.data.object.subscription as string,
     );
 
     const subscriptionInterval = subscription.items.data[0].plan.interval;
     const billedMonthly = subscriptionInterval === "month";
+    const subscriptionType = billedMonthly ? "pro" : "promax";
 
-    if (!membership?.userId) {
-      await db.membership.create({
-        data: {
-          status: "active",
-          type: billedMonthly ? "pro" : "promax",
-          userId: event.data.object.client_reference_id as string,
-          stripeCustomerId: subscription.customer as string,
-          stripeSubscriptionId: subscription.id,
-          stripeCurrentPeriodEnd: new Date(
-            subscription.current_period_end * 1000,
-          ),
-        },
-      });
-    } else {
-      await db.membership.update({
-        where: { userId: membership.userId },
-        data: {
-          status: "active",
-          type: billedMonthly ? "pro" : "promax",
-          stripeCustomerId: subscription.customer as string,
-          stripeSubscriptionId: subscription.id,
-          stripeCurrentPeriodEnd: new Date(
-            subscription.current_period_end * 1000,
-          ),
-        },
-      });
-    }
+    const stripeCustomerId = subscription.customer as string;
+    const stripeSubscriptionId = subscription.id;
+    const stripeCurrentPeriodEnd = new Date(
+      subscription.current_period_end * 1000,
+    );
+
+    await db.membership.upsert({
+      where: {
+        userId: event.data.object.client_reference_id as string,
+      },
+      create: {
+        userId: event.data.object.client_reference_id as string,
+        status: "active",
+        type: subscriptionType,
+        stripeCustomerId,
+        stripeSubscriptionId,
+        stripeCurrentPeriodEnd,
+      },
+      update: {
+        status: "active",
+        type: subscriptionType,
+        stripeCustomerId,
+        stripeSubscriptionId,
+        stripeCurrentPeriodEnd,
+      },
+    });
 
     await db.transaction.create({
       data: {

@@ -103,7 +103,7 @@ const Header = () => {
                           </Tooltip>
                         </TooltipProvider>
                       ) : null}
-                      <span>{`${capitalize(membershipQuery.data.type as string)} Plan ${membershipQuery.data.type !== "hobby" ? `(${capitalize(membershipQuery.data.status)})` : ""}`}</span>
+                      <span>{`${membershipQuery.data.type ? capitalize(membershipQuery.data.type as string) : "Hobby"} Plan ${membershipQuery.data.type !== null ? `(${capitalize(membershipQuery.data.status)})` : ""}`}</span>
                     </span>
                   )}
                 </>
