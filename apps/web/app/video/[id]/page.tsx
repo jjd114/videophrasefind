@@ -69,7 +69,7 @@ export default async function VideoPage({ params: { id } }: Props) {
       videoUrl={videoUrl}
       videoId={id}
       data={data}
-      userMembershipType={membershipType?.type || null}
+      userMembershipType={membershipType?.type}
     />
   );
 }

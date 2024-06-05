@@ -37,12 +37,14 @@ export const schema = z.object({
   semanticSearch: z.boolean(),
 });
 
+type MaybeMembershipType<T extends "pro" | "promax"> = T | null | undefined;
+
 interface Props {
   data: TranscriptionsSchema | null;
   videoId: string;
   videoUrl: string | null;
   refreshInterval?: number;
-  userMembershipType: "pro" | "promax" | null;
+  userMembershipType: MaybeMembershipType<"pro" | "promax">;
 }
 
 function getLoaderMessage(videoDurationSeconds?: number) {
@@ -162,10 +164,21 @@ const Content = ({
                     <Icons.info className="size-4" />
                   </TooltipTrigger>
                   <TooltipContent className="text-center" sideOffset={12}>
-                    <p>
-                      For a general topic search, e.g. &quot;space&quot; <br />
-                      will return results like moon and rocket. <br />
-                    </p>
+                    {userMembershipType ? (
+                      <p>
+                        For a general topic search, e.g. &quot;space&quot;{" "}
+                        <br />
+                        will return results like moon and rocket. <br />
+                      </p>
+                    ) : (
+                      <p>
+                        You need to{" "}
+                        <Link className="underline" href={"/pricing"}>
+                          upgrade your plan
+                        </Link>{" "}
+                        to use the feature.
+                      </p>
+                    )}
                     <Link className="underline" href="/about/#semantic-search">
                       Read more about the semantic search feature
                     </Link>
