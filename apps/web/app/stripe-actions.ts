@@ -19,8 +19,8 @@ export async function createCheckoutSession(formData: FormData) {
     billing_address_collection: "auto",
     client_reference_id: userId,
     mode: "subscription",
-    success_url: `http://localhost:3000/`,
-    cancel_url: `http://localhost:3000/pricing`,
+    success_url: `${process.env.BASE_URL}/`,
+    cancel_url: `${process.env.BASE_URL}/pricing`,
     line_items: [
       {
         price: prices.data[0].id,
@@ -37,7 +37,7 @@ export async function createPortalSession(formData: FormData) {
 
   const portalSession = await stripe.billingPortal.sessions.create({
     customer: customerId,
-    return_url: "http://localhost:3000",
+    return_url: `${process.env.BASE_URL}/`,
   });
 
   redirect(portalSession.url);
