@@ -33,20 +33,15 @@ const cards = [
     type: "Pro",
     price: 7,
     billed: "Monthly",
-    lookup_key: "pro-month",
-    bullets: ["18000 credits / month", "Cropped videos re-transcription"],
+    lookup_key: process.env.MONTHLY_LOOK_UP_KEY,
+    bullets: ["18000 credits / month"],
   },
   {
     type: "Pro Max",
     price: 80,
     billed: "Yearly",
-    lookup_key: "pro-year",
-    bullets: [
-      "180000 credits / year",
-      "Cropped videos re-transcription",
-      "Another Pro Max feature #1",
-      "Another Pro Max feature #2",
-    ],
+    lookup_key: process.env.YEARLY_LOOK_UP_KEY,
+    bullets: ["180000 credits / year"],
   },
 ] as const;
 
