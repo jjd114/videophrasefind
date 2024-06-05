@@ -1,5 +1,7 @@
 import _ from "lodash";
 import { type Metadata } from "next";
+import { db } from "database";
+import { auth } from "@clerk/nextjs/server";
 
 import Content from "@/components/Content";
 
@@ -44,10 +46,30 @@ async function getTranscriptions(videoId: string) {
 }
 
 export default async function VideoPage({ params: { id } }: Props) {
+  const { userId } = auth();
+
+  const membershipType = userId
+    ? await db.membership.findUnique({
+        where: {
+          userId,
+        },
+        select: {
+          type: true,
+        },
+      })
+    : null;
+
   const [videoUrl, { data }] = await Promise.all([
     getVideoUrl(id),
     getTranscriptions(id),
   ]);
 
-  return <Content videoUrl={videoUrl} videoId={id} data={data} />;
+  return (
+    <Content
+      videoUrl={videoUrl}
+      videoId={id}
+      data={data}
+      userMembershipType={membershipType?.type || null}
+    />
+  );
 }

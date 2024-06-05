@@ -42,6 +42,7 @@ interface Props {
   videoId: string;
   videoUrl: string | null;
   refreshInterval?: number;
+  userMembershipType: "pro" | "promax" | null;
 }
 
 function getLoaderMessage(videoDurationSeconds?: number) {
@@ -55,7 +56,13 @@ function getLoaderMessage(videoDurationSeconds?: number) {
   return "Waiting for transcription results. Your video is pretty large, it make take some time (up to half of the video duration). You can save this link and come back later!";
 }
 
-const Content = ({ data, videoId, videoUrl, refreshInterval }: Props) => {
+const Content = ({
+  data,
+  videoId,
+  videoUrl,
+  refreshInterval,
+  userMembershipType,
+}: Props) => {
   useRefresher({ enabled: !(data && videoUrl), interval: refreshInterval });
 
   const { thumbnails } = useThumbnailer(videoUrl);
@@ -141,6 +148,7 @@ const Content = ({ data, videoId, videoUrl, refreshInterval }: Props) => {
                       id="semanticSearchSwitch"
                       checked={value}
                       onCheckedChange={onChange}
+                      disabled={!userMembershipType}
                     />
                     <Label htmlFor="semanticSearchSwitch">
                       Semantic search
