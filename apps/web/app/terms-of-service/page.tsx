@@ -43,32 +43,32 @@ export default function TermsOfService() {
       <SmallText margins="mb-7">
         Welcome to{" "}
         <Link className="underline" href="/">
-          videophrasefind.com
+          siftvid.io
         </Link>
         , a platform where users can upload and view videos. This Terms of
-        Service Agreement governs your use of videophrasefind.com and any
-        related services provided by videophrasefind.
+        Service Agreement governs your use of siftvid.io and any
+        related services provided by siftvid.io.
       </SmallText>
       <SmallText>
-        By accessing or using the videophrasefind website, you agree to be bound
+        By accessing or using the siftvid.io website, you agree to be bound
         by this Agreement and our Privacy Policy. If you do not agree to abide
         by this Agreement or the Privacy Policy, please do not access or use
-        videophrasefind.com
+        siftvid.io
       </SmallText>
       <Spacer />
       <Header>1. User Content</Header>
       <TextBlock>
         <SmallText margins="mb-6">
-          1.1. By uploading videos to videophrasefind.com, you agree that you
+          1.1. By uploading videos to siftvid.io, you agree that you
           have the necessary rights and permissions to do so. You retain all
-          ownership rights to your videos, but you grant videophrasefind a
+          ownership rights to your videos, but you grant siftvid.io a
           non-exclusive, worldwide, royalty-free license to use and display your
-          videos on the videophrasefind website.
+          videos on the siftvid.io website.
         </SmallText>
         <SmallText>
-          1.2. You understand and acknowledge that videophrasefind does not
+          1.2. You understand and acknowledge that siftvid.io does not
           guarantee the accuracy, integrity, or quality of user-uploaded
-          content, and you agree to use the videophrasefind.com at your own
+          content, and you agree to use the siftvid.io at your own
           risk.
         </SmallText>
       </TextBlock>
@@ -92,12 +92,12 @@ export default function TermsOfService() {
       <Header>3. User Conduct</Header>
       <TextBlock>
         <SmallText margins="mb-6">
-          3.1. You agree to use videophrasefinder.com in accordance with all
+          3.1. You agree to use siftvid.io in accordance with all
           applicable laws and regulations.
         </SmallText>
         <SmallText>
           3.2. You agree not to engage in any conduct that could damage,
-          disable, or impair videophrasefind.com or interfere with any other
+          disable, or impair siftvid.io or interfere with any other
           party&apos;s use of the website.
         </SmallText>
       </TextBlock>
@@ -105,19 +105,19 @@ export default function TermsOfService() {
       <Header>4. Intellectual Property</Header>
       <TextBlock>
         <SmallText>
-          4.1. The videophrasefind.com website and all content and materials
-          available on videophrasefind.com are protected by copyright and other
+          4.1. The siftvid.io website and all content and materials
+          available on siftvid.io are protected by copyright and other
           intellectual property laws. You agree not to copy, reproduce, modify,
-          or distribute any content or materials from videophrasefind.com
-          without the prior written consent of videophrasefind.com.
+          or distribute any content or materials from siftvid.io
+          without the prior written consent of siftvid.io.
         </SmallText>
       </TextBlock>
       <Spacer />
       <Header>5. Termination</Header>
       <TextBlock>
         <SmallText>
-          5.1. videophrasefind may terminate or suspend your access to
-          videophrasefind.com at any time, without prior notice or liability,
+          5.1. siftvid.io may terminate or suspend your access to
+          siftvid.io at any time, without prior notice or liability,
           for any reason whatsoever, including without limitation if you breach
           this Agreement.
         </SmallText>
@@ -126,21 +126,21 @@ export default function TermsOfService() {
       <Header>6. Disclaimer of Warranties</Header>
       <TextBlock>
         <SmallText>
-          6.1. The videophrasefind.com is provided &quot;as is&quot; and
+          6.1. The siftvid.io is provided &quot;as is&quot; and
           &quot;as available&quot; without any representations or warranties,
-          express or implied. videophrasefind makes no representations or
-          warranties in relation to videophrasefind.com or the information and
-          materials provided on the videophrasefind.com website.
+          express or implied. siftvid.io makes no representations or
+          warranties in relation to siftvid.io or the information and
+          materials provided on the siftvid.io website.
         </SmallText>
       </TextBlock>
       <Spacer />
       <Header>7. Limitation of Liability</Header>
       <TextBlock>
         <SmallText>
-          7.1. videophrasefind.com will not be liable to you (whether under the
+          7.1. siftvid.io will not be liable to you (whether under the
           law of contract, the law of torts, or otherwise) in relation to the
           contents of, or use of, or otherwise in connection with, the
-          videophrasefind.com website for any indirect, special, or
+          siftvid.io website for any indirect, special, or
           consequential loss; or for any business losses, loss of revenue,
           income, profits, or anticipated savings, loss of contracts or business
           relationships, loss of reputation or goodwill, or loss or corruption
@@ -161,10 +161,10 @@ export default function TermsOfService() {
       <Header>9. Changes to this Agreement</Header>
       <TextBlock>
         <SmallText>
-          9.1. videophrasefind.com reserves the right to modify or replace this
+          9.1. siftvid.io reserves the right to modify or replace this
           Agreement at any time. It is your responsibility to review this
           Agreement periodically for changes. Your continued use of the
-          videophrasefind.com website following the posting of any changes to
+          siftvid.io website following the posting of any changes to
           this Agreement constitutes acceptance of those changes.
         </SmallText>
       </TextBlock>
@@ -178,7 +178,7 @@ export default function TermsOfService() {
       </TextBlock>
       <Spacer />
       <SmallText>
-        By accessing or using the videophrasefind.com, you acknowledge that you
+        By accessing or using the siftvid.io, you acknowledge that you
         have read, understood, and agree to be bound by this Agreement.
       </SmallText>
     </div>

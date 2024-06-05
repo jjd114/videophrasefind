@@ -67,7 +67,7 @@ export async function POST(req: Request) {
     await db.transaction.create({
       data: {
         credits: billedMonthly ? 18000 : 18000 * 10,
-        description: "VideoPhraseFind Pro (Initial)",
+        description: "siftvid.io Pro (Initial)",
         userId: event.data.object.client_reference_id as string,
       },
     });
@@ -117,7 +117,7 @@ export async function POST(req: Request) {
       data: {
         userId,
         credits: billedMonthly ? 18000 : 18000 * 10,
-        description: "VideoPhraseFind Pro (Provision)",
+        description: "siftvid.io Pro (Provision)",
       },
     });
   }

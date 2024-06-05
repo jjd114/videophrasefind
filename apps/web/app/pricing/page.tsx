@@ -23,18 +23,14 @@ const cards = [
     price: 0,
     billed: "Monthly",
     lookup_key: undefined,
-    bullets: [
-      "Transcribe videos up to 1 minute",
-      "Semantic search",
-      "Uploads history",
-    ],
+    bullets: ["Transcribe videos up to 1 minute", "Uploads history"],
   },
   {
     type: "Pro",
     price: 7,
     billed: "Monthly",
     lookup_key: process.env.MONTHLY_LOOK_UP_KEY,
-    bullets: ["18000 credits / month"],
+    bullets: ["18000 credits / month", "Semantic search"],
   },
   {
     type: "Pro Max",
@@ -75,10 +71,10 @@ export default async function Contact() {
                 className="flex min-w-[435px] flex-col gap-14 rounded-2xl border border-slate-800 bg-[#0B111A] p-8 text-center shadow-md transition-transform hover:scale-[1.02]"
               >
                 <div className="flex flex-col gap-5 text-center">
-                  <h3 className="text-2xl font-bold">
-                    VideoPhrase
-                    <span className="bg-gradient-to-r from-purple-600  to-indigo-400 bg-clip-text text-transparent">
-                      Find
+                  <h3 className="font-exo text-3xl font-bold tracking-wide">
+                    <span className="uppercase">sift</span>
+                    <span className="bg-gradient-to-r from-purple-600 to-indigo-400 bg-clip-text  uppercase text-transparent">
+                      vid
                     </span>
                     {` ${card.type}`}
                   </h3>
@@ -132,10 +128,10 @@ export default async function Contact() {
             <div className="flex h-[250px] w-[495px] flex-col justify-evenly gap-10 rounded-2xl border border-slate-800 bg-[#0B111A] p-7 text-center shadow-md">
               <div className="flex flex-col gap-2 text-start">
                 <span className="text-xs">{`Current plan`}</span>
-                <h3 className="space-y-3 text-3xl font-bold">
-                  VideoPhrase
-                  <span className="bg-gradient-to-r from-purple-600  to-indigo-400 bg-clip-text text-transparent">
-                    Find
+                <h3 className="font-exo space-y-3 text-4xl font-bold tracking-wide">
+                  <span className="uppercase">sift</span>
+                  <span className="bg-gradient-to-r from-purple-600 to-indigo-400  bg-clip-text uppercase text-transparent">
+                    VID
                   </span>
                   {` ${membership.type === "pro" ? "Pro" : "Pro Max"}`}
                 </h3>

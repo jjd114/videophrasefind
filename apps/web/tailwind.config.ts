@@ -18,6 +18,9 @@ const config = {
       },
     },
     extend: {
+      fontFamily: {
+        exo: ["var(--font-exo)"],
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",

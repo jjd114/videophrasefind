@@ -51,9 +51,14 @@ const Header = () => {
   return (
     <header className="flex items-center justify-center bg-[#101824] px-7 py-4">
       <div className="flex w-full max-w-[calc(theme(screens.2xl)-2*theme(padding.7))] items-center gap-8">
-        <Link href="/" className="text-xl font-extrabold">
-          VideoPhrase
-          <span className="text-purple-600">Find</span>
+        <Link
+          href="/"
+          className="font-exo text-2xl font-extrabold uppercase tracking-wide"
+        >
+          sift
+          <span className="bg-gradient-to-r from-purple-500 to-indigo-400 bg-clip-text text-transparent">
+            vid
+          </span>
         </Link>
         <div className="flex flex-1 items-center justify-between">
           <nav className="flex items-center">
@@ -103,7 +108,7 @@ const Header = () => {
                           </Tooltip>
                         </TooltipProvider>
                       ) : null}
-                      <span>{`${membershipQuery.data.type ? capitalize(membershipQuery.data.type as string) : "Hobby"} Plan ${membershipQuery.data.type !== null ? `(${capitalize(membershipQuery.data.status)})` : ""}`}</span>
+                      <span>{`${membershipQuery.data.type ? capitalize(membershipQuery.data.type as string) : "Hobby"} ${membershipQuery.data.type !== null ? `(${capitalize(membershipQuery.data.status)})` : ""}`}</span>
                     </span>
                   )}
                 </>
