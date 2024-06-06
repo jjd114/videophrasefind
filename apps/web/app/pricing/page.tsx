@@ -76,7 +76,7 @@ export default async function Contact() {
                     <span className="bg-gradient-to-r from-purple-600 to-indigo-400 bg-clip-text  uppercase text-transparent">
                       vid
                     </span>
-                    {` ${card.type}`}
+                    <span className="uppercase">.io</span> {` ${card.type}`}
                   </h3>
                   <div>
                     <h5 className="text-7xl font-bold">{`$${card.price}.00`}</h5>
@@ -128,11 +128,12 @@ export default async function Contact() {
             <div className="flex h-[250px] w-[495px] flex-col justify-evenly gap-10 rounded-2xl border border-slate-800 bg-[#0B111A] p-7 text-center shadow-md">
               <div className="flex flex-col gap-2 text-start">
                 <span className="text-xs">{`Current plan`}</span>
-                <h3 className="font-exo space-y-3 text-4xl font-bold tracking-wide">
+                <h3 className="space-y-3 font-exo text-4xl font-bold tracking-wide">
                   <span className="uppercase">sift</span>
                   <span className="bg-gradient-to-r from-purple-600 to-indigo-400  bg-clip-text uppercase text-transparent">
-                    VID
+                    vid
                   </span>
+                  <span className="uppercase">.io</span>
                   {` ${membership.type === "pro" ? "Pro" : "Pro Max"}`}
                 </h3>
                 {membership.stripeCurrentPeriodEnd && (

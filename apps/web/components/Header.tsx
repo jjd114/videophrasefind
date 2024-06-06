@@ -59,6 +59,7 @@ const Header = () => {
           <span className="bg-gradient-to-r from-purple-500 to-indigo-400 bg-clip-text text-transparent">
             vid
           </span>
+          .io
         </Link>
         <div className="flex flex-1 items-center justify-between">
           <nav className="flex items-center">
