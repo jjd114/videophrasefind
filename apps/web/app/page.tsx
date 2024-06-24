@@ -5,7 +5,7 @@ import VideoForm from "@/components/VideoForm";
 export const dynamic = "force-static";
 
 export const metadata: Metadata = {
-  title: "Home - VideoPhraseFind",
+  title: "Home - siftvid.io",
   description:
     "Here you can start use the main function of the app - transcribe a video and allow a user to quickly sift the results for any instance of a word or phrase",
 };

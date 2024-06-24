@@ -6,6 +6,9 @@ import {
   Zap,
   Frown,
   AudioLines,
+  Coins,
+  HandCoins,
+  Check,
 } from "lucide-react";
 
 export const Icons = {
@@ -16,4 +19,7 @@ export const Icons = {
   ready: Zap,
   sadFace: Frown,
   audioLines: AudioLines,
+  credits: Coins,
+  handCredits: HandCoins,
+  check: Check,
 };

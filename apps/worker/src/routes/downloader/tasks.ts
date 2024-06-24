@@ -21,6 +21,25 @@ import {
   transactionDescription,
 } from "../../transaction/utils";
 
+async function paidUserHasEnoughCredits(userId: string, duration: number) {
+  const creditsAmount = (
+    await db.transaction.findMany({
+      where: {
+        userId,
+      },
+      select: {
+        credits: true,
+      },
+    })
+  ).reduce((acc, current) => acc + current.credits, 0);
+
+  return creditsAmount + calculateCredits(duration) > 0;
+}
+
+function isSignedUp(userId: string | null): userId is string {
+  return userId !== null;
+}
+
 export async function trigger12LabsTask({ videoId }: { videoId: string }) {
   console.log(`Triggering 12Labs task for: ${videoId}`);
 
@@ -38,39 +57,57 @@ export async function trigger12LabsTask({ videoId }: { videoId: string }) {
     },
   });
 
-  const shouldBeCropped = duration > MAX_SECONDS_ALLOWED_TO_TRANSCRIBE_FOR_FREE;
+  const userIsSignedUp = isSignedUp(userId);
+
+  const membership = userIsSignedUp
+    ? await db.membership.findUnique({ where: { userId } })
+    : null;
+
+  const userIsPaid = userIsSignedUp && !!membership;
+
+  const hasEnoughCredits =
+    userIsPaid && (await paidUserHasEnoughCredits(userId, duration));
+
+  const videoShouldBeCropped =
+    !userIsSignedUp ||
+    (duration > MAX_SECONDS_ALLOWED_TO_TRANSCRIBE_FOR_FREE && !userIsPaid) ||
+    (duration > MAX_SECONDS_ALLOWED_TO_TRANSCRIBE_FOR_FREE &&
+      !hasEnoughCredits);
 
   const index = await client12Labs.index.create({
-    name: `${shouldBeCropped ? "cropped" : "full"}.${videoId}`,
+    name: `${videoShouldBeCropped ? "cropped" : "full"}.${videoId}`,
     engines: engine,
     addons: ["thumbnail"],
   });
-  console.log({ index });
+  console.log({ indexId: index.id });
 
   const { twelveLabsIndexId } = await db.twelveLabsVideo.create({
     data: {
       twelveLabsIndexId: index.id,
       videoMetadataId: videoId,
-      full: !shouldBeCropped,
-      duration: shouldBeCropped
+      full: !videoShouldBeCropped,
+      duration: videoShouldBeCropped
         ? MAX_SECONDS_ALLOWED_TO_TRANSCRIBE_FOR_FREE
         : duration,
     },
   });
 
-  shouldBeCropped && (await cropAndUploadToS3(videoId));
+  videoShouldBeCropped && (await cropAndUploadToS3(videoId));
 
   await client12Labs.task.create({
     indexId: twelveLabsIndexId,
-    url: `${getS3DirectoryUrl(videoId)}/video${shouldBeCropped ? ".cropped" : ""}.webm`,
+    url: `${getS3DirectoryUrl(videoId)}/video${videoShouldBeCropped ? ".cropped" : ""}.webm`,
   });
 
-  if (userId) {
+  if (userIsPaid) {
     await db.transaction.create({
       data: {
         description:
-          transactionDescription[shouldBeCropped ? "cropped" : "full"],
-        credits: calculateCredits(duration),
+          transactionDescription[videoShouldBeCropped ? "cropped" : "full"],
+        credits:
+          videoShouldBeCropped || !hasEnoughCredits // add this ternary, because we don't want to have negative balance. Paid user without enough credits === not paid user
+            ? 0
+            : calculateCredits(duration),
         twelveLabsIndexId,
         userId,
       },

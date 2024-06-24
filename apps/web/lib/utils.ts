@@ -8,7 +8,8 @@ export function cn(...inputs: ClassValue[]) {
 export function formatDate(date: Date) {
   return new Date(date.toString()).toLocaleDateString(undefined, {
     day: "numeric",
-    month: "short",
+    month: "numeric",
+    year: "2-digit",
   });
 }
 
@@ -18,4 +19,8 @@ export function formatTime(date: Date) {
     hour: "2-digit",
     minute: "2-digit",
   });
+}
+
+export function capitalize(str: string) {
+  return str[0].toUpperCase() + str.slice(1);
 }

@@ -6,11 +6,18 @@ import { intervalToDuration } from "date-fns";
 
 import { padTime } from "@/components/CaptionsEntry";
 
-import { formatDate, formatTime } from "@/lib/utils";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+
+import { cn, formatDate, formatTime } from "@/lib/utils";
 
 import { Icons } from "@/components/Icons";
 
-const formatDuration = (videoDuration: Prisma.Decimal) => {
+function formatDuration(videoDuration: Prisma.Decimal) {
   const duration = intervalToDuration({
     start: 0,
     end: videoDuration.toNumber() * 1000,
@@ -20,29 +27,25 @@ const formatDuration = (videoDuration: Prisma.Decimal) => {
     return `${padTime(duration.minutes)}:${padTime(duration.seconds)}`;
 
   return `${padTime(duration.hours)}:${padTime(duration.minutes)}:${padTime(duration.seconds)}`;
-};
+}
 
-const getVideos = async (userId: string) => {
-  // await db.videoMetadata.delete({
-  //   where: {
-  //     id: "",
-  //   },
-  // });
-
-  // await db.videoMetadata.deleteMany({
-  //   where: {
-  //     userId: "",
-  //   },
-  // });
-
+async function getVideos(userId: string) {
   return db.videoMetadata.findMany({
     where: { userId },
     include: {
-      twelveLabsVideos: true,
+      twelveLabsVideos: {
+        include: {
+          transaction: {
+            select: {
+              credits: true,
+            },
+          },
+        },
+      },
     },
     orderBy: { createdAt: "desc" },
   });
-};
+}
 
 export default async function VideosPage() {
   const { userId } = auth().protect();
@@ -60,7 +63,7 @@ export default async function VideosPage() {
     );
 
   return (
-    <div className="flex w-full max-w-[950px] flex-col gap-8">
+    <div className="flex w-full max-w-[1000px] flex-col gap-8">
       {videos.map((video) => (
         <Link key={video.id} href={`/video/${video.id}`}>
           <div className="flex gap-10 rounded-2xl bg-[#0b111a] p-10">
@@ -90,7 +93,7 @@ export default async function VideosPage() {
                   <Icons.spinner className="size-5 animate-spin" />
                 </span>
               )}
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between text-sm">
                 <span className="flex items-center gap-2 text-white/70">
                   <Icons.videoSize strokeWidth={1.5} className="size-5" />
                   <span className="font-semibold">
@@ -102,10 +105,32 @@ export default async function VideosPage() {
                   </span>
                 </span>
                 {video.twelveLabsVideos[0] && (
-                  <span className="flex items-center gap-2 text-white/70">
-                    <Icons.audioLines strokeWidth={1.5} className="size-5" />
-                    <span className="font-semibold">{`${formatDuration(video.twelveLabsVideos[0].duration)} ${!video.twelveLabsVideos[0].full ? "(Cropped)" : "(Full)"}`}</span>
-                  </span>
+                  <>
+                    <span className="flex items-center gap-2 text-white/70">
+                      <Icons.audioLines strokeWidth={1.5} className="size-5" />
+                      <span className="font-semibold">{`${formatDuration(video.twelveLabsVideos[0].duration)} ${!video.twelveLabsVideos[0].full ? "(Cropped)" : "(Full)"}`}</span>
+                    </span>
+                    {video.twelveLabsVideos[0].transaction &&
+                      -1 * video.twelveLabsVideos[0].transaction.credits >
+                        0 && (
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger className="group">
+                              <span className="flex items-center gap-2 text-white/70  underline-offset-4 group-hover:underline">
+                                <Icons.handCredits
+                                  strokeWidth={1.5}
+                                  className="size-5"
+                                />
+                                <span className="font-semibold">{`${video.twelveLabsVideos[0].transaction.credits} credits`}</span>
+                              </span>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p>{`The video cost you ${-1 * video.twelveLabsVideos[0].transaction.credits} credits`}</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                      )}
+                  </>
                 )}
                 <span className="flex items-center gap-2 text-white/70">
                   <Icons.date strokeWidth={1.5} className="size-5" />

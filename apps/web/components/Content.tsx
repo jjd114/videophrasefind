@@ -37,11 +37,14 @@ export const schema = z.object({
   semanticSearch: z.boolean(),
 });
 
+type MaybeMembershipType<T extends "pro" | "promax"> = T | null | undefined;
+
 interface Props {
   data: TranscriptionsSchema | null;
   videoId: string;
   videoUrl: string | null;
   refreshInterval?: number;
+  userMembershipType: MaybeMembershipType<"pro" | "promax">;
 }
 
 function getLoaderMessage(videoDurationSeconds?: number) {
@@ -55,7 +58,13 @@ function getLoaderMessage(videoDurationSeconds?: number) {
   return "Waiting for transcription results. Your video is pretty large, it make take some time (up to half of the video duration). You can save this link and come back later!";
 }
 
-const Content = ({ data, videoId, videoUrl, refreshInterval }: Props) => {
+const Content = ({
+  data,
+  videoId,
+  videoUrl,
+  refreshInterval,
+  userMembershipType,
+}: Props) => {
   useRefresher({ enabled: !(data && videoUrl), interval: refreshInterval });
 
   const { thumbnails } = useThumbnailer(videoUrl);
@@ -141,6 +150,7 @@ const Content = ({ data, videoId, videoUrl, refreshInterval }: Props) => {
                       id="semanticSearchSwitch"
                       checked={value}
                       onCheckedChange={onChange}
+                      disabled={!userMembershipType}
                     />
                     <Label htmlFor="semanticSearchSwitch">
                       Semantic search
@@ -154,10 +164,21 @@ const Content = ({ data, videoId, videoUrl, refreshInterval }: Props) => {
                     <Icons.info className="size-4" />
                   </TooltipTrigger>
                   <TooltipContent className="text-center" sideOffset={12}>
-                    <p>
-                      For a general topic search, e.g. &quot;space&quot; <br />
-                      will return results like moon and rocket. <br />
-                    </p>
+                    {userMembershipType ? (
+                      <p>
+                        For a general topic search, e.g. &quot;space&quot;{" "}
+                        <br />
+                        will return results like moon and rocket. <br />
+                      </p>
+                    ) : (
+                      <p>
+                        You need to{" "}
+                        <Link className="underline" href={"/pricing"}>
+                          upgrade your plan
+                        </Link>{" "}
+                        to use the feature.
+                      </p>
+                    )}
                     <Link className="underline" href="/about/#semantic-search">
                       Read more about the semantic search feature
                     </Link>
