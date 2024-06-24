@@ -1,4 +1,4 @@
-import { client12Labs } from "../../twelveLabs/client";
+import { client12Labs } from "../twelveLabs/client";
 
 export async function get12LabsVideoId(twelveLabsIndexId: string) {
   const [video] = await client12Labs.index.video.list(twelveLabsIndexId);

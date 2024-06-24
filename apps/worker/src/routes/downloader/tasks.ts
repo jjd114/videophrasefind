@@ -14,7 +14,12 @@ import {
 import {
   triggerSaveMetadataTask,
   triggerUpdateVideoProcessingTaskStatus,
-} from "../video/tasks";
+} from "../../video/tasks";
+
+import {
+  calculateCredits,
+  transactionDescription,
+} from "../../transaction/utils";
 
 export async function trigger12LabsTask({ videoId }: { videoId: string }) {
   console.log(`Triggering 12Labs task for: ${videoId}`);
@@ -24,7 +29,7 @@ export async function trigger12LabsTask({ videoId }: { videoId: string }) {
   );
   console.log({ duration });
 
-  await db.videoMetadata.update({
+  const { userId } = await db.videoMetadata.update({
     where: {
       id: videoId,
     },
@@ -57,8 +62,20 @@ export async function trigger12LabsTask({ videoId }: { videoId: string }) {
 
   await client12Labs.task.create({
     indexId: twelveLabsIndexId,
-    url: `${getS3DirectoryUrl(videoId)}/video.${shouldBeCropped ? "cropped." : ""}webm`,
+    url: `${getS3DirectoryUrl(videoId)}/video${shouldBeCropped ? ".cropped" : ""}.webm`,
   });
+
+  if (userId) {
+    await db.transaction.create({
+      data: {
+        description:
+          transactionDescription[shouldBeCropped ? "cropped" : "full"],
+        credits: calculateCredits(duration),
+        twelveLabsIndexId,
+        userId,
+      },
+    });
+  }
 
   triggerSaveMetadataTask({ twelveLabsIndexId, videoId });
   triggerUpdateVideoProcessingTaskStatus({ twelveLabsIndexId });
