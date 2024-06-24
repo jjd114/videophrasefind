@@ -1,36 +1,27 @@
-import { db } from "database";
-
 import { client12Labs } from "../../twelveLabs/client";
 
-export const get12LabsIndexId = async (videoId: string) => {
-  return (
-    await db.videoMetadata.findUnique({
-      where: { id: videoId },
-    })
-  )?.twelveLabsIndexId;
-};
-
-export const get12LabsVideoId = async (indexId: string) => {
-  const [video] = await client12Labs.index.video.list(indexId);
+export async function get12LabsVideoId(twelveLabsIndexId: string) {
+  const [video] = await client12Labs.index.video.list(twelveLabsIndexId);
 
   return video?.id;
-};
+}
 
-export const getVideoProcessingStatus = async (indexId: string) => {
-  return (await client12Labs.task.list({ indexId }))[0]?.status;
-};
+export async function getVideoProcessingStatus(twelveLabsIndexId: string) {
+  return (await client12Labs.task.list({ indexId: twelveLabsIndexId }))[0]
+    ?.status;
+}
 
-export const getHLS = async ({
+export async function getHLS({
   twelveLabsIndexId,
   twelveLabsVideoId,
 }: {
   twelveLabsIndexId: string;
   twelveLabsVideoId: string;
-}) => {
+}) {
   return (
     await client12Labs.index.video.retrieve(
       twelveLabsIndexId,
       twelveLabsVideoId
     )
   ).hls;
-};
+}

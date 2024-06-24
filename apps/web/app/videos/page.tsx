@@ -10,7 +10,7 @@ import { formatDate, formatTime } from "@/lib/utils";
 
 import { Icons } from "@/components/Icons";
 
-const formatVideoDuration = (videoDuration: Prisma.Decimal) => {
+const formatDuration = (videoDuration: Prisma.Decimal) => {
   const duration = intervalToDuration({
     start: 0,
     end: videoDuration.toNumber() * 1000,
@@ -37,6 +37,9 @@ const getVideos = async (userId: string) => {
 
   return db.videoMetadata.findMany({
     where: { userId },
+    include: {
+      twelveLabsVideos: true,
+    },
     orderBy: { createdAt: "desc" },
   });
 };
@@ -74,7 +77,7 @@ export default async function VideosPage() {
               )}
               {video.duration && (
                 <div className="absolute bottom-1 right-1 rounded-md bg-black/65 p-1 text-sm">
-                  {formatVideoDuration(video.duration)}
+                  {formatDuration(video.duration)}
                 </div>
               )}
             </div>
@@ -88,9 +91,9 @@ export default async function VideosPage() {
                 </span>
               )}
               <div className="flex items-center justify-between">
-                <span className="flex gap-2 text-white/70">
+                <span className="flex items-center gap-2 text-white/70">
                   <Icons.videoSize strokeWidth={1.5} className="size-5" />
-                  <span className="flex items-center font-semibold">
+                  <span className="font-semibold">
                     {video.size ? (
                       `${(video.size / 1e6).toFixed(2)}MB`
                     ) : (
@@ -98,14 +101,20 @@ export default async function VideosPage() {
                     )}
                   </span>
                 </span>
-                <span className="flex gap-2 text-white/70">
+                {video.twelveLabsVideos[0] && (
+                  <span className="flex items-center gap-2 text-white/70">
+                    <Icons.audioLines strokeWidth={1.5} className="size-5" />
+                    <span className="font-semibold">{`${formatDuration(video.twelveLabsVideos[0].duration)} ${!video.twelveLabsVideos[0].full ? "(Cropped)" : "(Full)"}`}</span>
+                  </span>
+                )}
+                <span className="flex items-center gap-2 text-white/70">
                   <Icons.date strokeWidth={1.5} className="size-5" />
                   <time className="font-semibold">{`${formatDate(video.createdAt)} at ${formatTime(video.createdAt)}`}</time>
                 </span>
               </div>
               <span className="flex gap-3 font-semibold">
-                Transcriptions:
-                {video.status === "PROCESSING" ? (
+                {`Transcriptions`}:
+                {video.twelveLabsVideos[0]?.status !== "READY" ? (
                   <span className="flex items-center gap-2 text-amber-300">
                     please wait, we&apos;re processing your video
                     <Icons.spinner className="size-5 animate-spin" />

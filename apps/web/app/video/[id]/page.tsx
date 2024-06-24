@@ -5,8 +5,8 @@ import Content from "@/components/Content";
 
 import {
   getVideoUrl,
-  getVideoProcessingStatus,
-  getVideo12LabsIds,
+  get12LabsVideoIds,
+  get12LabsVideoProcessingStatus,
 } from "@/app/video-actions";
 
 import { client12Labs } from "@/twelveLabs/client";
@@ -27,19 +27,17 @@ export const metadata: Metadata = {
 };
 
 async function getTranscriptions(videoId: string) {
-  const status = await getVideoProcessingStatus(videoId);
+  const status = await get12LabsVideoProcessingStatus(videoId);
 
   if (status !== "READY") return { ready: false, data: null };
 
-  const { twelveLabsVideoId, twelveLabsIndexId } =
-    await getVideo12LabsIds(videoId);
+  const ids = await get12LabsVideoIds(videoId);
 
-  if (!twelveLabsVideoId || !twelveLabsIndexId)
-    return { ready: false, data: null };
+  if (!ids?.twelveLabsVideoId) return { ready: false, data: null };
 
   const transcriptions = await client12Labs.index.video.transcription(
-    twelveLabsIndexId,
-    twelveLabsVideoId,
+    ids.twelveLabsIndexId,
+    ids.twelveLabsVideoId,
   );
 
   return { ready: true, data: transcriptionsSchema.parse(transcriptions) };

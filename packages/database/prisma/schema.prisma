@@ -8,11 +8,6 @@ generator client {
   provider = "prisma-client-js"
 }
 
-enum Status {
-  PROCESSING
-  READY
-}
-
 model VideoMetadata {
   id String @id @default(cuid())
 
@@ -23,9 +18,27 @@ model VideoMetadata {
 
   userId String?
 
-  status            Status  @default(PROCESSING)
-  twelveLabsVideoId String?
-  twelveLabsIndexId String?
+  twelveLabsVideos TwelveLabsVideo[]
 
   createdAt DateTime @default(now())
+}
+
+enum Status {
+  PROCESSING
+  READY
+}
+
+model TwelveLabsVideo {
+  id String @id @default(cuid())
+
+  full     Boolean
+  status   Status  @default(PROCESSING)
+  duration Decimal
+
+  twelveLabsIndexId String  @unique
+  twelveLabsVideoId String?
+
+  videoMetadataId String
+
+  videoMetadata VideoMetadata @relation(fields: [videoMetadataId], references: [id], onDelete: Cascade)
 }

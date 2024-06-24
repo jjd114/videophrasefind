@@ -2,7 +2,6 @@ import { serve } from "@hono/node-server";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 
-import video from "./routes/video/video";
 import downloader from "./routes/downloader/downloader";
 
 const app = new Hono();
@@ -20,7 +19,6 @@ app.get("/", async (c) => {
 });
 
 app.route("/downloader", downloader);
-app.route("/video", video);
 
 const port = 5173;
 

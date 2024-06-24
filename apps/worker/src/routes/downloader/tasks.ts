@@ -11,8 +11,13 @@ import {
   cropAndUploadToS3,
 } from "./utils";
 
+import {
+  triggerSaveMetadataTask,
+  triggerUpdateVideoProcessingTaskStatus,
+} from "../video/tasks";
+
 export async function trigger12LabsTask({ videoId }: { videoId: string }) {
-  console.log(`Triggering 12Labs task for: ${{ videoId }}`);
+  console.log(`Triggering 12Labs task for: ${videoId}`);
 
   const duration = await getVideoDurationInSeconds(
     `${getS3DirectoryUrl(videoId)}/video.webm`
@@ -28,33 +33,33 @@ export async function trigger12LabsTask({ videoId }: { videoId: string }) {
     },
   });
 
+  const shouldBeCropped = duration > MAX_SECONDS_ALLOWED_TO_TRANSCRIBE_FOR_FREE;
+
   const index = await client12Labs.index.create({
-    name: `${duration > MAX_SECONDS_ALLOWED_TO_TRANSCRIBE_FOR_FREE ? "cropped" : "full"}.${videoId}`,
+    name: `${shouldBeCropped ? "cropped" : "full"}.${videoId}`,
     engines: engine,
     addons: ["thumbnail"],
   });
   console.log({ index });
 
-  await db.videoMetadata.update({
-    where: {
-      id: videoId,
-    },
+  const { twelveLabsIndexId } = await db.twelveLabsVideo.create({
     data: {
       twelveLabsIndexId: index.id,
+      videoMetadataId: videoId,
+      full: !shouldBeCropped,
+      duration: shouldBeCropped
+        ? MAX_SECONDS_ALLOWED_TO_TRANSCRIBE_FOR_FREE
+        : duration,
     },
   });
 
-  if (duration > MAX_SECONDS_ALLOWED_TO_TRANSCRIBE_FOR_FREE) {
-    await cropAndUploadToS3(videoId);
+  shouldBeCropped && (await cropAndUploadToS3(videoId));
 
-    await client12Labs.task.create({
-      indexId: index.id,
-      url: `${getS3DirectoryUrl(videoId)}/video.cropped.webm`,
-    });
-  } else {
-    await client12Labs.task.create({
-      indexId: index.id,
-      url: `${getS3DirectoryUrl(videoId)}/video.webm`,
-    });
-  }
+  await client12Labs.task.create({
+    indexId: twelveLabsIndexId,
+    url: `${getS3DirectoryUrl(videoId)}/video.${shouldBeCropped ? "cropped." : ""}webm`,
+  });
+
+  triggerSaveMetadataTask({ twelveLabsIndexId, videoId });
+  triggerUpdateVideoProcessingTaskStatus({ twelveLabsIndexId });
 }

@@ -17,22 +17,35 @@ export async function getVideoUrl(videoId: string) {
   return url;
 }
 
-export async function getVideoProcessingStatus(videoId: string) {
+export async function get12LabsVideoProcessingStatus(videoId: string) {
   const data = await db.videoMetadata.findUnique({
     where: { id: videoId },
-    select: { status: true },
+    select: {
+      twelveLabsVideos: {
+        select: {
+          status: true,
+        },
+      },
+    },
   });
 
-  return data?.status;
+  return data?.twelveLabsVideos[0]?.status;
 }
 
-export async function getVideo12LabsIds(videoId: string) {
+export async function get12LabsVideoIds(videoId: string) {
   const data = await db.videoMetadata.findUnique({
     where: { id: videoId },
-    select: { twelveLabsVideoId: true, twelveLabsIndexId: true },
+    select: {
+      twelveLabsVideos: {
+        select: {
+          twelveLabsIndexId: true,
+          twelveLabsVideoId: true,
+        },
+      },
+    },
   });
 
-  return { ...data };
+  return data?.twelveLabsVideos[0];
 }
 
 export async function createVideo() {
@@ -43,36 +56,6 @@ export async function createVideo() {
       userId,
     },
   });
-
-  const triggerSaveMetadataRes = await fetch(
-    `${process.env.NEXT_PUBLIC_API_BASE_URL}/video/trigger-save-metadata`,
-    {
-      method: "PATCH",
-      body: JSON.stringify({ videoId: video.id }),
-      headers: {
-        accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      cache: "no-cache",
-    },
-  );
-
-  console.log(await triggerSaveMetadataRes.json());
-
-  const triggerStatusUpdateRes = await fetch(
-    `${process.env.NEXT_PUBLIC_API_BASE_URL}/video/trigger-status-update`,
-    {
-      method: "PATCH",
-      body: JSON.stringify({ videoId: video.id }),
-      headers: {
-        accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      cache: "no-cache",
-    },
-  );
-
-  console.log(await triggerStatusUpdateRes.json());
 
   return video.id;
 }
