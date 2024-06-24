@@ -1,0 +1,31 @@
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Status {
+  PROCESSING
+  READY
+}
+
+model VideoMetadata {
+  id String @id @default(cuid())
+
+  title        String?
+  duration     Decimal?
+  size         Int?
+  thumbnailUrl String?
+
+  userId String?
+
+  status            Status  @default(PROCESSING)
+  twelveLabsVideoId String?
+  twelveLabsIndexId String?
+
+  createdAt DateTime @default(now())
+}

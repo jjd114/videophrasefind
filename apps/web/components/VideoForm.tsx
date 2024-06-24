@@ -11,13 +11,18 @@ import useZodForm from "@/hooks/useZodForm";
 
 import Button from "@/components/Button";
 import Input from "@/components/Input";
+import { Icons } from "@/components/Icons";
 
-import { fetchAndTrigger, getUploadUrl, trigger } from "@/app/actions";
+import {
+  fetchYTVideoAndTriggerTranscription,
+  getUploadUrl,
+  triggerTranscription,
+} from "@/app/actions";
 
-import Loader from "@/app/video/[s3DirectoryPath]/loader";
+import { createVideo, saveVideoTitleAndSize } from "@/app/video-actions";
 
 export const schema = z.object({
-  videoUrl: z
+  ytUrl: z
     .string()
     .url({ message: "Invalid URL" })
     .transform((s) => s.replaceAll(/&.*$/g, "")) // Cleanup youtube links
@@ -25,25 +30,28 @@ export const schema = z.object({
 });
 
 export default function VideoForm() {
-  const router = useRouter();
-
   const [status, setStatus] = useState("no status");
 
   const [isPending, startTransition] = useTransition();
 
+  const router = useRouter();
+
+  const { acceptedFiles, getRootProps, getInputProps } = useDropzone();
+
   const {
     register,
+    watch,
     handleSubmit,
     formState: { errors, isValid, isSubmitting, isDirty },
   } = useZodForm({
     schema,
     defaultValues: {
-      videoUrl: "",
+      ytUrl: "",
     },
     mode: "onBlur",
   });
 
-  const { acceptedFiles, getRootProps, getInputProps } = useDropzone();
+  const ytUrl = watch("ytUrl");
 
   const files = acceptedFiles.map((file: FileWithPath) => (
     <li key={file.path}>
@@ -51,62 +59,83 @@ export default function VideoForm() {
     </li>
   ));
 
+  const externalUploadMutation = useMutation({
+    onMutate: () => {
+      setStatus("Triggering video upload to our storage...");
+    },
+    mutationFn: ({ ytUrl, videoId }: { ytUrl: string; videoId: string }) =>
+      fetchYTVideoAndTriggerTranscription(ytUrl, videoId), // Video transcription on 12Labs will be triggered automatically
+  });
+
   const localUploadMutation = useMutation({
     onMutate: () => {
-      setStatus("uploading your video to our storage");
+      setStatus(
+        "Uploading your video to our storage...\nPlease, don't leave the page",
+      );
     },
-    mutationFn: async ({ file }: { file: File }) => {
-      const { uploadUrl, s3Directory, downloadUrl } = await getUploadUrl();
-
-      await fetch(uploadUrl, {
+    mutationFn: async ({ file, videoId }: { file: File; videoId: string }) => {
+      await fetch(await getUploadUrl(videoId), {
         method: "PUT",
         body: file,
       });
 
-      // Trigger video transcription manually
-      await trigger(downloadUrl, s3Directory);
+      await saveVideoTitleAndSize({
+        id: videoId,
+        title: file.name.split(".")[0],
+        size: file.size,
+      });
 
-      return { s3Directory };
+      return triggerTranscription(videoId); // Trigger video transcription on 12Labs manually
     },
   });
 
-  const externalUploadMutation = useMutation({
+  const createVideoMutation = useMutation({
     onMutate: () => {
-      setStatus("triggering video upload to our storage");
+      setStatus("Triggering save video metadata jobs...");
     },
-    mutationFn: async ({ url }: { url: string }) => {
-      // Video transcription will be triggered automatically
-      return fetchAndTrigger(url);
+    mutationFn: createVideo,
+    onSuccess: async (videoId) => {
+      const { message } = ytUrl
+        ? await externalUploadMutation.mutateAsync({
+            ytUrl,
+            videoId,
+          })
+        : await localUploadMutation.mutateAsync({
+            file: acceptedFiles[0],
+            videoId,
+          });
+      console.log({ message });
+
+      startTransition(() => {
+        router.push(`/video/${videoId}`);
+      });
     },
   });
 
-  const onSubmit = handleSubmit(async (formData) => {
-    const { s3Directory } = formData.videoUrl
-      ? await externalUploadMutation.mutateAsync({ url: formData.videoUrl })
-      : await localUploadMutation.mutateAsync({ file: acceptedFiles[0] });
-
-    startTransition(() => {
-      router.push(`/video/${s3Directory}`);
-    });
-  });
-
-  if (localUploadMutation.isPending)
+  if (
+    isSubmitting ||
+    isPending ||
+    localUploadMutation.isPending ||
+    externalUploadMutation.isPending ||
+    createVideoMutation.isPending
+  )
     return (
-      <div className="flex w-full max-w-[512px]">
-        <Loader message="Uploading your video" />
-      </div>
-    );
-
-  if (isSubmitting || isPending)
-    return (
-      <div className="flex w-full max-w-[512px]">
-        <Loader message={`Video processing.. status=${status}`} />
+      <div className="flex w-full max-w-[512px] flex-col items-center gap-4">
+        <Icons.spinner className="size-20 animate-spin text-[#9DA3AE]" />
+        <div className="text-center">
+          <h2 className="mb-4 text-lg font-bold">Video processing...</h2>
+          <p className="text-md animate-slide whitespace-pre-wrap text-center text-[#9DA3AE]">
+            {status}
+          </p>
+        </div>
       </div>
     );
 
   return (
     <form
-      onSubmit={onSubmit}
+      onSubmit={handleSubmit(() => {
+        createVideoMutation.mutate();
+      })}
       className="flex w-full flex-col items-center gap-8 rounded-[32px] bg-[#0B111A] p-4 min-[1050px]:max-w-[512px]"
     >
       <section className="size-full">
@@ -147,7 +176,7 @@ export default function VideoForm() {
       <Input
         className="w-full"
         placeholder="Paste video URL"
-        name="videoUrl"
+        name="ytUrl"
         register={register}
         errors={errors}
       />
@@ -157,6 +186,8 @@ export default function VideoForm() {
           isSubmitting ||
           isPending ||
           localUploadMutation.isPending ||
+          externalUploadMutation.isPending ||
+          createVideoMutation.isPending ||
           !isValid ||
           (!isDirty && acceptedFiles.length === 0)
         }

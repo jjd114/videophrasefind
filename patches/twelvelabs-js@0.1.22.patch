@@ -1,0 +1,13 @@
+diff --git a/dist/core.js b/dist/core.js
+index fd9126ba96b724420774cae7347dbecece9ab78b..16988da0f946c1b722a34ce7d0616162afa2fc9e 100644
+--- a/dist/core.js
++++ b/dist/core.js
+@@ -78,7 +78,7 @@ class APIClient {
+             return body;
+         }
+         catch (error) {
+-            if (error instanceof node_fetch_1.default.FetchError) {
++            if (error instanceof node_fetch_1.FetchError) {
+                 if (error.code === 'ENOTFOUND') {
+                     throw new Errors.APIConnectionError('API Connection Error', error);
+                 }

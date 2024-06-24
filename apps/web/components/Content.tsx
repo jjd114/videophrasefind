@@ -28,7 +28,7 @@ import { TranscriptionsSchema } from "@/twelveLabs/utils";
 import useRefresher from "@/hooks/useRefresher";
 import { useThumbnailer, STEP } from "@/hooks/useThumbnailer";
 
-import Loader from "@/app/video/[s3DirectoryPath]/loader";
+import Loader from "@/app/video/[id]/loader";
 
 import { getSemanticSearchResult } from "@/app/actions";
 
@@ -39,7 +39,7 @@ export const schema = z.object({
 
 interface Props {
   data: TranscriptionsSchema | null;
-  indexName: string;
+  videoId: string;
   videoUrl: string | null;
   refreshInterval?: number;
 }
@@ -55,7 +55,7 @@ function getLoaderMessage(videoDurationSeconds?: number) {
   return "Waiting for transcription results. Your video is pretty large, it make take some time (up to half of the video duration). You can save this link and come back later!";
 }
 
-const Content = ({ data, indexName, videoUrl, refreshInterval }: Props) => {
+const Content = ({ data, videoId, videoUrl, refreshInterval }: Props) => {
   useRefresher({ enabled: !(data && videoUrl), interval: refreshInterval });
 
   const { thumbnails } = useThumbnailer(videoUrl);
@@ -92,8 +92,8 @@ const Content = ({ data, indexName, videoUrl, refreshInterval }: Props) => {
   const semanticResponse = useQuery({
     enabled: semanticSearch && !!debouncedSearchQuery,
     refetchOnWindowFocus: false,
-    queryKey: ["semantic", indexName, debouncedSearchQuery],
-    queryFn: () => getSemanticSearchResult(indexName, debouncedSearchQuery),
+    queryKey: ["semantic", videoId, debouncedSearchQuery],
+    queryFn: () => getSemanticSearchResult(videoId, debouncedSearchQuery),
   });
 
   if (!videoUrl)
