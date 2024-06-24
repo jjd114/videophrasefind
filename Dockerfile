@@ -1,5 +1,6 @@
 FROM node:20-alpine AS base
 
+RUN apk add ffmpeg
 RUN corepack enable pnpm
 
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .

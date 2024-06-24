@@ -44,7 +44,8 @@ export async function trigger12LabsTask({ videoId }: { videoId: string }) {
   console.log(`Triggering 12Labs task for: ${videoId}`);
 
   const duration = await getVideoDurationInSeconds(
-    `${getS3DirectoryUrl(videoId)}/video.webm`
+    `${getS3DirectoryUrl(videoId)}/video.webm`,
+    '/usr/bin/ffprobe'
   );
   console.log({ duration });
 
