@@ -4,13 +4,15 @@
   "scripts": {
     "dev": "FORCE_COLOR=1 turbo run dev --parallel",
     "build": "FORCE_COLOR=1 turbo run build",
-    "test": "FORCE_COLOR=1 turbo run test",
-    "test:ui": "FORCE_COLOR=1 turbo run test:ui",
-    "start": "FORCE_COLOR=1 turbo run start"
+    "start": "FORCE_COLOR=1 turbo run start",
+    "web:build": "turbo --filter=web build",
+    "web:format:check": "turbo --filter=web format:check",
+    "web:format:write": "turbo --filter=web format:write",
+    "web:lint": "turbo --filter=web lint"
   },
   "devDependencies": {
-    "prettier": "^3.2.5",
-    "turbo": "^1.13.0"
+    "prettier": "^3.3.2",
+    "turbo": "^2.0.4"
   },
-  "packageManager": "pnpm@8.6.2"
+  "packageManager": "pnpm@8.15.7"
 }

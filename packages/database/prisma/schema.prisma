@@ -1,0 +1,87 @@
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model VideoMetadata {
+  id String @id @default(cuid())
+
+  title        String?
+  duration     Decimal?
+  size         Int?
+  thumbnailUrl String?
+
+  userId String?
+
+  twelveLabsVideos TwelveLabsVideo[]
+
+  createdAt DateTime @default(now())
+}
+
+enum Status {
+  PROCESSING
+  READY
+}
+
+model TwelveLabsVideo {
+  id String @id @default(cuid())
+
+  full     Boolean
+  status   Status  @default(PROCESSING)
+  duration Decimal
+
+  twelveLabsIndexId String  @unique
+  twelveLabsVideoId String?
+
+  videoMetadataId String
+
+  videoMetadata VideoMetadata @relation(fields: [videoMetadataId], references: [id], onDelete: Cascade)
+
+  transaction Transaction?
+}
+
+model Transaction {
+  id String @id @default(cuid())
+
+  description String
+  credits     Int
+
+  userId String
+
+  twelveLabsIndexId String? @unique
+
+  twelveLabsVideo TwelveLabsVideo? @relation(fields: [twelveLabsIndexId], references: [twelveLabsIndexId])
+
+  createdAt DateTime @default(now())
+}
+
+enum MembershipStatus {
+  active
+  inactive
+  paused
+}
+
+enum MembershipType {
+  pro
+  promax
+}
+
+model Membership {
+  id String @id @default(cuid())
+
+  status MembershipStatus
+  type   MembershipType?
+
+  userId String @unique
+
+  stripeCustomerId       String?   @unique
+  stripeSubscriptionId   String?   @unique
+  stripeCurrentPeriodEnd DateTime?
+
+  createdAt DateTime @default(now())
+}
