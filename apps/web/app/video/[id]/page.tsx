@@ -37,7 +37,7 @@ async function getTranscriptions(videoId: string) {
 
   if (!ids?.twelveLabsVideoId) return { ready: false, data: null };
 
-  const transcriptions = await client12Labs.index.video.transcription(
+  const transcriptions = await client12Labs().index.video.transcription(
     ids.twelveLabsIndexId,
     ids.twelveLabsVideoId,
   );
