@@ -1,16 +1,11 @@
-import { authMiddleware } from "@clerk/nextjs";
+import { clerkMiddleware } from "@clerk/nextjs/server";
 
-export default authMiddleware({
-  publicRoutes: [
-    "/",
-    "/about",
-    "/contact",
-    "/help",
-    "/terms-of-service",
-    "/video/:s3DirectoryPath",
-  ],
-});
+export default clerkMiddleware();
 
 export const config = {
-  matcher: ["/((?!.+.[w]+$|_next|favicon.ico|.*\.svg).*)", "/", "/(api|trpc)(.*)"],
+  matcher: [
+    "/((?!.+.[w]+$|_next|favicon.ico|.*.svg).*)",
+    "/",
+    "/(api|trpc)(.*)",
+  ],
 };

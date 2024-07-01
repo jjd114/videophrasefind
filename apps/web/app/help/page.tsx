@@ -9,7 +9,7 @@ const steps: {
   };
 }[] = [
   {
-    text: "Navigate to https://videophrasefind.com",
+    text: "Navigate to https://siftvid.io",
   },
   {
     text: `Click the "Paste video URL" input`,
